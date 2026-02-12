@@ -60,7 +60,10 @@ local entity = spawner.Create({
 
 entity:SetCallback("OnSpawned", function()
     print("Entity has spawned")
-workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value).Assets.Light_Fixtures:Destroy()
+local find = workspace.CurrentRooms:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value).Assets.Light_Fixtures
+if find then
+find:Destroy()
+end
 end)
 
 entity:SetCallback("OnStartMoving", function()
