@@ -1,0 +1,1059 @@
+--// ===== SERVICES =====
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+--// ===== BACKGROUND MUSIC =====
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Volume = 1
+    sound.PlaybackSpeed = 1
+    sound.Looped = true
+    sound.Name = "BackgroundMusic"
+end
+
+CustomGitSound("https://github.com/stopfuckingSkiddingbitch/My-Scripts/raw/refs/heads/main/YTDown.com_YouTube_DOORS-Roblox-OST-The-Shop_Media_4tLw0HF0ruA_001_1080p.mp3?raw=true", 1, "No")
+
+local plr = Players.LocalPlayer
+local expandedMap = {}
+
+--// ===== GUI ROOT =====
+local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
+gui.Name = "DoorsStyleHub"
+
+--// ===== CLICK SOUND =====
+local CLICK_SOUND_ID = "rbxassetid://139421450430380"
+
+local function playClickSound()
+	local sound = Instance.new("Sound")
+	sound.SoundId = CLICK_SOUND_ID
+	sound.Volume = 1
+	sound.Parent = gui
+	sound:Play()
+
+	sound.Ended:Connect(function()
+		sound:Destroy()
+	end)
+end
+
+--// ===== PRESS ANIMATION =====
+local function addPressAnimation(button)
+
+	local originalSize = button.Size
+	local pressedSize = UDim2.new(
+		originalSize.X.Scale * 0.92,
+		originalSize.X.Offset * 0.92,
+		originalSize.Y.Scale * 0.92,
+		originalSize.Y.Offset * 0.92
+	)
+
+	button.MouseButton1Down:Connect(function()
+		TweenService:Create(button,
+			TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+			{Size = pressedSize}
+		):Play()
+	end)
+
+	button.MouseButton1Up:Connect(function()
+		TweenService:Create(button,
+			TweenInfo.new(0.12, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+			{Size = originalSize}
+		):Play()
+	end)
+
+end
+
+-- OPEN BUTTON (nhỏ, tối giản)
+local openBtn = Instance.new("TextButton", gui)
+openBtn.Size = UDim2.fromOffset(120,40)
+openBtn.Position = UDim2.new(0,20,0.5,-20)
+openBtn.Text = "DOORS HUB"
+openBtn.TextScaled = true
+openBtn.BackgroundColor3 = Color3.fromRGB(25,20,15)
+openBtn.TextColor3 = Color3.fromRGB(200,170,120)
+Instance.new("UICorner", openBtn).CornerRadius = UDim.new(0,4)
+
+addPressAnimation(openBtn)
+
+-- OPEN BUTTON STROKE
+local openStroke = Instance.new("UIStroke")
+openStroke.Color = Color3.fromRGB(212,175,55)
+openStroke.Thickness = 2
+openStroke.Transparency = 0.3
+openStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+openStroke.Parent = openBtn
+
+-- Hover effect
+openBtn.MouseEnter:Connect(function()
+	TweenService:Create(openStroke, TweenInfo.new(0.2), {
+		Transparency = 0
+	}):Play()
+end)
+
+openBtn.MouseLeave:Connect(function()
+	TweenService:Create(openStroke, TweenInfo.new(0.2), {
+		Transparency = 0.3
+	}):Play()
+end)
+
+--// ===== MAIN HUB =====
+local main = Instance.new("Frame", gui)
+main.AnchorPoint = Vector2.new(0.5,0.5)
+main.Position = UDim2.fromScale(0.5,0.5)
+main.Size = UDim2.fromScale(0,0)
+main.Visible = false
+main.BackgroundColor3 = Color3.fromRGB(0,0,0)
+main.BorderSizePixel = 1
+main.BorderColor3 = Color3.fromRGB(120,90,50)
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,6)
+
+local function updateHubMusic()
+	if main.Visible then
+		if not game.Workspace.BackgroundMusic.IsPlaying then
+			game.Workspace.BackgroundMusic:Play()
+		end
+	else
+		if game.Workspace.BackgroundMusic.IsPlaying then
+			game.Workspace.BackgroundMusic:Pause()
+		end
+	end
+end
+
+--// ===== EXECUTED EFFECT =====
+local function showExecutedEffect()
+
+	local executedText = Instance.new("TextLabel")
+	executedText.Parent = gui
+	executedText.AnchorPoint = Vector2.new(0.5,0.5)
+	executedText.Position = UDim2.fromScale(0.5,0.5)
+	executedText.Size = UDim2.fromScale(0,0)
+	executedText.BackgroundTransparency = 1
+	executedText.Text = "EXECUTED!"
+	executedText.TextScaled = true
+	executedText.Font = Enum.Font.GothamBlack
+	executedText.TextColor3 = Color3.fromRGB(212,175,55)
+	executedText.TextTransparency = 0
+	executedText.ZIndex = 999
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(255,220,120)
+	stroke.Thickness = 3
+	stroke.Parent = executedText
+
+	-- SOUND (m tự thay ID)
+	local sound = Instance.new("Sound")
+	sound.SoundId = "rbxassetid://135329036031873"
+	sound.Volume = 1
+	sound.Parent = gui
+	sound:Play()
+
+	-- Khi sound kết thúc mới destroy sound
+	sound.Ended:Connect(function()
+		sound:Destroy()
+	end)
+
+	-- PHÓNG TO
+	local growTween = TweenService:Create(
+		executedText,
+		TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+		{Size = UDim2.fromScale(0.4,0.15)}
+	)
+
+	growTween:Play()
+	growTween.Completed:Wait()
+
+	task.wait(0.5)
+
+	-- FADE OUT TEXT
+	local fadeTween = TweenService:Create(
+		executedText,
+		TweenInfo.new(0.5),
+		{TextTransparency = 1}
+	)
+
+	local strokeFade = TweenService:Create(
+		stroke,
+		TweenInfo.new(0.5),
+		{Transparency = 1}
+	)
+
+	fadeTween:Play()
+	strokeFade:Play()
+
+	fadeTween.Completed:Wait()
+
+	-- Chỉ destroy text trước
+	executedText:Destroy()
+end
+
+--// ===== MENU BACKGROUND SLIDESHOW =====
+local TweenService = game:GetService("TweenService")
+
+local images = {
+    "rbxassetid://130825007316063",
+    "rbxassetid://88470424126126",
+    "rbxassetid://102060916896593"
+}
+
+local currentIndex = 1
+
+local menuBg = Instance.new("ImageLabel")
+menuBg.Size = UDim2.new(1,0,1,-45)
+menuBg.Position = UDim2.new(0,0,0,45)
+menuBg.BackgroundTransparency = 1
+menuBg.Image = images[currentIndex]
+menuBg.ScaleType = Enum.ScaleType.Crop
+menuBg.ImageTransparency = 0
+menuBg.ZIndex = 1
+menuBg.Parent = main
+
+Instance.new("UICorner", menuBg).CornerRadius = UDim.new(0,6)
+
+-- Fade settings
+local fadeOutTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local fadeInTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+task.spawn(function()
+    while true do
+        task.wait(10)
+
+        -- Fade Out
+        local fadeOut = TweenService:Create(menuBg, fadeOutTweenInfo, {
+            ImageTransparency = 1
+        })
+        fadeOut:Play()
+        fadeOut.Completed:Wait()
+
+        -- Change Image
+        currentIndex += 1
+        if currentIndex > #images then
+            currentIndex = 1
+        end
+
+        menuBg.Image = images[currentIndex]
+
+        -- Fade In
+        local fadeIn = TweenService:Create(menuBg, fadeInTweenInfo, {
+            ImageTransparency = 0
+        })
+        fadeIn:Play()
+    end
+end)
+
+-- HUB BORDER STROKE (DOORS STYLE)
+local hubStroke = Instance.new("UIStroke")
+hubStroke.Color = Color3.fromRGB(212,175,55)
+hubStroke.Thickness = 3
+hubStroke.Transparency = 0.2
+hubStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+hubStroke.Parent = main
+
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+	local t = tick() % 2
+	hubStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.2
+end)
+
+--// ===== DRAG FUNCTION =====
+local function makeDraggable(frame)
+
+	local dragging = false
+	local dragInput
+	local dragStart
+	local startPos
+
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+
+end
+
+makeDraggable(main)
+makeDraggable(openBtn)
+
+-- Fade nền nhẹ khi mở
+local overlay = Instance.new("Frame", gui)
+overlay.Size = UDim2.fromScale(1,1)
+overlay.BackgroundColor3 = Color3.new(0,0,0)
+overlay.BackgroundTransparency = 1
+overlay.ZIndex = 0
+
+-- TITLE BAR
+local top = Instance.new("Frame", main)
+top.Size = UDim2.new(1,0,0,45)
+top.BackgroundColor3 = Color3.fromRGB(30,20,10)
+
+local title = Instance.new("TextLabel", top)
+title.Size = UDim2.fromScale(1,1)
+title.BackgroundTransparency = 1
+title.Text = "DOORS HUB"
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(220,190,140)
+title.Font = Enum.Font.GothamBold
+
+-- CLOSE BUTTON
+local closeBtn = Instance.new("TextButton", top)
+closeBtn.Size = UDim2.fromOffset(40,30)
+closeBtn.Position = UDim2.new(1,-45,0.5,-15)
+closeBtn.Text = "X"
+closeBtn.TextScaled = true
+closeBtn.BackgroundColor3 = Color3.fromRGB(60,20,20)
+closeBtn.TextColor3 = Color3.fromRGB(255,200,150)
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0,4)
+
+-- CLOSE BUTTON STROKE
+local closeStroke = Instance.new("UIStroke")
+closeStroke.Color = Color3.fromRGB(212,175,55)
+closeStroke.Thickness = 2
+closeStroke.Transparency = 0.3
+closeStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+closeStroke.Parent = closeBtn
+
+-- Hover effect
+closeBtn.MouseEnter:Connect(function()
+	TweenService:Create(closeStroke, TweenInfo.new(0.2), {
+		Transparency = 0
+	}):Play()
+end)
+
+closeBtn.MouseLeave:Connect(function()
+	TweenService:Create(closeStroke, TweenInfo.new(0.2), {
+		Transparency = 0.3
+	}):Play()
+end)
+
+-- CONTENT AREA
+local content = Instance.new("Frame", main)
+content.ZIndex = 2
+content.Position = UDim2.new(0,0,0,45)
+content.Size = UDim2.new(1,0,1,-45)
+content.BackgroundTransparency = 1
+
+-- TAB HOLDER
+local tabButtons = Instance.new("Frame", content)
+tabButtons.Size = UDim2.new(0,140,1,0)
+tabButtons.BackgroundColor3 = Color3.fromRGB(25,18,12)
+
+local layout = Instance.new("UIListLayout", tabButtons)
+layout.Padding = UDim.new(0,8)
+
+-- PAGES
+local pages = Instance.new("Frame", content)
+pages.Position = UDim2.new(0,140,0,0)
+pages.Size = UDim2.new(1,-140,1,0)
+pages.BackgroundTransparency = 1
+
+--// ===== SCRIPT BUTTON WITH IMAGE + CONFIRM =====
+local openedContainer = nil
+local activeScriptHighlight = nil
+local shakeConnection = nil
+local shakingImage = nil
+local scriptPulseConnection = nil
+
+local function addScriptHighlight(button, color)
+
+	-- Xóa highlight cũ nếu có
+	if activeScriptHighlight then
+		activeScriptHighlight:Destroy()
+		activeScriptHighlight = nil
+	end
+
+	if scriptPulseConnection then
+		scriptPulseConnection:Disconnect()
+	end
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = color
+	stroke.Thickness = 3
+	stroke.Transparency = 0.2
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke.Parent = button
+
+	activeScriptHighlight = stroke
+
+	-- Pulse animation
+	scriptPulseConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		if not stroke.Parent then return end
+		local t = tick() % 2
+		stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+end
+
+local function removeScriptHighlight()
+	if activeScriptHighlight then
+		TweenService:Create(activeScriptHighlight, TweenInfo.new(0.25), {
+			Transparency = 1
+		}):Play()
+
+		task.wait(0.25)
+
+		activeScriptHighlight:Destroy()
+		activeScriptHighlight = nil
+	end
+
+	if scriptPulseConnection then
+		scriptPulseConnection:Disconnect()
+		scriptPulseConnection = nil
+	end
+end
+
+local function startImageShake(image)
+
+	-- stop cái cũ nếu có
+	if shakeConnection then
+		shakeConnection:Disconnect()
+	end
+
+	shakingImage = image
+	local originalPos = image.Position
+
+	shakeConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		if not image.Parent then return end
+
+		local offsetX = math.random(-2,2)
+		local offsetY = math.random(-2,2)
+
+		image.Position = originalPos + UDim2.new(0, offsetX, 0, offsetY)
+	end)
+end
+
+local function stopImageShake()
+	if shakeConnection then
+		shakeConnection:Disconnect()
+		shakeConnection = nil
+	end
+
+	if shakingImage then
+		shakingImage.Position = UDim2.new(0,0,0,0)
+		shakingImage = nil
+	end
+end
+
+local function createScriptButton(page, buttonData)
+
+	local container = Instance.new("Frame")
+	container.Size = UDim2.new(1,-20,0,50)
+	container.BackgroundTransparency = 1
+	container.Parent = page
+  container.BackgroundColor3 = Color3.fromRGB(0,0,0)
+container.BorderSizePixel = 0
+
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1,0,0,50)
+	button.BackgroundColor3 = Color3.fromRGB(80,50,30)
+button.BackgroundTransparency = 1
+	button.Text = buttonData.Name
+	button.Font = Enum.Font.GothamBold
+	button.TextSize = 18
+	button.TextColor3 = Color3.new(1,1,1)
+	button.Parent = container
+button.ZIndex = 2
+	button.AutoButtonColor = false
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0,6)
+
+addPressAnimation(button)
+
+	-- IMAGE BACKGROUND
+	local img = nil
+
+if buttonData.ImageId then
+	img = Instance.new("ImageLabel")
+	img.Size = UDim2.fromScale(1,1)
+	img.Position = UDim2.new(0,0,0,0)
+	img.BackgroundTransparency = 0.2
+	img.Image = "rbxassetid://"..buttonData.ImageId
+	img.ScaleType = Enum.ScaleType.Crop
+	img.ZIndex = 1
+	img.Parent = button
+	Instance.new("UICorner", img).CornerRadius = UDim.new(0,6)
+end
+
+-- EXPAND BUTTON (+)
+local subContainer = nil
+local plusBtn = nil
+
+if buttonData.SubButton then
+	
+	plusBtn = Instance.new("TextButton")
+	plusBtn.Size = UDim2.new(0, 40, 0, 40)
+	plusBtn.Position = UDim2.new(1,-35,0.5,-14)
+	plusBtn.BackgroundTransparency = 1
+	plusBtn.Text = "+"
+	plusBtn.TextScaled = true
+	plusBtn.Font = Enum.Font.GothamBlack
+	plusBtn.TextColor3 = Color3.fromRGB(255,255,255)
+	plusBtn.ZIndex = 5
+	plusBtn.Parent = button
+	
+	addPressAnimation(plusBtn)
+	
+end
+
+	-- CONFIRM FRAME
+	local confirmFrame = Instance.new("Frame")
+	confirmFrame.Size = UDim2.new(1,0,0,0)
+	confirmFrame.Position = UDim2.new(0,0,0,65)
+	confirmFrame.BackgroundTransparency = 1
+	confirmFrame.ClipsDescendants = true
+	confirmFrame.Parent = container
+ confirmFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+confirmFrame.BorderSizePixel = 0
+
+	local yesBtn = Instance.new("TextButton")
+	yesBtn.Size = UDim2.new(0.48,0,0,30)
+	yesBtn.Position = UDim2.new(0,0,0,0)
+	yesBtn.Text = "EXECUTE"
+	yesBtn.TextScaled = true
+	yesBtn.BackgroundColor3 = Color3.fromRGB(0,120,0)
+	yesBtn.TextColor3 = Color3.fromRGB(150,255,150)
+	yesBtn.Parent = confirmFrame
+	Instance.new("UICorner", yesBtn).CornerRadius = UDim.new(0,6)
+
+local yesStroke = Instance.new("UIStroke")
+yesStroke.Color = Color3.fromRGB(0,255,0)
+yesStroke.Thickness = 3
+yesStroke.Transparency = 0.3
+yesStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+yesStroke.Parent = yesBtn
+
+	local noBtn = Instance.new("TextButton")
+	noBtn.Size = UDim2.new(0.48,0,0,30)
+	noBtn.Position = UDim2.new(0.52,0,0,0)
+	noBtn.Text = "CANCEL"
+	noBtn.TextScaled = true
+	noBtn.BackgroundColor3 = Color3.fromRGB(120,0,0)
+	noBtn.TextColor3 = Color3.fromRGB(255,150,150)
+	noBtn.Parent = confirmFrame
+	Instance.new("UICorner", noBtn).CornerRadius = UDim.new(0,6)
+
+local noStroke = Instance.new("UIStroke")
+noStroke.Color = Color3.fromRGB(255,0,0)
+noStroke.Thickness = 3
+noStroke.Transparency = 0.3
+noStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+noStroke.Parent = noBtn
+
+addPressAnimation(yesBtn)
+addPressAnimation(noBtn)
+
+local RunService = game:GetService("RunService")
+
+local function startPulse(stroke)
+	RunService.Heartbeat:Connect(function()
+		local t = tick() % 2
+		stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+end
+
+	local opened = false
+
+	local function closeConfirm()
+		opened = false
+		openedContainer = nil
+
+		TweenService:Create(container, TweenInfo.new(0, Enum.EasingStyle.Quad), {
+			Size = UDim2.new(1,-20,0,50)
+		}):Play()
+
+		TweenService:Create(confirmFrame, TweenInfo.new(0), {
+			Size = UDim2.new(1,0,0,0)
+		}):Play()
+
+removeScriptHighlight()
+stopImageShake()
+	end
+
+if plusBtn then
+	
+	plusBtn.MouseButton1Click:Connect(function()
+		
+		playClickSound()
+		
+		-- ===== MỞ =====
+		if not expandedMap[container] then
+			
+			expandedMap[container] = true
+			
+			subContainer = createScriptButton(page, buttonData.SubButton)
+			subContainer.Parent = page
+     subContainer.BackgroundColor3 = Color3.fromRGB(0,0,0)
+subContainer.BorderSizePixel = 0
+			
+			-- Transparency setup
+			subContainer.BackgroundTransparency = 1
+			local subButton = subContainer:FindFirstChildOfClass("TextButton")
+if subButton then
+	subButton.TextTransparency = 1
+end
+			
+			local stroke = subContainer:FindFirstChildOfClass("UIStroke")
+			if stroke then
+				stroke.Transparency = 1
+			end
+			
+			local scale = subContainer:FindFirstChildOfClass("UIScale")
+			if scale then
+				scale.Scale = 0.8
+			end
+			
+			task.wait()
+			
+			-- Fade in
+			TweenService:Create(subContainer,
+				TweenInfo.new(0),
+				{BackgroundTransparency = 0}
+			):Play()
+
+			if subButton then
+	TweenService:Create(subButton,
+		TweenInfo.new(0),
+		{TextTransparency = 0}
+	):Play()
+end
+			
+			if stroke then
+				TweenService:Create(stroke,
+					TweenInfo.new(0),
+					{Transparency = 0}
+				):Play()
+			end
+			
+			if scale then
+				TweenService:Create(scale,
+					TweenInfo.new(0, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+					{Scale = 1}
+				):Play()
+			end
+			
+			TweenService:Create(plusBtn,
+				TweenInfo.new(0),
+				{Rotation = 45}
+			):Play()
+		
+		-- ===== ĐÓNG =====
+		else
+			
+			expandedMap[container] = nil
+			
+			if subContainer then
+				
+				local scale = subContainer:FindFirstChildOfClass("UIScale")
+				
+				if scale then
+					TweenService:Create(scale,
+						TweenInfo.new(0, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+						{Scale = 0.8}
+					):Play()
+				end
+				
+				if subButton then
+	TweenService:Create(subButton,
+		TweenInfo.new(0),
+		{TextTransparency = 1}
+	):Play()
+end
+
+local fadeOut = TweenService:Create(subContainer,
+					TweenInfo.new(0),
+					{BackgroundTransparency = 1}
+				)
+				
+				fadeOut:Play()
+				
+				local stroke = subContainer:FindFirstChildOfClass("UIStroke")
+				if stroke then
+					TweenService:Create(stroke,
+						TweenInfo.new(0),
+						{Transparency = 1}
+					):Play()
+				end
+				
+				fadeOut.Completed:Connect(function()
+					subContainer:Destroy()
+					subContainer = nil
+				end)
+			end
+			
+			TweenService:Create(plusBtn,
+				TweenInfo.new(0),
+				{Rotation = 0}
+			):Play()
+		end
+		
+	end)
+	
+end
+
+	-- CLICK MAIN BUTTON
+	button.MouseButton1Click:Connect(function()
+
+	playClickSound()
+ addScriptHighlight(button, buttonData.HighlightColor or Color3.fromRGB(212,175,55))
+ 
+ if img then
+	startImageShake(img)
+end
+
+		-- nếu có button khác đang mở → đóng nó
+		if openedContainer and openedContainer ~= container then
+			for _,obj in pairs(page:GetChildren()) do
+				if obj:IsA("Frame") and obj ~= container then
+					obj.Size = UDim2.new(1,-20,0,50)
+					local cf = obj:FindFirstChildOfClass("Frame")
+					if cf then
+						cf.Size = UDim2.new(1,0,0,0)
+					end
+				end
+			end
+		end
+
+		if opened then
+			closeConfirm()
+			return
+		end
+
+		opened = true
+		openedContainer = container
+   startPulse(yesStroke)
+   startPulse(noStroke)
+
+		TweenService:Create(container, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
+			Size = UDim2.new(1,-20,0,90)
+		}):Play()
+
+		TweenService:Create(confirmFrame, TweenInfo.new(0.25), {
+			Size = UDim2.new(1,0,0,35)
+		}):Play()
+
+	end)
+
+	-- YES
+	yesBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	closeConfirm()
+
+ stopImageShake()
+ 
+ removeScriptHighlight()
+
+	showExecutedEffect() -- 👈 thêm dòng này
+
+	task.spawn(function()
+		buttonData.Code()
+	end)
+
+end)
+
+	-- NO
+	noBtn.MouseButton1Click:Connect(function()
+	playClickSound()
+	closeConfirm()
+ stopImageShake()
+  removeScriptHighlight()
+end)
+
+	-- HOVER EFFECT
+	button.MouseEnter:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.15), {
+			BackgroundColor3 = Color3.fromRGB(100,65,40)
+		}):Play()
+	end)
+
+	button.MouseLeave:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.15), {
+			BackgroundColor3 = Color3.fromRGB(80,50,30)
+		}):Play()
+	end)
+
+return container
+end
+
+--// ===== TAB SYSTEM =====
+local activeTabButton = nil
+local activeStroke = nil
+local pulseConnection = nil
+local tabs = {}
+
+local function selectTab(tabButton, page)
+
+	-- Ẩn tất cả page
+	for _,p in pairs(tabs) do
+		p.Visible = false
+	end
+	page.Visible = true
+
+	-- Fade out stroke cũ
+	if activeStroke and activeStroke.Parent ~= tabButton then
+		TweenService:Create(activeStroke, TweenInfo.new(0.25), {
+			Transparency = 1
+		}):Play()
+	end
+
+	-- Lấy stroke mới
+	local newStroke = tabButton:FindFirstChildOfClass("UIStroke")
+	if not newStroke then return end
+
+	activeTabButton = tabButton
+	activeStroke = newStroke
+
+	-- Fade in
+	TweenService:Create(newStroke, TweenInfo.new(0.25), {
+		Transparency = 0
+	}):Play()
+
+	-- Stop pulse cũ
+	if pulseConnection then
+		pulseConnection:Disconnect()
+	end
+
+	-- Pulse DOORS style
+	pulseConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		if activeStroke ~= newStroke then return end
+		local t = tick() % 2
+		newStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+end
+
+local function createTabGroup(tabData)
+
+	local btn = Instance.new("TextButton", tabButtons)
+	btn.Size = UDim2.new(1,-10,0,40)
+	btn.Text = tabData.Name
+	btn.TextScaled = true
+	btn.BackgroundColor3 = Color3.fromRGB(40,30,20)
+	btn.TextColor3 = Color3.fromRGB(220,190,140)
+	btn.AutoButtonColor = false
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0,4)
+
+addPressAnimation(btn)
+
+	-- DOORS STYLE STROKE
+	-- GLOW LAYER
+-- DOORS STYLE STROKE
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(212,175,55) -- vàng bạc doors
+stroke.Thickness = 2
+stroke.Transparency = 1
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.Parent = btn
+
+	-- PAGE
+	local page = Instance.new("ScrollingFrame", pages)
+	page.Size = UDim2.new(1,-10,1,-10)
+	page.Position = UDim2.new(0,5,0,5)
+	page.CanvasSize = UDim2.new(0,0,0,0)
+	page.ScrollBarThickness = 6
+	page.BackgroundColor3 = Color3.fromRGB(30,20,15)
+page.BackgroundTransparency = 0.4
+	page.Visible = false
+	Instance.new("UICorner", page).CornerRadius = UDim.new(0,4)
+
+	local layout = Instance.new("UIListLayout", page)
+	layout.Padding = UDim.new(0,10)
+
+	layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		page.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 10)
+	end)
+
+	tabs[tabData.Name] = page
+
+	for i, buttonData in ipairs(tabData.Buttons) do
+	local container = createScriptButton(page, buttonData)
+	container.LayoutOrder = i
+end
+
+	-- HÀM PULSE
+	local function startPulse(targetStroke)
+
+		if pulseConnection then
+			pulseConnection:Disconnect()
+		end
+
+		pulseConnection = game:GetService("RunService").Heartbeat:Connect(function()
+			if activeStroke ~= targetStroke then return end
+			local t = tick() % 2
+			targetStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+		end)
+	end
+
+	-- CLICK TAB
+	btn.MouseButton1Click:Connect(function()
+	playClickSound()
+	selectTab(btn, page)
+end)
+end
+
+local TabsConfig = {
+	
+	{
+		Name = "Modes",
+		Buttons = {
+			{
+	Name = "Dreamcore Mode",
+	ImageId = 123961768980557,
+	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	Code = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Dreamcore-Mode-Made-by-Guestly-and-Voorpr0"))()
+	end
+},
+			
+			{
+	Name = "Cataclysm Mode",
+	ImageId = 82766883740850,
+	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	Code = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Cataclysm-Mode-made-by-Guestly-and-Vuivuiviu3"))()
+	end
+},
+
+{
+	Name = "Cataclysmic Mode",
+	ImageId = 132419993309810,
+	HighlightColor = Color3.fromRGB(173, 2, 2), -- màu riêng
+	Code = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Cataclysmic-Mode-Made-by-Guestly-and-Vuivuiviu4"))()
+	end
+},
+
+{
+	Name = "Hallucination Mode (Easy)",
+	ImageId = 101502113770190,
+	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hallucination-Mode-(Easy-Version)-Made-by-Celestian-on-Discord"))()
+	end
+},
+
+{
+	Name = "Hallucination Mode (Hard)",
+	ImageId = 106197785545507,
+	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hallucination-Mode-(Hard-Version)-Made-by-Celestian-on-Discord"))()
+	end
+},
+
+{
+	Name = "Mayhem Mode",
+	ImageId = 86406621171060,
+	HighlightColor = Color3.fromRGB(3, 175, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-stuff/refs/heads/main/Mayhem%20mode%20recreate/Code"))()
+	end
+},
+
+{
+	Name = "Fragmented Mode",
+	ImageId = 72469716690004,
+	HighlightColor = Color3.fromRGB(161, 3, 252), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/talales/Nhankg/refs/heads/main/fragmented%20v5"))()
+	end
+},
+		}
+	},
+}
+
+for _, tabData in pairs(TabsConfig) do
+	createTabGroup(tabData)
+end
+
+local firstTabName = TabsConfig[1].Name
+local firstPage = tabs[firstTabName]
+
+for _,btn in pairs(tabButtons:GetChildren()) do
+	if btn:IsA("TextButton") and btn.Text == firstTabName then
+		selectTab(btn, firstPage)
+		break
+	end
+end
+
+-- Demo nội dung
+local homePage = tabs["Home"]
+
+local lbl = Instance.new("TextLabel", homePage)
+lbl.Size = UDim2.new(1,0,0,50)
+lbl.BackgroundTransparency = 1
+lbl.Text = " "
+lbl.TextScaled = true
+lbl.TextColor3 = Color3.fromRGB(220,190,140)
+
+--// ===== OPEN/CLOSE ANIMATION =====
+openBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	main.Visible = true
+ updateHubMusic()
+	main.Size = UDim2.fromScale(0,0)
+
+	TweenService:Create(overlay, TweenInfo.new(0.3), {
+		BackgroundTransparency = 0.4
+	}):Play()
+
+	TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Back), {
+		Size = UDim2.fromScale(0.8,1)
+	}):Play()
+
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	TweenService:Create(main, TweenInfo.new(0.25), {
+		Size = UDim2.fromScale(0,0)
+	}):Play()
+
+	TweenService:Create(overlay, TweenInfo.new(0.3), {
+		BackgroundTransparency = 1
+	}):Play()
+
+	task.wait(0.25)
+	main.Visible = false
+ updateHubMusic()
+end)
