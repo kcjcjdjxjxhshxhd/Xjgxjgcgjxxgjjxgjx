@@ -994,6 +994,79 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-st
 loadstring(game:HttpGet("https://raw.githubusercontent.com/talales/Nhankg/refs/heads/main/fragmented%20v5"))()
 	end
 },
+
+{
+	Name = "Hazy Mode (Recreated)",
+	ImageId = 92641237396007,
+	HighlightColor = Color3.fromRGB(244, 3, 252), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hazy-Mode-Recreated-made-by-Guestly-(Celestian)-on-Discord"))()
+
+	end
+},
+
+{
+	Name = "Extreme Mode (Recreated)",
+	ImageId = 118198140491141,
+	HighlightColor = Color3.fromRGB(191, 0, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Extreme-Mode-Recreated-made-by-Guestly"))()
+	end
+},
+
+{
+	Name = "Forbidden Mode (Recreated)",
+	ImageId = 105232479298352,
+	HighlightColor = Color3.fromRGB(214, 186, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Forbidden-Mode-recreated-by-Guestly"))()
+	end
+},
+
+{
+	Name = "Hardcore Re-remastered Mode",
+	ImageId = 138892776130651,
+	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	Code = function()
+loadstring(gameHttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hardcore-Mode-Re-Remastered-Made-By-Guestly-Vuivuiviu2-Nowhywhat-Voorpr0"))()
+	end
+},
+
+{
+	Name = "Lunacy Mode",
+	ImageId = 89502147756556,
+	HighlightColor = Color3.fromRGB(187, 0, 255), -- màu riêng
+	Code = function()
+loadstring(gameHttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Lunacy-Mode-Made-By-Guestly-Vuivuiviu2-Nowhywhat-And-Voorpr0"))()
+	end
+},
+
+{
+	Name = "Inferno Mode",
+	ImageId = 112861305612238,
+	HighlightColor = Color3.fromRGB(174, 255, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Anctarus7105/My-Modes/main/Inferno.lua"))()
+	end
+},
+
+{
+	Name = "Hardcore Mode (Reworked)",
+	ImageId = 87047590074187,
+	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/rrealblueyt-oss/Hradcore-by-noonies-remakes/refs/heads/main/Hradcore%20reworker%20by%20RealblueYT%20chubeteliet%20LDLT_legacy"))()
+	end
+},
+
+{
+	Name = "OVERDOORS Mode",
+	ImageId = 87047590074187,
+	HighlightColor = Color3.fromRGB(36, 178, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/binhlforsaken156-sys/THE-OVERDOORS-/refs/heads/main/OVERDOORS-2.9.2", true))()
+	end
+},
 		}
 	},
 }
