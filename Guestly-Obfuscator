@@ -1,0 +1,130 @@
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 380, 0, 350)
+frame.Position = UDim2.new(0.5, -190, 0.5, -175)
+frame.BackgroundColor3 = Color3.fromRGB(10,10,10)
+
+local del = Instance.new("TextButton", frame)
+del.Size = UDim2.new(0,120,0,25)
+del.Position = UDim2.new(0.5,-60,0,5)
+del.Text = "xóa gui"
+del.BackgroundColor3 = Color3.fromRGB(120,0,0)
+del.TextColor3 = Color3.new(1,1,1)
+
+del.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+local input = Instance.new("TextBox", frame)
+input.Size = UDim2.new(1, -20, 0, 180)
+input.Position = UDim2.new(0,10,0,35)
+input.MultiLine = true
+input.TextWrapped = true
+input.Text = "-- nhập script ở đây =))"
+input.BackgroundColor3 = Color3.fromRGB(25,25,25)
+input.TextColor3 = Color3.new(1,1,1)
+input.Font = Enum.Font.Code
+input.TextSize = 14
+
+local output = Instance.new("TextBox", frame)
+output.Size = UDim2.new(1, -20, 0, 70)
+output.Position = UDim2.new(0,10,0,265)
+output.MultiLine = true
+output.TextWrapped = true
+output.BackgroundColor3 = Color3.fromRGB(15,15,15)
+output.TextColor3 = Color3.new(0,1,0)
+output.Font = Enum.Font.Code
+output.TextSize = 14
+
+local btn = Instance.new("TextButton", frame)
+btn.Size = UDim2.new(0,160,0,30)
+btn.Position = UDim2.new(0.5,-80,0,220)
+btn.Text = "OBFUSCATE (đến lúc phải chống lại skid)"
+btn.BackgroundColor3 = Color3.fromRGB(80,0,120)
+btn.TextColor3 = Color3.new(1,1,1)
+
+local function rand(len)
+	local c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	local s="_"
+	for i=1,(len or math.random(5,10)) do
+		local r=math.random(1,#c)
+		s=s..c:sub(r,r)
+	end
+	return s
+end
+
+local function toBytes(str, key)
+	local t={}
+	for i=1,#str do
+		t[i]=str:byte(i)+key
+	end
+	return t
+end
+
+local function moonsecLoader(code)
+	local key = math.random(1,3)
+	local bytes = toBytes(code, key)
+
+	local tblName = rand()
+	local funcName = rand()
+	local runner = rand()
+
+	local tbl = "{"
+	for i,v in ipairs(bytes) do
+		tbl = tbl .. v
+		if i ~= #bytes then tbl = tbl .. "," end
+	end
+	tbl = tbl .. "}"
+
+	local loader =
+"local "..tblName.."="..tbl.."\n"..
+"local function "..funcName.."(t)\n"..
+"local s=\"\"\n"..
+"for i=1,#t do s=s..string.char(t[i]-"..key..") end\n"..
+"return s end\n"..
+"local function "..runner.."(f)\n"..
+"local ld=loadstring or load\n"..
+"if not ld then local e=getfenv and getfenv(0) or _G ld=e.loadstring or e.load end\n"..
+"return ld(f)()\n"..
+"end\n"..
+runner.."("..funcName.."("..tblName.."))"
+
+	return loader
+end
+
+local function obfuscate(code)
+	math.randomseed(tick()*1000)
+
+	code = "--[[This script has been protected by Guestly obfuscator on Discord]]--\n"..code
+
+	local layer1 = moonsecLoader(code)
+	local layer2 = moonsecLoader(layer1)
+
+	local fakeVM = [[
+local _VM={OP_LOAD=1,OP_CALL=2,OP_RET=3}
+local function _exec(x) return x end
+_exec(_VM)
+]]
+
+	return fakeVM .. layer2
+end
+
+btn.MouseButton1Click:Connect(function()
+	local txt = input.Text
+	if #txt < 5 then return end
+
+	local obf = obfuscate(txt)
+	output.Text = obf
+
+	if setclipboard then
+		setclipboard(obf)
+		btn.Text = "đã copy 👍"
+	else
+		btn.Text = "copy cái củ tỏi🧄"
+	end
+end)
