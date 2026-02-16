@@ -12,7 +12,7 @@ frame.BackgroundColor3 = Color3.fromRGB(10,10,10)
 local del = Instance.new("TextButton", frame)
 del.Size = UDim2.new(0,120,0,25)
 del.Position = UDim2.new(0.5,-60,0,5)
-del.Text = "xóa gui"
+del.Text = "delete gui"
 del.BackgroundColor3 = Color3.fromRGB(120,0,0)
 del.TextColor3 = Color3.new(1,1,1)
 
@@ -44,7 +44,7 @@ output.TextSize = 14
 local btn = Instance.new("TextButton", frame)
 btn.Size = UDim2.new(0,160,0,30)
 btn.Position = UDim2.new(0.5,-80,0,220)
-btn.Text = "OBFUSCATE (đến lúc phải chống lại skid)"
+btn.Text = "OBFUSCATE yee"
 btn.BackgroundColor3 = Color3.fromRGB(80,0,120)
 btn.TextColor3 = Color3.new(1,1,1)
 
@@ -123,8 +123,8 @@ btn.MouseButton1Click:Connect(function()
 
 	if setclipboard then
 		setclipboard(obf)
-		btn.Text = "đã copy 👍"
+		btn.Text = "copied 👍"
 	else
-		btn.Text = "copy cái củ tỏi🧄"
+		btn.Text = "copy skibidi 🧄"
 	end
 end)
