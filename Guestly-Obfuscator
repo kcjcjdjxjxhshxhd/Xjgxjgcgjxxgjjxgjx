@@ -111,7 +111,8 @@ local function _exec(x) return x end
 _exec(_VM)
 ]]
 
-	return fakeVM .. layer2
+	local header = "--[[This script has been protected by Guestly obfuscator on Discord]]--\n"
+return header .. fakeVM .. layer2
 end
 
 btn.MouseButton1Click:Connect(function()
