@@ -1864,12 +1864,12 @@ rankToggleFrame.ZIndex = 3005
 
 -- TEXT
 local rankText = Instance.new("TextLabel")
-rankText.Size = UDim2.new(0.6, 0, 1, 0)
+rankText.Size = UDim2.new(1, -20, 1, 0)
 rankText.BackgroundTransparency = 1
 rankText.Text = "Head Rank [ON]"
 rankText.TextColor3 = Color3.fromRGB(230, 200, 120) -- bạc vàng
 rankText.Font = Enum.Font.GothamBold
-rankText.TextSize = 16
+rankText.TextSize = 20
 rankText.Position = dropdown.Position + UDim2.new(0, 0, 0, dropdown.Size.Y.Offset + 15)
 rankText.ZIndex = 3006
 rankText.TextXAlignment = Enum.TextXAlignment.Left
