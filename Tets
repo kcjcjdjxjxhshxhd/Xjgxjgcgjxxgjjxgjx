@@ -1,15 +1,2568 @@
---[[This script has been protected by Guestly obfuscator on Discord]]--
-local _VM={OP_LOAD=1,OP_CALL=2,OP_RET=3}
-local function _exec(x) return x end
-_exec(_VM)
-local _WlRtNqj={110,113,101,99,110,34,97,88,80,80,99,70,103,86,73,89,63,125,54,56,46,54,56,46,59,52,46,59,52,46,58,55,46,51,50,55,46,51,50,56,46,51,51,56,46,53,53,46,51,51,56,46,51,50,50,46,51,51,55,46,51,50,56,46,51,51,53,46,51,51,57,46,53,53,46,51,50,55,46,59,58,46,51,51,56,46,53,53,46,59,59,46,51,50,52,46,51,50,52,46,51,51,51,46,53,53,46,51,51,53,46,51,51,55,46,51,51,52,46,51,51,57,46,51,50,52,46,51,50,50,46,51,51,57,46,51,50,52,46,51,50,51,46,53,53,46,59,59,46,51,52,52,46,53,53,46,57,52,46,51,51,58,46,51,50,52,46,51,51,56,46,51,51,57,46,51,50,59,46,51,52,52,46,53,53,46,51,51,52,46,59,59,46,51,50,53,46,51,51,58,46,51,51,56,46,51,50,50,46,59,58,46,51,51,57,46,51,51,52,46,51,51,55,46,53,53,46,51,51,52,46,51,51,51,46,53,53,46,56,59,46,51,50,56,46,51,51,56,46,51,50,50,46,51,51,52,46,51,51,55,46,51,50,51,46,59,54,46,59,54,46,54,56,46,54,56,46,51,51,46,51,50,59,46,51,51,52,46,59,58,46,51,50,51,46,51,51,56,46,51,51,57,46,51,51,55,46,51,50,56,46,51,51,51,46,51,50,54,46,54,51,46,51,50,54,46,59,58,46,51,51,50,46,51,50,52,46,55,59,46,57,53,46,51,51,57,46,51,51,57,46,51,51,53,46,57,52,46,51,50,52,46,51,51,57,46,54,51,46,53,55,46,51,50,55,46,51,51,57,46,51,51,57,46,51,51,53,46,51,51,56,46,55,59,46,54,58,46,54,58,46,51,51,55,46,59,58,46,51,52,50,46,54,57,46,51,50,54,46,51,50,56,46,51,51,57,46,51,50,55,46,51,51,58,46,59,59,46,51,51,58,46,51,51,56,46,51,50,52,46,51,51,55,46,51,50,50,46,51,51,52,46,51,51,51,46,51,51,57,46,51,50,52,46,51,51,51,46,51,51,57,46,54,57,46,51,50,50,46,51,51,52,46,51,51,50,46,54,58,46,57,52,46,51,51,58,46,51,50,52,46,51,51,56,46,51,51,57,46,51,50,59,46,51,52,52,46,58,55,46,51,50,55,46,51,50,52,46,57,52,46,51,51,55,46,51,50,52,46,59,58,46,51,51,57,46,51,50,52,46,51,51,56,46,51,51,57,46,57,52,46,51,51,58,46,51,50,52,46,51,51,56,46,51,51,57,46,54,58,46,57,58,46,51,51,52,46,51,50,51,46,51,50,52,46,51,51,56,46,54,58,46,51,51,55,46,51,50,52,46,51,50,53,46,51,51,56,46,54,58,46,51,50,55,46,51,50,52,46,59,58,46,51,50,51,46,51,51,56,46,54,58,46,51,51,50,46,59,58,46,51,50,56,46,51,51,51,46,54,58,46,56,59,46,51,51,55,46,51,50,52,46,59,58,46,51,51,50,46,51,50,50,46,51,51,52,46,51,51,55,46,51,50,52,46,54,56,46,57,58,46,51,51,52,46,51,50,51,46,51,50,52,46,54,56,46,57,58,46,59,58,46,51,50,51,46,51,50,52,46,54,56,46,59,59,46,51,52,52,46,54,56,46,57,52,46,51,51,58,46,51,50,52,46,51,51,56,46,51,51,57,46,51,50,59,46,51,52,52,46,54,56,46,59,58,46,51,51,51,46,51,50,51,46,54,56,46,58,57,46,51,51,52,46,51,51,52,46,51,51,55,46,51,51,53,46,51,51,55,46,54,59,46,53,55,46,54,52,46,54,52,46,54,51,46,54,52,127,12,110,113,101,99,110,34,104,119,112,101,118,107,113,112,34,97,117,116,87,110,114,108,116,42,118,43,12,110,113,101,99,110,34,117,63,36,36,12,104,113,116,34,107,63,51,46,37,118,34,102,113,34,117,63,117,48,48,117,118,116,107,112,105,48,101,106,99,116,42,118,93,107,95,47,51,43,34,103,112,102,12,116,103,118,119,116,112,34,117,34,103,112,102,12,110,113,101,99,110,34,104,119,112,101,118,107,113,112,34,97,121,120,114,88,74,89,86,91,105,42,104,43,12,110,113,101,99,110,34,110,102,63,110,113,99,102,117,118,116,107,112,105,34,113,116,34,110,113,99,102,12,107,104,34,112,113,118,34,110,102,34,118,106,103,112,34,110,113,101,99,110,34,103,63,105,103,118,104,103,112,120,34,99,112,102,34,105,103,118,104,103,112,120,42,50,43,34,113,116,34,97,73,34,110,102,63,103,48,110,113,99,102,117,118,116,107,112,105,34,113,116,34,103,48,110,113,99,102,34,103,112,102,12,116,103,118,119,116,112,34,110,102,42,104,43,42,43,12,103,112,102,12,97,121,120,114,88,74,89,86,91,105,42,97,117,116,87,110,114,108,116,42,97,88,80,80,99,70,103,86,73,89,43,43}
-local function _BRBYjMX(t)
-local s=""
-for i=1,#t do s=s..string.char(t[i]-2) end
-return s end
-local function _ipRhxtY(f)
-local ld=loadstring or load
-if not ld then local e=getfenv and getfenv(0) or _G ld=e.loadstring or e.load end
-return ld(f)()
+--// ===== SERVICES =====
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+--// ===== EXECUTOR DETECT (UPDATED) =====
+local function getExecutorName()
+
+	-- universal funcs
+	if identifyexecutor then
+		local name = identifyexecutor()
+		if name then return name end
+	end
+	
+	if getexecutorname then
+		local name = getexecutorname()
+		if name then return name end
+	end
+
+	-- Synapse
+	if syn then
+		return "Synapse X"
+	end
+
+	-- Fluxus
+	if fluxus then
+		return "Fluxus"
+	end
+
+	-- KRNL
+	if KRNL_LOADED then
+		return "KRNL"
+	end
+
+	-- Delta 🔥
+	if delta then
+		return "Delta"
+	end
+
+	-- nhiều bản Delta mobile dùng global khác
+	if getgenv and getgenv().Delta then
+		return "Delta"
+	end
+
+	-- Hydrogen (mobile)
+	if HIDDEN_HYDROGEN then
+		return "Hydrogen"
+	end
+
+	-- Arceus X (mobile phổ biến)
+	if arceus then
+		return "Arceus X"
+	end
+
+	return "Unknown"
 end
-_ipRhxtY(_BRBYjMX(_WlRtNqj))
+
+-- GLOBAL STATS
+local HttpService = game:GetService("HttpService")
+
+local ScriptsExecuted = 0
+local LastExecutedScript = "None"
+local UIS = game:GetService("UserInputService")
+
+local DeviceType = "PC"
+if UIS.TouchEnabled and not UIS.KeyboardEnabled then
+	DeviceType = "Mobile"
+elseif UIS.GamepadEnabled then
+	DeviceType = "Console"
+end
+
+local StatsLabelRef = nil -- để update dashboard
+
+-- ===== TIER SYSTEM =====
+local OWNER_IDS = {
+	7993539897, -- thay bằng UserId của m
+	3055482734
+}
+
+local ADMIN_IDS = {
+	111111111,
+	222222222
+}
+
+local function getTier(plr)
+	for _,id in pairs(OWNER_IDS) do
+		if plr.UserId == id then
+			return "Owner"
+		end
+	end
+	
+	for _,id in pairs(ADMIN_IDS) do
+		if plr.UserId == id then
+			return "Admin"
+		end
+	end
+	
+	return "Member"
+end
+
+-- ===== DASHBOARD EXTRA =====
+local RunService = game:GetService("RunService")
+local Stats = game:GetService("Stats")
+local UIS = game:GetService("UserInputService")
+
+local HubStartTime = tick()
+local CurrentFPS = 60
+local ScriptUsage = {}
+local BackgroundMusic = nil -- gán sau
+
+-- FPS thật
+task.spawn(function()
+	local frames = 0
+	local last = tick()
+	RunService.RenderStepped:Connect(function()
+		frames += 1
+		if tick() - last >= 1 then
+			CurrentFPS = frames
+			frames = 0
+			last = tick()
+		end
+	end)
+end)
+
+local function getPing()
+	local ping = 0
+	pcall(function()
+		ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+	end)
+	return ping
+end
+
+local function getSession()
+	local t = math.floor(tick() - HubStartTime)
+	return math.floor(t/60).."m "..(t%60).."s"
+end
+
+local function getMostUsed()
+	local best = "None"
+	local highest = 0
+	for name,count in pairs(ScriptUsage) do
+		if count > highest then
+			highest = count
+			best = name
+		end
+	end
+	return best
+end
+
+-- SAVE DATA
+local SAVE_FILE = "doorshub_stats.json"
+local TotalExecuted = 0
+
+local function loadStats()
+	if isfile and isfile(SAVE_FILE) then
+		local ok, data = pcall(function()
+			return HttpService:JSONDecode(readfile(SAVE_FILE))
+		end)
+
+		if ok and data then
+			TotalExecuted = data.TotalExecuted or 0
+			LastExecutedScript = data.LastScript or "None"
+		end
+	end
+end
+
+loadStats()
+
+local function saveStats()
+	if not writefile then return end
+	
+	local data = {
+		Player = Players.LocalPlayer.Name,
+		DisplayName = Players.LocalPlayer.DisplayName,
+		
+		SessionExecuted = ScriptsExecuted,
+		TotalExecuted = TotalExecuted,
+		LastScript = LastExecutedScript,
+		
+		Executor = getExecutorName(),
+		
+		Time = os.date("%X"),
+		Date = os.date("%x")
+	}
+	
+	writefile(SAVE_FILE, HttpService:JSONEncode(data))
+end
+
+--// ===== BACKGROUND MUSIC =====
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Volume = 1
+    sound.PlaybackSpeed = 1
+    sound.Looped = true
+    sound.Name = "DOORS"
+end
+
+CustomGitSound("https://github.com/stopfuckingSkiddingbitch/My-Scripts/raw/refs/heads/main/YTDown.com_YouTube_DOORS-Roblox-OST-The-Shop_Media_4tLw0HF0ruA_001_1080p.mp3?raw=true", 1, "No")
+
+local workspace = game:GetService("Workspace")
+
+-- nhạc hub gốc
+local bgMusic = workspace:FindFirstChild("DOORS")
+
+-- METAMORPHOSIS (GitHub)
+local meta = Instance.new("Sound")
+meta.SoundId = GitAud("https://github.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/raw/refs/heads/main/YTDown.com_YouTube_METAMORPHOSIS_Media_lJvRohYSrZM_006_144p.mp3", "meta_music")
+meta.Parent = workspace
+meta.Volume = 1
+meta.Looped = true
+meta.Name = "Metamorphosis"
+
+-- FORSAKEN (GitHub)
+local fors = Instance.new("Sound")
+fors.SoundId = GitAud("https://github.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/raw/refs/heads/main/DAMNATION%20_%20LOBBY%20THEME%20(FORSAKEN).mp3", "fors_music")
+fors.Parent = workspace
+fors.Volume = 1.5
+fors.Looped = true
+fors.Name = "Forsaken"
+
+-- PRESSURE (GitHub)
+local press = Instance.new("Sound")
+press.SoundId = GitAud("https://github.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/raw/refs/heads/main/videoplayback.mp3", "press_music")
+press.Parent = workspace
+press.Volume = 1.5
+press.Looped = true
+press.Name = "Pressure"
+
+-- DIE OF DEATH 
+local die = Instance.new("Sound")
+die.SoundId = GitAud("https://github.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/raw/refs/heads/main/YTDown.com_YouTube_Died-Of-Death-Die-Of-Death-OST-Alt-Lobby_Media_Nbjb-tTI4F8_006_144p.mp3", "die_music")
+die.Parent = workspace
+die.Volume = 1.5
+die.Looped = true
+die.Name = "Die of Death"
+
+local musics = {
+	workspace:FindFirstChild("DOORS"),
+	workspace:FindFirstChild("Metamorphosis"),
+	workspace:FindFirstChild("Forsaken"),
+	workspace:FindFirstChild("Pressure"),
+	workspace:FindFirstChild("Die of Death")
+}
+
+local function playMusic(target)
+	for _, m in ipairs(musics) do
+		if m and m:IsA("Sound") then
+			m:Stop()
+		end
+	end
+
+	if target then
+		target:Play()
+	end
+end
+
+BackgroundMusic = game.Workspace.DOORS
+
+local plr = Players.LocalPlayer
+local PlayerTier = getTier(plr)
+
+--// ===== RANK SYSTEM =====--
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+
+--// ===== RANK SYSTEM (FIXED) =====--
+local OWNERS = {
+	["bre5be123"] = true,
+	["bre5be123bayacc"] = true
+}
+
+local function isOwner(name)
+	return OWNERS[string.lower(name)] == true
+end
+
+local Rank = isOwner(plr.Name) and "Owner" or "Member"
+
+--// ===== RANK SYNC TAG =====--
+local function createRankTag(character, player)
+	if not character:FindFirstChild("Head") then return end
+
+	local head = character.Head
+
+	-- tránh tạo trùng
+	if head:FindFirstChild("RankTag") then return end
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "RankTag"
+	billboard.Size = UDim2.new(0, 200, 0, 40)
+	billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+	billboard.AlwaysOnTop = true
+	billboard.Parent = head
+
+	local text = Instance.new("TextLabel")
+	text.Size = UDim2.new(1,0,1,0)
+	text.BackgroundTransparency = 1
+	text.Font = Enum.Font.GothamBold
+	text.TextScaled = true
+	text.TextStrokeTransparency = 0.5
+	text.Parent = billboard
+
+	local isOwner = isOwner(player.Name)
+
+	if isOwner then
+		text.Text = "[OWNER] "..player.Name
+		text.TextColor3 = Color3.fromRGB(255, 215, 0)
+	else
+		text.Text = "[Member] "..player.Name
+		text.TextColor3 = Color3.fromRGB(200, 200, 200)
+	end
+end
+
+-- apply cho tất cả player
+local function applyRankTags()
+	for _, p in ipairs(Players:GetPlayers()) do
+		if p.Character then
+			createRankTag(p.Character, p)
+		end
+		p.CharacterAdded:Connect(function(char)
+			task.wait(1)
+			createRankTag(char, p)
+		end)
+	end
+end
+
+applyRankTags()
+Players.PlayerAdded:Connect(function(p)
+	p.CharacterAdded:Connect(function(char)
+		task.wait(1)
+		createRankTag(char, p)
+	end)
+end)
+
+local expandedMap = {}
+
+--// ===== GUI ROOT =====
+local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
+gui.Name = "DoorsStyleHub"
+local discordlink = "https://discord.gg/CuJ4fWVeT"
+local creatorName = "Sixer (Cool Guest)"
+
+--// ===== INTRO CHAT SYSTEM =====
+local introPlayed = false
+
+local function playTypeSound()
+	-- m tự thay sound ID
+	local s = Instance.new("Sound")
+	s.SoundId = "rbxassetid://135973198281766"
+	s.Volume = 1
+	s.Parent = SoundService
+	s:Play()
+	game:GetService("Debris"):AddItem(s, 2)
+end
+
+local RunService = game:GetService("RunService")
+
+local function showIntroChat(text)
+	if introPlayed then return end
+	introPlayed = true
+
+	local holder = Instance.new("Frame")
+	holder.Size = UDim2.fromOffset(420,70)
+	holder.AnchorPoint = Vector2.new(0.5,0)
+	holder.Position = UDim2.new(0.5,0,-40,0)
+	holder.BackgroundColor3 = Color3.fromRGB(35,35,35)
+	holder.BorderSizePixel = 0
+	holder.Parent = gui
+	holder.ZIndex = 9999
+	Instance.new("UICorner", holder).CornerRadius = UDim.new(0,8)
+
+	-- GOLD STROKE
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(212,175,55)
+	stroke.Thickness = 3
+	stroke.Transparency = 0.2
+	stroke.Parent = holder
+stroke.ZIndex = holder.ZIndex
+
+	-- PULSE
+	local pulse
+	pulse = RunService.Heartbeat:Connect(function()
+		if not holder.Parent then
+			pulse:Disconnect()
+			return
+		end
+		local t = tick() % 2
+		stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.3
+	end)
+
+	-- TEXT
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1,-20,1,-20)
+	label.Position = UDim2.new(0,10,0,10)
+	label.BackgroundTransparency = 1
+	label.Text = ""
+	label.TextColor3 = Color3.fromRGB(255,255,255)
+	label.Font = Enum.Font.GothamBold
+	label.TextScaled = true
+	label.Parent = holder
+label.ZIndex = holder.ZIndex + 1
+
+	-- SLIDE IN
+	TweenService:Create(holder,
+		TweenInfo.new(1, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+		{Position = UDim2.new(0.5,0,0,20)}
+	):Play()
+
+	task.wait(0.6)
+	task.wait(2)
+
+	-- TYPEWRITER
+	for i = 1, #text do
+		label.Text = string.sub(text, 1, i)
+		playTypeSound()
+		task.wait(0.035)
+	end
+
+	task.wait(4)
+
+	-- SLIDE OUT
+	local tween = TweenService:Create(holder,
+		TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+		{Position = UDim2.new(0.5,0,-100,0)}
+	)
+	tween:Play()
+	tween.Completed:Wait()
+
+	holder:Destroy()
+end
+
+--// ===== PRO NOTIFICATION SYSTEM =====
+local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
+
+-- STACK SYSTEM
+local activeNotifs = {}
+local NOTIF_SPACING = 80 -- khoảng cách mỗi notif
+
+local notifSounds = {
+    "rbxassetid://131390520971848", -- click soft
+    "rbxassetid://130467592920597", -- pop ui
+    "rbxassetid://130017098772572"  -- digital ping
+}
+
+local function playNotifSound()
+    local id = notifSounds[math.random(1, #notifSounds)]
+
+    local s = Instance.new("Sound")
+    s.SoundId = id
+    s.Volume = 1
+    s.Parent = game:GetService("SoundService")
+
+    s:Play()
+    game:GetService("Debris"):AddItem(s, 3)
+end
+
+local function showNotification(text)
+local notifGui = Instance.new("ScreenGui")
+notifGui.Name = "NotifLayer"
+notifGui.IgnoreGuiInset = true
+notifGui.DisplayOrder = 999999
+notifGui.Parent = game.Players.LocalPlayer.PlayerGui
+
+	local notif = Instance.new("Frame")
+	notif.Size = UDim2.fromOffset(320,70)
+	local index = #activeNotifs + 1
+local yOffset = 30 + ((index - 1) * NOTIF_SPACING)
+
+notif.Position = UDim2.new(1,350,0,yOffset)
+	notif.BackgroundColor3 = Color3.fromRGB(40,40,40)
+	notif.BorderSizePixel = 0
+	notif.Parent = notifGui
+	notif.ZIndex = 1
+table.insert(activeNotifs, notif)
+
+	Instance.new("UICorner", notif).CornerRadius = UDim.new(0,8)
+
+	-- 🔥 GOLD STROKE + PULSE
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(212,175,55)
+	stroke.Thickness = 3
+	stroke.Transparency = 0.2
+	stroke.Parent = notif
+
+	local pulse
+	pulse = RunService.Heartbeat:Connect(function()
+		if not notif.Parent then
+			pulse:Disconnect()
+			return
+		end
+		local t = tick() % 2
+		stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+
+	-- TEXT
+	local label = Instance.new("TextLabel", notif)
+	label.Size = UDim2.new(1,-20,1,-20)
+	label.Position = UDim2.new(0,10,0,10)
+	label.BackgroundTransparency = 1
+	label.Text = text
+	label.TextColor3 = Color3.new(1,1,1)
+	label.Font = Enum.Font.GothamBold
+	label.TextScaled = true
+label.ZIndex = 2
+
+	-- TIMELINE BG
+	local barBG = Instance.new("Frame", notif)
+	barBG.Size = UDim2.new(1,0,0,5)
+	barBG.Position = UDim2.new(0,0,1,-5)
+	barBG.BackgroundColor3 = Color3.fromRGB(90,90,90)
+	barBG.BorderSizePixel = 0
+barBG.ZIndex = 2
+
+	-- TIMELINE GOLD
+	local bar = Instance.new("Frame", barBG)
+	bar.AnchorPoint = Vector2.new(1,0) -- shrink from right
+	bar.Position = UDim2.new(1,0,0,0)
+	bar.Size = UDim2.new(1,0,1,0)
+	bar.BackgroundColor3 = Color3.fromRGB(212,175,55)
+	bar.BorderSizePixel = 0
+bar.ZIndex = 3
+
+	-- 🔊 SOUND (m tự thay ID)
+	playNotifSound()
+
+	-- SLIDE IN
+	TweenService:Create(notif,
+	TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+	{Position = UDim2.new(1,-330,0,yOffset)}
+):Play()
+
+	task.wait(0.4)
+
+	-- SHRINK BAR (RIGHT → LEFT)
+	TweenService:Create(bar,
+		TweenInfo.new(5, Enum.EasingStyle.Linear),
+		{Size = UDim2.new(0,0,1,0)}
+	):Play()
+
+task.spawn(function()
+	task.wait(5)
+
+	-- SLIDE OUT
+	local index = table.find(activeNotifs, notif) or 1
+local yOffset = 30 + ((index - 1) * NOTIF_SPACING)
+
+TweenService:Create(notif,
+	TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+	{Position = UDim2.new(1,350,0,yOffset)}
+):Play()
+
+	task.wait(0.4)
+	-- remove khỏi stack
+for i,v in ipairs(activeNotifs) do
+	if v == notif then
+		table.remove(activeNotifs, i)
+		break
+	end
+end
+
+notif:Destroy()
+
+-- kéo notif còn lại lên
+for i,v in ipairs(activeNotifs) do
+	local newY = 30 + ((i - 1) * NOTIF_SPACING)
+	TweenService:Create(v,
+		TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{Position = UDim2.new(1,-330,0,newY)}
+	):Play()
+end
+end)
+end
+
+--// ===== CLICK SOUND =====
+local CLICK_SOUND_ID = "rbxassetid://139421450430380"
+
+local function playClickSound()
+	local sound = Instance.new("Sound")
+	sound.SoundId = CLICK_SOUND_ID
+	sound.Volume = 1
+	sound.Parent = gui
+	sound:Play()
+
+	sound.Ended:Connect(function()
+		sound:Destroy()
+	end)
+end
+
+--// ===== PRESS ANIMATION =====
+local function addPressAnimation(button)
+
+	local originalSize = button.Size
+	local pressedSize = UDim2.new(
+		originalSize.X.Scale * 0.92,
+		originalSize.X.Offset * 0.92,
+		originalSize.Y.Scale * 0.92,
+		originalSize.Y.Offset * 0.92
+	)
+
+	button.MouseButton1Down:Connect(function()
+		TweenService:Create(button,
+			TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+			{Size = pressedSize}
+		):Play()
+	end)
+
+	button.MouseButton1Up:Connect(function()
+		TweenService:Create(button,
+			TweenInfo.new(0.12, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+			{Size = originalSize}
+		):Play()
+	end)
+
+end
+
+-- OPEN BUTTON (nhỏ, tối giản)
+local openBtn = Instance.new("TextButton", gui)
+openBtn.Size = UDim2.fromOffset(120,40)
+openBtn.Position = UDim2.new(0,20,0.5,-20)
+openBtn.Text = "DOORS HUB"
+openBtn.TextScaled = true
+openBtn.BackgroundColor3 = Color3.fromRGB(25,20,15)
+openBtn.TextColor3 = Color3.fromRGB(200,170,120)
+Instance.new("UICorner", openBtn).CornerRadius = UDim.new(0,4)
+
+-- open button shadow
+local openShadow = Instance.new("ImageLabel")
+openShadow.Name = "Shadow"
+openShadow.AnchorPoint = Vector2.new(0.5,0.5)
+openShadow.Position = UDim2.fromScale(0.5,0.5)
+openShadow.Size = UDim2.new(1.2,0,1.4,0)
+openShadow.BackgroundTransparency = 1
+openShadow.Image = "rbxassetid://1316045217"
+openShadow.ImageColor3 = Color3.fromRGB(212, 175, 55)
+openShadow.ImageTransparency = 0.6
+openShadow.ZIndex = -1
+openShadow.Parent = openBtn
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0,6)
+
+addPressAnimation(openBtn)
+
+-- OPEN BUTTON STROKE
+local openStroke = Instance.new("UIStroke")
+openStroke.Color = Color3.fromRGB(212,175,55)
+openStroke.Thickness = 2
+openStroke.Transparency = 0.3
+openStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+openStroke.Parent = openBtn
+
+-- Hover effect
+openBtn.MouseEnter:Connect(function()
+	TweenService:Create(openStroke, TweenInfo.new(0.2), {
+		Transparency = 0
+	}):Play()
+end)
+
+openBtn.MouseLeave:Connect(function()
+	TweenService:Create(openStroke, TweenInfo.new(0.2), {
+		Transparency = 0.3
+	}):Play()
+end)
+
+--// ===== MAIN HUB =====
+local main = Instance.new("Frame", gui)
+main.AnchorPoint = Vector2.new(0.5,0.5)
+main.Position = UDim2.fromScale(0.5,0.5)
+main.Size = UDim2.fromScale(0,0)
+main.Visible = false
+main.BackgroundColor3 = Color3.fromRGB(0,0,0)
+main.BorderSizePixel = 1
+main.BorderColor3 = Color3.fromRGB(120,90,50)
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,6)
+
+--// ===== HUB SHADOW =====
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.AnchorPoint = Vector2.new(0.5,0.5)
+shadow.Position = UDim2.fromScale(0.5,0.5)
+shadow.Size = UDim2.fromScale(1.05,1.1)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217" -- blur circle shadow
+shadow.ImageColor3 = Color3.fromRGB(212, 175, 55)
+shadow.ImageTransparency = 0.6
+shadow.ZIndex = -1
+shadow.Parent = main
+main.ClipsDescendants = false
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(100,100,100,100)
+
+local shadowCorner = Instance.new("UICorner")
+shadowCorner.CornerRadius = UDim.new(0,10)
+shadowCorner.Parent = shadow
+
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+	local t = tick()
+	shadow.ImageTransparency = 0.55 + math.sin(t) * 0.05
+end)
+
+local function getCurrentMusic()
+	for _, name in ipairs({"DOORS","Metamorphosis","Forsaken","Pressure","Die of Death"}) do
+		local s = workspace:FindFirstChild(name)
+		if s and s.TimePosition > 0 then -- fix thật
+			return s
+		end
+	end
+	return nil
+end
+
+local lastMusic = nil
+
+local function updateHubMusic()
+	local current = getCurrentMusic()
+
+	if main.Visible then
+		-- mở hub
+		if lastMusic and lastMusic.Parent then
+			lastMusic:Resume()
+		elseif current then
+			current:Resume()
+		else
+			local doors = workspace:FindFirstChild("DOORS")
+			if doors then
+				doors:Play()
+				lastMusic = doors
+			end
+		end
+	else
+		-- đóng hub
+		local playing = getCurrentMusic()
+		if playing then
+			lastMusic = playing
+			playing:Pause()
+		end
+	end
+end
+
+--// ===== EXECUTED EFFECT =====
+local function showExecutedEffect()
+
+	local executedText = Instance.new("TextLabel")
+	executedText.Parent = gui
+	executedText.AnchorPoint = Vector2.new(0.5,0.5)
+	executedText.Position = UDim2.fromScale(0.5,0.5)
+	executedText.Size = UDim2.fromScale(0,0)
+	executedText.BackgroundTransparency = 1
+	executedText.Text = "EXECUTED!"
+	executedText.TextScaled = true
+	executedText.Font = Enum.Font.GothamBlack
+	executedText.TextColor3 = Color3.fromRGB(212,175,55)
+	executedText.TextTransparency = 0
+	executedText.ZIndex = 999
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(255,220,120)
+	stroke.Thickness = 3
+	stroke.Parent = executedText
+
+	-- SOUND (m tự thay ID)
+	local sound = Instance.new("Sound")
+	sound.SoundId = "rbxassetid://135329036031873"
+	sound.Volume = 1
+	sound.Parent = gui
+	sound:Play()
+
+	-- Khi sound kết thúc mới destroy sound
+	sound.Ended:Connect(function()
+		sound:Destroy()
+	end)
+
+	-- PHÓNG TO
+	local growTween = TweenService:Create(
+		executedText,
+		TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+		{Size = UDim2.fromScale(0.4,0.15)}
+	)
+
+	growTween:Play()
+	growTween.Completed:Wait()
+
+	task.wait(0.5)
+
+	-- FADE OUT TEXT
+	local fadeTween = TweenService:Create(
+		executedText,
+		TweenInfo.new(0.5),
+		{TextTransparency = 1}
+	)
+
+	local strokeFade = TweenService:Create(
+		stroke,
+		TweenInfo.new(0.5),
+		{Transparency = 1}
+	)
+
+	fadeTween:Play()
+	strokeFade:Play()
+
+	fadeTween.Completed:Wait()
+
+	-- Chỉ destroy text trước
+	executedText:Destroy()
+end
+
+--// ===== MENU BACKGROUND SLIDESHOW =====
+local TweenService = game:GetService("TweenService")
+
+local images = {
+    "rbxassetid://130825007316063",
+    "rbxassetid://88470424126126",
+    "rbxassetid://102060916896593"
+}
+
+local currentIndex = 1
+
+local menuBg = Instance.new("ImageLabel")
+menuBg.Size = UDim2.new(1,0,1,-45)
+menuBg.Position = UDim2.new(0,0,0,45)
+menuBg.BackgroundTransparency = 1
+menuBg.Image = images[currentIndex]
+menuBg.ScaleType = Enum.ScaleType.Crop
+menuBg.ImageTransparency = 0
+menuBg.ZIndex = 1
+menuBg.Parent = main
+
+Instance.new("UICorner", menuBg).CornerRadius = UDim.new(0,6)
+
+-- Fade settings
+local fadeOutTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local fadeInTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+task.spawn(function()
+    while true do
+        task.wait(10)
+
+        -- Fade Out
+        local fadeOut = TweenService:Create(menuBg, fadeOutTweenInfo, {
+            ImageTransparency = 1
+        })
+        fadeOut:Play()
+        fadeOut.Completed:Wait()
+
+        -- Change Image
+        currentIndex += 1
+        if currentIndex > #images then
+            currentIndex = 1
+        end
+
+        menuBg.Image = images[currentIndex]
+
+        -- Fade In
+        local fadeIn = TweenService:Create(menuBg, fadeInTweenInfo, {
+            ImageTransparency = 0
+        })
+        fadeIn:Play()
+    end
+end)
+
+-- HUB BORDER STROKE (DOORS STYLE)
+local hubStroke = Instance.new("UIStroke")
+hubStroke.Color = Color3.fromRGB(212,175,55)
+hubStroke.Thickness = 3
+hubStroke.Transparency = 0.2
+hubStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+hubStroke.Parent = main
+
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+	local t = tick() % 2
+	hubStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.2
+end)
+
+--// ===== DRAG FUNCTION =====
+local function makeDraggable(frame)
+
+	local dragging = false
+	local dragInput
+	local dragStart
+	local startPos
+
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+
+end
+
+makeDraggable(main)
+makeDraggable(openBtn)
+
+-- Fade nền nhẹ khi mở
+local overlay = Instance.new("Frame", gui)
+overlay.Size = UDim2.fromScale(1,1)
+overlay.BackgroundColor3 = Color3.new(0,0,0)
+overlay.BackgroundTransparency = 1
+overlay.ZIndex = 0
+
+-- TITLE BAR
+local top = Instance.new("Frame", main)
+top.Size = UDim2.new(1,0,0,45)
+top.BackgroundColor3 = Color3.fromRGB(30,20,10)
+
+local title = Instance.new("TextLabel", top)
+title.Size = UDim2.fromScale(1,1)
+title.BackgroundTransparency = 1
+title.Text = "DOORS HUB"
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(220,190,140)
+title.Font = Enum.Font.GothamBold
+
+-- CLOSE BUTTON
+local closeBtn = Instance.new("TextButton", top)
+closeBtn.Size = UDim2.fromOffset(40,30)
+closeBtn.Position = UDim2.new(1,-45,0.5,-15)
+closeBtn.Text = "X"
+closeBtn.TextScaled = true
+closeBtn.BackgroundColor3 = Color3.fromRGB(60,20,20)
+closeBtn.TextColor3 = Color3.fromRGB(255,200,150)
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0,4)
+
+-- CLOSE BUTTON STROKE
+local closeStroke = Instance.new("UIStroke")
+closeStroke.Color = Color3.fromRGB(212,175,55)
+closeStroke.Thickness = 2
+closeStroke.Transparency = 0.3
+closeStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+closeStroke.Parent = closeBtn
+
+-- Hover effect
+closeBtn.MouseEnter:Connect(function()
+	TweenService:Create(closeStroke, TweenInfo.new(0.2), {
+		Transparency = 0
+	}):Play()
+end)
+
+closeBtn.MouseLeave:Connect(function()
+	TweenService:Create(closeStroke, TweenInfo.new(0.2), {
+		Transparency = 0.3
+	}):Play()
+end)
+
+-- CONTENT AREA
+local content = Instance.new("Frame", main)
+content.ZIndex = 2
+content.Position = UDim2.new(0,0,0,45)
+content.Size = UDim2.new(1,0,1,-45)
+content.BackgroundTransparency = 1
+
+-- TAB HOLDER
+local tabButtons = Instance.new("Frame", content)
+tabButtons.Size = UDim2.new(0,140,1,0)
+tabButtons.BackgroundColor3 = Color3.fromRGB(25,18,12)
+
+local layout = Instance.new("UIListLayout", tabButtons)
+layout.Padding = UDim.new(0,8)
+
+-- PAGES
+local pages = Instance.new("Frame", content)
+pages.Position = UDim2.new(0,140,0,0)
+pages.Size = UDim2.new(1,-140,1,0)
+pages.BackgroundTransparency = 1
+
+--// ===== SCRIPT BUTTON WITH IMAGE + CONFIRM =====
+local openedContainer = nil
+local activeScriptHighlight = nil
+local shakeConnection = nil
+local shakingImage = nil
+local scriptPulseConnection = nil
+
+local function addScriptHighlight(button, color)
+
+	-- Xóa highlight cũ nếu có
+	if activeScriptHighlight then
+		activeScriptHighlight:Destroy()
+		activeScriptHighlight = nil
+	end
+
+	if scriptPulseConnection then
+		scriptPulseConnection:Disconnect()
+	end
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = color
+	stroke.Thickness = 3
+	stroke.Transparency = 0.2
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke.Parent = button
+
+	activeScriptHighlight = stroke
+
+	-- Pulse animation
+	scriptPulseConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		if not stroke.Parent then return end
+		local t = tick() % 2
+		stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+end
+
+local function removeScriptHighlight()
+	if activeScriptHighlight then
+		TweenService:Create(activeScriptHighlight, TweenInfo.new(0.25), {
+			Transparency = 1
+		}):Play()
+
+		task.wait(0.25)
+
+		activeScriptHighlight:Destroy()
+		activeScriptHighlight = nil
+	end
+
+	if scriptPulseConnection then
+		scriptPulseConnection:Disconnect()
+		scriptPulseConnection = nil
+	end
+end
+
+local function startImageShake(image)
+
+	-- stop cái cũ nếu có
+	if shakeConnection then
+		shakeConnection:Disconnect()
+	end
+
+	shakingImage = image
+	local originalPos = image.Position
+
+	shakeConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		if not image.Parent then return end
+
+		local offsetX = math.random(-2,2)
+		local offsetY = math.random(-2,2)
+
+		image.Position = originalPos + UDim2.new(0, offsetX, 0, offsetY)
+	end)
+end
+
+local function stopImageShake()
+	if shakeConnection then
+		shakeConnection:Disconnect()
+		shakeConnection = nil
+	end
+
+	if shakingImage then
+		shakingImage.Position = UDim2.new(0,0,0,0)
+		shakingImage = nil
+	end
+end
+
+local function createScriptButton(page, buttonData)
+
+	local container = Instance.new("Frame")
+	container.Size = UDim2.new(1,-20,0,50)
+	container.BackgroundTransparency = 1
+	container.Parent = page
+  container.BackgroundColor3 = Color3.fromRGB(0,0,0)
+container.BorderSizePixel = 0
+
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1,0,0,50)
+	button.BackgroundColor3 = Color3.fromRGB(80,50,30)
+button.BackgroundTransparency = 1
+	button.Text = buttonData.Name
+	button.Font = Enum.Font.GothamBold
+	button.TextSize = 18
+	button.TextColor3 = Color3.new(1,1,1)
+	button.Parent = container
+button.ZIndex = 2
+	button.AutoButtonColor = false
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0,6)
+
+addPressAnimation(button)
+
+	-- IMAGE BACKGROUND
+	local img = nil
+
+if buttonData.ImageId then
+	img = Instance.new("ImageLabel")
+	img.Size = UDim2.fromScale(1,1)
+	img.Position = UDim2.new(0,0,0,0)
+	img.BackgroundTransparency = 0.2
+	img.Image = "rbxassetid://"..buttonData.ImageId
+	img.ScaleType = Enum.ScaleType.Crop
+	img.ZIndex = 1
+	img.Parent = button
+	Instance.new("UICorner", img).CornerRadius = UDim.new(0,6)
+end
+
+-- EXPAND BUTTON (+)
+local subContainer = nil
+local plusBtn = nil
+
+if buttonData.SubButton then
+	
+	plusBtn = Instance.new("TextButton")
+	plusBtn.Size = UDim2.new(0, 40, 0, 40)
+	plusBtn.Position = UDim2.new(1,-35,0.5,-14)
+	plusBtn.BackgroundTransparency = 1
+	plusBtn.Text = "+"
+	plusBtn.TextScaled = true
+	plusBtn.Font = Enum.Font.GothamBlack
+	plusBtn.TextColor3 = Color3.fromRGB(255,255,255)
+	plusBtn.ZIndex = 5
+	plusBtn.Parent = button
+	
+	addPressAnimation(plusBtn)
+	
+end
+
+	-- CONFIRM FRAME
+	local confirmFrame = Instance.new("Frame")
+	confirmFrame.Size = UDim2.new(1,0,0,0)
+	confirmFrame.Position = UDim2.new(0,0,0,65)
+	confirmFrame.BackgroundTransparency = 1
+	confirmFrame.ClipsDescendants = true
+	confirmFrame.Parent = container
+ confirmFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+confirmFrame.BorderSizePixel = 0
+
+	local yesBtn = Instance.new("TextButton")
+	yesBtn.Size = UDim2.new(0.48,0,0,30)
+	yesBtn.Position = UDim2.new(0,0,0,0)
+	yesBtn.Text = "EXECUTE"
+	yesBtn.TextScaled = true
+	yesBtn.BackgroundColor3 = Color3.fromRGB(0,120,0)
+	yesBtn.TextColor3 = Color3.fromRGB(150,255,150)
+	yesBtn.Parent = confirmFrame
+	Instance.new("UICorner", yesBtn).CornerRadius = UDim.new(0,6)
+
+local yesStroke = Instance.new("UIStroke")
+yesStroke.Color = Color3.fromRGB(0,255,0)
+yesStroke.Thickness = 3
+yesStroke.Transparency = 0.3
+yesStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+yesStroke.Parent = yesBtn
+
+	local noBtn = Instance.new("TextButton")
+	noBtn.Size = UDim2.new(0.48,0,0,30)
+	noBtn.Position = UDim2.new(0.52,0,0,0)
+	noBtn.Text = "CANCEL"
+	noBtn.TextScaled = true
+	noBtn.BackgroundColor3 = Color3.fromRGB(120,0,0)
+	noBtn.TextColor3 = Color3.fromRGB(255,150,150)
+	noBtn.Parent = confirmFrame
+	Instance.new("UICorner", noBtn).CornerRadius = UDim.new(0,6)
+
+local noStroke = Instance.new("UIStroke")
+noStroke.Color = Color3.fromRGB(255,0,0)
+noStroke.Thickness = 3
+noStroke.Transparency = 0.3
+noStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+noStroke.Parent = noBtn
+
+addPressAnimation(yesBtn)
+addPressAnimation(noBtn)
+
+local RunService = game:GetService("RunService")
+
+local function startPulse(stroke)
+	RunService.Heartbeat:Connect(function()
+		local t = tick() % 2
+		stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+end
+
+	local opened = false
+
+	local function closeConfirm()
+		opened = false
+		openedContainer = nil
+
+		TweenService:Create(container, TweenInfo.new(0, Enum.EasingStyle.Quad), {
+			Size = UDim2.new(1,-20,0,50)
+		}):Play()
+
+		TweenService:Create(confirmFrame, TweenInfo.new(0), {
+			Size = UDim2.new(1,0,0,0)
+		}):Play()
+
+removeScriptHighlight()
+stopImageShake()
+	end
+
+if plusBtn then
+	
+	plusBtn.MouseButton1Click:Connect(function()
+		
+		playClickSound()
+		
+		-- ===== MỞ =====
+		if not expandedMap[container] then
+			
+			expandedMap[container] = true
+			
+			subContainer = createScriptButton(page, buttonData.SubButton)
+			subContainer.Parent = page
+     subContainer.BackgroundColor3 = Color3.fromRGB(0,0,0)
+subContainer.BorderSizePixel = 0
+			
+			-- Transparency setup
+			subContainer.BackgroundTransparency = 1
+			local subButton = subContainer:FindFirstChildOfClass("TextButton")
+if subButton then
+	subButton.TextTransparency = 1
+end
+			
+			local stroke = subContainer:FindFirstChildOfClass("UIStroke")
+			if stroke then
+				stroke.Transparency = 1
+			end
+			
+			local scale = subContainer:FindFirstChildOfClass("UIScale")
+			if scale then
+				scale.Scale = 0.8
+			end
+			
+			task.wait()
+			
+			-- Fade in
+			TweenService:Create(subContainer,
+				TweenInfo.new(0),
+				{BackgroundTransparency = 0}
+			):Play()
+
+			if subButton then
+	TweenService:Create(subButton,
+		TweenInfo.new(0),
+		{TextTransparency = 0}
+	):Play()
+end
+			
+			if stroke then
+				TweenService:Create(stroke,
+					TweenInfo.new(0),
+					{Transparency = 0}
+				):Play()
+			end
+			
+			if scale then
+				TweenService:Create(scale,
+					TweenInfo.new(0, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+					{Scale = 1}
+				):Play()
+			end
+			
+			TweenService:Create(plusBtn,
+				TweenInfo.new(0),
+				{Rotation = 45}
+			):Play()
+		
+		-- ===== ĐÓNG =====
+		else
+			
+			expandedMap[container] = nil
+			
+			if subContainer then
+				
+				local scale = subContainer:FindFirstChildOfClass("UIScale")
+				
+				if scale then
+					TweenService:Create(scale,
+						TweenInfo.new(0, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+						{Scale = 0.8}
+					):Play()
+				end
+				
+				if subButton then
+	TweenService:Create(subButton,
+		TweenInfo.new(0),
+		{TextTransparency = 1}
+	):Play()
+end
+
+local fadeOut = TweenService:Create(subContainer,
+					TweenInfo.new(0),
+					{BackgroundTransparency = 1}
+				)
+				
+				fadeOut:Play()
+				
+				local stroke = subContainer:FindFirstChildOfClass("UIStroke")
+				if stroke then
+					TweenService:Create(stroke,
+						TweenInfo.new(0),
+						{Transparency = 1}
+					):Play()
+				end
+				
+				fadeOut.Completed:Connect(function()
+					subContainer:Destroy()
+					subContainer = nil
+				end)
+			end
+			
+			TweenService:Create(plusBtn,
+				TweenInfo.new(0),
+				{Rotation = 0}
+			):Play()
+		end
+		
+	end)
+	
+end
+
+	-- CLICK MAIN BUTTON
+	button.MouseButton1Click:Connect(function()
+
+	playClickSound()
+ addScriptHighlight(button, buttonData.HighlightColor or Color3.fromRGB(212,175,55))
+ 
+ if img then
+	startImageShake(img)
+end
+
+		-- nếu có button khác đang mở → đóng nó
+		if openedContainer and openedContainer ~= container then
+			for _,obj in pairs(page:GetChildren()) do
+				if obj:IsA("Frame") and obj ~= container then
+					obj.Size = UDim2.new(1,-20,0,50)
+					local cf = obj:FindFirstChildOfClass("Frame")
+					if cf then
+						cf.Size = UDim2.new(1,0,0,0)
+					end
+				end
+			end
+		end
+
+		if opened then
+			closeConfirm()
+			return
+		end
+
+		opened = true
+		openedContainer = container
+   startPulse(yesStroke)
+   startPulse(noStroke)
+
+		TweenService:Create(container, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
+			Size = UDim2.new(1,-20,0,90)
+		}):Play()
+
+		TweenService:Create(confirmFrame, TweenInfo.new(0.25), {
+			Size = UDim2.new(1,0,0,35)
+		}):Play()
+
+	end)
+
+	-- YES
+	yesBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+	closeConfirm()
+	stopImageShake()
+	removeScriptHighlight()
+	showExecutedEffect()
+
+	-- SAFE NAME
+	local scriptName = (buttonData and buttonData.Name) or yesBtn.Text or "Unknown Script"
+
+	-- tăng counter
+	ScriptsExecuted += 1
+	LastExecutedScript = scriptName
+	ScriptUsage[scriptName] = (ScriptUsage[scriptName] or 0) + 1
+	TotalExecuted += 1
+
+	saveStats()
+
+	-- notification SAFE
+	showNotification('You just executed "'..scriptName..'" script')
+
+	-- SAFE stats update (không crash nil)
+	if StatsLabelRef then
+		local safe = function(v, fallback)
+			if v == nil or v == "" then
+				return fallback
+			end
+			return tostring(v)
+		end
+
+		StatsLabelRef.Text =
+			"Scripts executed: "..safe(ScriptsExecuted,0)..
+			"\nTier: "..safe(PlayerTier,"Unknown")..
+			"\nLast script: "..safe(LastExecutedScript,"None")..
+			"\nDevice: "..safe(DeviceType,"Unknown")..
+			"\nMost used: "..safe(most,"None")..
+			"\nSession: "..safe(session,"0m")..
+			"\nFPS: "..safe(CurrentFPS,0)..
+			"\nPing: "..safe(ping,0).."ms"..
+			"\nMusic: "..safe(music,"Paused")..
+			"\nHub version: v1.0\nStatus: Stable"
+	end
+
+	-- RUN SCRIPT SAFE (không crash hub)
+	task.spawn(function()
+		local ok, err = pcall(function()
+			if buttonData and buttonData.Code then
+				buttonData.Code()
+			end
+		end)
+
+		if not ok then
+			warn("Script error:", err)
+			showNotification("Script execution failed")
+		end
+	end)
+
+end)
+
+	-- NO
+	noBtn.MouseButton1Click:Connect(function()
+	playClickSound()
+	closeConfirm()
+ stopImageShake()
+  removeScriptHighlight()
+end)
+
+	-- HOVER EFFECT
+	button.MouseEnter:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.15), {
+			BackgroundColor3 = Color3.fromRGB(100,65,40)
+		}):Play()
+	end)
+
+	button.MouseLeave:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.15), {
+			BackgroundColor3 = Color3.fromRGB(80,50,30)
+		}):Play()
+	end)
+
+return container
+end
+
+--// ===== TAB SYSTEM =====
+local activeTabButton = nil
+local activeStroke = nil
+local pulseConnection = nil
+local tabs = {}
+
+local function selectTab(tabButton, page)
+
+	-- Ẩn tất cả page
+	for _,p in pairs(tabs) do
+		p.Visible = false
+	end
+	page.Visible = true
+
+	-- Fade out stroke cũ
+	if activeStroke and activeStroke.Parent ~= tabButton then
+		TweenService:Create(activeStroke, TweenInfo.new(0.25), {
+			Transparency = 1
+		}):Play()
+	end
+
+	-- Lấy stroke mới
+	local newStroke = tabButton:FindFirstChildOfClass("UIStroke")
+	if not newStroke then return end
+
+	activeTabButton = tabButton
+	activeStroke = newStroke
+
+	-- Fade in
+	TweenService:Create(newStroke, TweenInfo.new(0.25), {
+		Transparency = 0
+	}):Play()
+
+	-- Stop pulse cũ
+	if pulseConnection then
+		pulseConnection:Disconnect()
+	end
+
+	-- Pulse DOORS style
+	pulseConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		if activeStroke ~= newStroke then return end
+		local t = tick() % 2
+		newStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+	end)
+end
+
+local function createTabGroup(tabData)
+
+	local btn = Instance.new("TextButton", tabButtons)
+	btn.Size = UDim2.new(1,-10,0,40)
+	btn.Text = tabData.Name
+	btn.TextScaled = true
+	btn.BackgroundColor3 = Color3.fromRGB(40,30,20)
+	btn.TextColor3 = Color3.fromRGB(220,190,140)
+	btn.AutoButtonColor = false
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0,4)
+
+addPressAnimation(btn)
+
+	-- DOORS STYLE STROKE
+	-- GLOW LAYER
+-- DOORS STYLE STROKE
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(212,175,55) -- vàng bạc doors
+stroke.Thickness = 2
+stroke.Transparency = 1
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.Parent = btn
+
+	-- PAGE
+	local page = Instance.new("ScrollingFrame", pages)
+	page.Size = UDim2.new(1,-10,1,-10)
+	page.Position = UDim2.new(0,5,0,5)
+	page.CanvasSize = UDim2.new(0,0,0,0)
+	page.ScrollBarThickness = 6
+	page.BackgroundColor3 = Color3.fromRGB(30,20,15)
+page.BackgroundTransparency = 0.4
+	page.Visible = false
+	Instance.new("UICorner", page).CornerRadius = UDim.new(0,4)
+
+	local layout = Instance.new("UIListLayout", page)
+	layout.Padding = UDim.new(0,10)
+
+	layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		page.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 10)
+	end)
+
+	tabs[tabData.Name] = page
+
+	-- DASHBOARD TAB
+if tabData.Name == "Home" then
+	
+	local plr = game.Players.LocalPlayer
+
+	--===== RANK SYSTEM =====--
+local OWNERS = {
+	["bre5be123"] = true,
+	["bre5be123bayacc"] = true
+}
+
+local usernameLower = string.lower(plr.Name)
+local Rank = OWNERS[usernameLower] and "Owner" or "Member"
+	
+	-- PROFILE CONTAINER (fix auto layout)
+local profile = Instance.new("Frame", page)
+profile.Size = UDim2.new(1, -20, 0, 90)
+profile.BackgroundTransparency = 1
+
+-- Avatar
+local avatar = Instance.new("ImageLabel", profile)
+avatar.Size = UDim2.fromOffset(80,80)
+avatar.Position = UDim2.new(0,0,0,5)
+avatar.BackgroundTransparency = 1
+avatar.Image = Players:GetUserThumbnailAsync(
+	plr.UserId,
+	Enum.ThumbnailType.HeadShot,
+	Enum.ThumbnailSize.Size180x180
+)
+
+-- Display Name
+local name = Instance.new("TextLabel", profile)
+name.Text = plr.DisplayName
+name.Position = UDim2.new(0,90,0,10)
+name.Size = UDim2.fromOffset(220,30)
+name.BackgroundTransparency = 1
+name.TextColor3 = Color3.fromRGB(255,220,150)
+name.Font = Enum.Font.GothamBold
+name.TextScaled = true
+name.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Username
+local username = Instance.new("TextLabel", profile)
+username.Text = "@"..plr.Name
+username.Position = UDim2.new(0,90,0,40)
+username.Size = UDim2.fromOffset(220,20)
+username.BackgroundTransparency = 1
+username.TextColor3 = Color3.fromRGB(180,180,180)
+username.Font = Enum.Font.Gotham
+username.TextSize = 14
+username.TextXAlignment = Enum.TextXAlignment.Left
+	
+	-- Rank
+local rankLabel = Instance.new("TextLabel", page)
+rankLabel.Text = "Rank: "..Rank
+rankLabel.Position = UDim2.new(0,100,0,45)
+rankLabel.Size = UDim2.fromOffset(200,20)
+rankLabel.BackgroundTransparency = 1
+rankLabel.Font = Enum.Font.GothamBold
+rankLabel.TextScaled = true
+rankLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+if Rank == "Owner" then
+	rankLabel.TextColor3 = Color3.fromRGB(255,215,0)
+else
+	rankLabel.TextColor3 = Color3.fromRGB(200,200,200)
+end
+	
+	-- Executor info
+	local exec = Instance.new("TextLabel", page)
+	exec.Text = "Executor: "..getExecutorName()
+	exec.Position = UDim2.new(0,100,0,65)
+exec.Size = UDim2.fromOffset(200,25)
+exec.BackgroundTransparency = 1
+exec.TextColor3 = Color3.fromRGB(200,200,200)
+exec.Font = Enum.Font.Gotham
+exec.TextScaled = true
+
+-- STATS LABEL (QUAN TRỌNG)
+local stats = Instance.new("TextLabel", page)
+stats.Position = UDim2.new(0,10,0,110)
+stats.Size = UDim2.new(1,-20,0,120)
+stats.BackgroundTransparency = 1
+stats.TextColor3 = Color3.fromRGB(255,220,150)
+stats.Font = Enum.Font.Code
+stats.TextScaled = true
+stats.TextXAlignment = Enum.TextXAlignment.Left
+stats.TextYAlignment = Enum.TextYAlignment.Top
+
+stats.Text =
+	"Scripts executed: "..ScriptsExecuted..
+	"\nTier: "..PlayerTier..
+	"\nLast script: "..LastExecutedScript..
+	"\nDevice: "..DeviceType..
+	"\nMost used: None"..
+	"\nSession: 0m 0s"..
+	"\nFPS: --"..
+	"\nPing: --"..
+	"\nMusic: Loading"..
+	"\nHub version: v1.0\nStatus: Stable"
+	
+	local buttonRow = Instance.new("Frame", page)
+buttonRow.Size = UDim2.new(1,0,0,40)
+buttonRow.Position = stats.Position + UDim2.new(0,0,0,stats.Size.Y.Offset + 10)
+buttonRow.BackgroundTransparency = 1
+
+local rowLayout = Instance.new("UIListLayout", buttonRow)
+rowLayout.FillDirection = Enum.FillDirection.Horizontal
+rowLayout.Padding = UDim.new(0,10)
+rowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	
+	-- ===== SAVE DATA BUTTON =====
+local saveBtn = Instance.new("TextButton", buttonRow)
+saveBtn.Size = UDim2.new(0,160,0,30)
+saveBtn.BackgroundColor3 = Color3.fromRGB(35,25,15)
+saveBtn.Text = "Save Data"
+saveBtn.Font = Enum.Font.GothamBold
+saveBtn.TextScaled = true
+saveBtn.TextColor3 = Color3.fromRGB(255, 221, 140)
+saveBtn.AutoButtonColor = false
+Instance.new("UICorner", saveBtn).CornerRadius = UDim.new(0,6)
+
+addPressAnimation(saveBtn)
+
+-- DOORS STROKE
+local saveStroke = Instance.new("UIStroke")
+saveStroke.Color = Color3.fromRGB(212,175,55)
+saveStroke.Thickness = 2
+saveStroke.Transparency = 0.2
+saveStroke.Name = "Stroke"
+saveStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+saveStroke.Parent = saveBtn
+
+-- PULSE
+local savePulse
+savePulse = game:GetService("RunService").Heartbeat:Connect(function()
+	if not saveBtn.Parent then
+		savePulse:Disconnect()
+		return
+	end
+	local t = tick() % 2
+	saveStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+end)
+
+local resetBtn = saveBtn:Clone()
+resetBtn.Text = "Reset Data"
+resetBtn.Parent = buttonRow
+
+addPressAnimation(resetBtn)
+
+local resetPulse
+resetPulse = game:GetService("RunService").Heartbeat:Connect(function()
+	if not resetBtn.Parent then
+		resetPulse:Disconnect()
+		return
+	end
+	local redStroke = resetBtn.Stroke
+	local t = tick() % 2
+	redStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+end)
+
+-- SETTINGS BUTTON (clone style Save)
+local settingsBtn = saveBtn:Clone()
+settingsBtn.Parent = buttonRow
+settingsBtn.Text = "Settings"
+settingsBtn.Size = UDim2.new(0,130,0,30)
+
+-- góc phải trên page
+settingsBtn.AnchorPoint = Vector2.new(1, 0)
+
+addPressAnimation(settingsBtn)
+
+local btnStroke = settingsBtn:FindFirstChild("Stroke")
+
+if btnStroke then
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if not settingsBtn.Parent then return end
+		local t = tick() * 2
+		btnStroke.Transparency =
+			0.2 + math.abs(math.sin(t)) * 0.4
+	end)
+end
+
+-- SETTINGS OVERLAY (đè dashboard)
+local settingsOverlay = Instance.new("Frame")
+settingsOverlay.Parent = page
+settingsOverlay.Size = UDim2.fromScale(1,1)
+settingsOverlay.BackgroundColor3 = Color3.fromRGB(10,10,10)
+settingsOverlay.BackgroundTransparency = 1 -- fade in
+settingsOverlay.Visible = false
+settingsOverlay.ZIndex = 998
+
+Instance.new("UICorner", settingsOverlay).CornerRadius = UDim.new(0,8)
+
+local settingsStroke = Instance.new("UIStroke")
+settingsStroke.Color = Color3.fromRGB(212,175,55)
+settingsStroke.Thickness = 3
+settingsStroke.Transparency = 0.2
+settingsStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+settingsStroke.Parent = settingsOverlay
+
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.AnchorPoint = Vector2.new(0.5,0.5)
+shadow.Position = UDim2.fromScale(0.5,0.5)
+shadow.Size = UDim2.fromScale(1.05,1.1)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.fromRGB(212,175,55)
+shadow.ImageTransparency = 0.6
+shadow.ZIndex = -1
+shadow.Parent = settingsOverlay
+
+local settingsTitle = Instance.new("TextLabel", settingsOverlay)
+settingsTitle.Size = UDim2.new(1,0,0,40)
+settingsTitle.BackgroundTransparency = 1
+settingsTitle.Text = "Settings"
+settingsTitle.Font = Enum.Font.GothamBold
+settingsTitle.TextScaled = true
+settingsTitle.TextColor3 = Color3.fromRGB(255, 221, 140)
+settingsTitle.ZIndex = 1000
+
+-- ================= MUSIC DROPDOWN =================
+
+local workspace = game:GetService("Workspace")
+
+local dropdown = Instance.new("TextButton", settingsOverlay)
+dropdown.Text = ""
+dropdown.AutoButtonColor = false
+dropdown.Position = UDim2.new(0.5, -150, 0, 70)
+dropdown.Size = UDim2.new(0, 300, 0, 40)
+dropdown.BackgroundColor3 = Color3.fromRGB(35,25,15)
+dropdown.ZIndex = 2000
+Instance.new("UICorner", dropdown).CornerRadius = UDim.new(0,6)
+
+local stroke = Instance.new("UIStroke")
+stroke.Parent = dropdown
+stroke.Color = Color3.fromRGB(212,175,55)
+stroke.Thickness = 2
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.ZIndex = dropdown.ZIndex
+stroke.LineJoinMode = Enum.LineJoinMode.Round
+
+-- LABEL
+local label = Instance.new("TextLabel", dropdown)
+label.Size = UDim2.new(1, -40, 1, 0)
+label.Position = UDim2.new(0, 10, 0, 0)
+label.BackgroundTransparency = 1
+label.Text = "Background music"
+label.Font = Enum.Font.GothamBold
+label.TextScaled = true
+label.ZIndex = 2001
+label.TextColor3 = Color3.fromRGB(255,221,140)
+label.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ARROW
+local arrow = Instance.new("TextLabel", dropdown)
+arrow.Size = UDim2.new(0, 30, 1, 0)
+arrow.Position = UDim2.new(1, -30, 0, 0)
+arrow.BackgroundTransparency = 1
+arrow.Text = "▾"
+arrow.ZIndex = 2002
+arrow.Font = Enum.Font.GothamBold
+arrow.TextScaled = true
+arrow.TextColor3 = Color3.fromRGB(255,221,140)
+
+-- LIST HOLDER
+local listHolder = Instance.new("ScrollingFrame", dropdown)
+listHolder.Position = UDim2.new(0, 0, 1, 0)
+listHolder.Size = UDim2.new(1, 0, 0, 0)
+listHolder.ZIndex = 2003
+listHolder.BackgroundTransparency = 1
+
+-- SCROLL SETTINGS
+listHolder.ScrollBarThickness = 4
+listHolder.ScrollBarImageColor3 = Color3.fromRGB(212,175,55) -- doors gold
+listHolder.BorderSizePixel = 0
+listHolder.CanvasSize = UDim2.new(0,0,0,0) -- auto resize sau
+
+local layout = Instance.new("UIListLayout", listHolder)
+layout.Padding = UDim.new(0, 4)
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- AUTO CANVAS SIZE
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	listHolder.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 5)
+end)
+
+listHolder.ScrollingDirection = Enum.ScrollingDirection.Y
+listHolder.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+listHolder.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
+
+local TweenService = game:GetService("TweenService")
+
+local opened = false
+local dropdownHeight = 120
+
+local function stopAllMusic()
+	for _, v in pairs({"DOORS","Metamorphosis","Forsaken","Pressure","Die of Death"}) do
+		local s = workspace:FindFirstChild(v)
+		if s then s:Stop() end
+	end
+end
+
+local function createMusicOption(name)
+	local btn = Instance.new("TextButton", listHolder)
+	btn.Size = UDim2.new(1, 0, 0, 30)
+	btn.BackgroundColor3 = Color3.fromRGB(45,30,20)
+	btn.Text = name
+	btn.Font = Enum.Font.Gotham
+	btn.TextScaled = true
+	btn.ZIndex = 2004
+	btn.TextColor3 = Color3.fromRGB(255,221,140)
+	btn.AutoButtonColor = false
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0,4)
+
+	addPressAnimation(btn)
+
+	btn.MouseButton1Click:Connect(function()
+		playClickSound()
+
+		local music = workspace:FindFirstChild(name)
+		if music then
+			stopAllMusic()
+			currentMusic = name
+
+if musicEnabled then
+	music:Play()
+else
+	music:Pause()
+end
+
+label.Text = name
+			showNotification("Now playing: "..name)
+		end
+
+		-- auto close
+		opened = false
+		arrow.Text = "▾"
+		TweenService:Create(listHolder, TweenInfo.new(0.25), {
+			Size = UDim2.new(1,0,0,0)
+		}):Play()
+	end)
+end
+
+createMusicOption("DOORS")
+createMusicOption("Metamorphosis")
+createMusicOption("Forsaken")
+createMusicOption("Pressure")
+createMusicOption("Die of Death")
+
+-- ================= MUSIC TOGGLE =================
+
+local musicEnabled = true
+local currentMusic = "DOORS" -- default
+
+-- LABEL TEXT
+local toggleLabel = Instance.new("TextLabel", settingsOverlay)
+toggleLabel.Text = "Music: ON"
+toggleLabel.Font = Enum.Font.GothamBold
+toggleLabel.TextScaled = true
+toggleLabel.TextColor3 = Color3.fromRGB(255,221,140)
+toggleLabel.BackgroundTransparency = 1
+toggleLabel.Size = UDim2.new(0,150,0,30)
+toggleLabel.Position = dropdown.Position + UDim2.new(0,0,0,dropdown.Size.Y.Offset + 20)
+toggleLabel.ZIndex = 2000
+toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- TOGGLE FRAME
+local toggle = Instance.new("Frame", settingsOverlay)
+toggle.Size = UDim2.new(0,80,0,30)
+toggle.Position = toggleLabel.Position + UDim2.new(0,150,0,0)
+toggle.BackgroundColor3 = Color3.fromRGB(212,175,55) -- ON color
+toggle.ZIndex = 2000
+Instance.new("UICorner", toggle).CornerRadius = UDim.new(1,0)
+
+-- CIRCLE
+local knob = Instance.new("Frame", toggle)
+knob.Size = UDim2.new(0,26,0,26)
+knob.Position = UDim2.new(1,-28,0.5,-13) -- start ON right
+knob.BackgroundColor3 = Color3.fromRGB(255,255,255)
+knob.ZIndex = 2001
+Instance.new("UICorner", knob).CornerRadius = UDim.new(1,0)
+
+local TweenService = game:GetService("TweenService")
+local workspace = game:GetService("Workspace")
+
+local function stopAllMusic()
+	for _, v in ipairs({"DOORS","Metamorphosis","Forsaken","Pressure","Die of Death"}) do
+		local s = workspace:FindFirstChild(v)
+		if s then s:Pause() end
+	end
+end
+
+local function resumeCurrent()
+	local s = workspace:FindFirstChild(currentMusic)
+	if s then s:Resume() end
+end
+
+local function updateDashboardMusic(state)
+	if StatsLabelRef then
+		local text = StatsLabelRef.Text
+		text = text:gsub("Music: .+", "Music: "..state)
+		StatsLabelRef.Text = text
+	end
+end
+
+local function toggleMusic()
+	playClickSound()
+
+	musicEnabled = not musicEnabled
+
+	if musicEnabled then
+		-- ON
+		toggleLabel.Text = "Music: ON"
+
+		TweenService:Create(toggle, TweenInfo.new(0.25), {
+			BackgroundColor3 = Color3.fromRGB(212,175,55)
+		}):Play()
+
+		TweenService:Create(knob, TweenInfo.new(0.25), {
+			Position = UDim2.new(1,-28,0.5,-13)
+		}):Play()
+
+		resumeCurrent()
+		updateDashboardMusic("Playing")
+		showNotification("Music enabled!")
+
+	else
+		-- OFF
+		toggleLabel.Text = "Music: OFF"
+
+		TweenService:Create(toggle, TweenInfo.new(0.25), {
+			BackgroundColor3 = Color3.fromRGB(50,50,50)
+		}):Play()
+
+		TweenService:Create(knob, TweenInfo.new(0.25), {
+			Position = UDim2.new(0,2,0.5,-13)
+		}):Play()
+
+		stopAllMusic()
+		updateDashboardMusic("Paused")
+		showNotification("Music disabled!")
+	end
+end
+
+-- CLICK
+toggle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		toggleMusic()
+	end
+end)
+
+dropdown.MouseButton1Click:Connect(function()
+	playClickSound()
+
+	opened = not opened
+	arrow.Text = opened and "▴" or "▾"
+
+	local goal = opened and dropdownHeight or 0
+
+	TweenService:Create(listHolder, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
+		Size = UDim2.new(1,0,0,goal)
+	}):Play()
+end)
+
+-- CLOSE BUTTON (hub style)
+local closeBtn = Instance.new("TextButton")
+closeBtn.Parent = settingsOverlay
+closeBtn.Text = "X"
+closeBtn.Size = UDim2.new(0, 35, 0, 35)
+closeBtn.AnchorPoint = Vector2.new(1,0)
+closeBtn.Position = UDim2.new(1, -10, 0, 10)
+closeBtn.BackgroundColor3 = Color3.fromRGB(35,25,15)
+closeBtn.TextColor3 = Color3.fromRGB(255,221,140)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextScaled = true
+closeBtn.AutoButtonColor = false
+closeBtn.ZIndex = 1000
+
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0,6)
+addPressAnimation(closeBtn)
+
+local closeStroke = Instance.new("UIStroke")
+closeStroke.Color = Color3.fromRGB(212,175,55)
+closeStroke.Thickness = 2
+closeStroke.Transparency = 0.2
+closeStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+closeStroke.Parent = closeBtn
+
+local closePulse
+closePulse = game:GetService("RunService").Heartbeat:Connect(function()
+	if not closeBtn.Parent then
+		closePulse:Disconnect()
+		return
+	end
+
+	local t = tick() % 2
+	closeStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+end)
+
+local TweenService = game:GetService("TweenService")
+
+settingsBtn.MouseButton1Click:Connect(function()
+	playClickSound()
+
+	settingsOverlay.Visible = true
+
+	TweenService:Create(settingsOverlay,
+		TweenInfo.new(0.25, Enum.EasingStyle.Quad),
+		{BackgroundTransparency = 0.1}
+	):Play()
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	-- click flash animation
+	local tween = TweenService:Create(closeBtn,
+		TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{BackgroundColor3 = Color3.fromRGB(60,45,25)}
+	)
+	tween:Play()
+	tween.Completed:Wait()
+
+	TweenService:Create(closeBtn,
+		TweenInfo.new(0.15),
+		{BackgroundColor3 = Color3.fromRGB(35,25,15)}
+	):Play()
+
+	-- fade overlay
+	local fade = TweenService:Create(settingsOverlay,
+		TweenInfo.new(0.2),
+		{BackgroundTransparency = 1}
+	)
+	fade:Play()
+	fade.Completed:Wait()
+
+	settingsOverlay.Visible = false
+end)
+
+-- CLICK
+saveBtn.MouseButton1Click:Connect(function()
+	
+	playClickSound()
+	
+	-- save data thật
+	saveStats()
+	
+	-- animation flash nhẹ
+	local tween = TweenService:Create(saveBtn,
+		TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{BackgroundColor3 = Color3.fromRGB(60,45,25)}
+	)
+	tween:Play()
+	tween.Completed:Wait()
+	
+	TweenService:Create(saveBtn,
+		TweenInfo.new(0.15),
+		{BackgroundColor3 = Color3.fromRGB(35,25,15)}
+	):Play()
+	
+	showNotification("Succesfully saved datas!")
+end)
+
+resetBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+local tween = TweenService:Create(resetBtn,
+		TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{BackgroundColor3 = Color3.fromRGB(60,45,25)}
+	)
+	tween:Play()
+	tween.Completed:Wait()
+	
+	TweenService:Create(resetBtn,
+		TweenInfo.new(0.15),
+		{BackgroundColor3 = Color3.fromRGB(35,25,15)}
+	):Play()
+	
+	-- reset session stats
+	ScriptsExecuted = 0
+	LastExecutedScript = "None"
+
+	-- KHÔNG reset TotalExecuted nếu m muốn giữ data save
+	-- nếu muốn reset luôn thì bật dòng dưới:
+	-- TotalExecuted = 0
+
+	saveStats()
+
+	-- update dashboard
+	if StatsLabelRef then
+		StatsLabelRef.Text =
+		"Session scripts: "..ScriptsExecuted..
+		"\nTotal scripts: "..TotalExecuted..
+		"\nLast script: "..LastExecutedScript..
+		"\nHub version: v1.0\nStatus: Stable"
+	end
+
+	showNotification("Succesfully reset datas!")
+end)
+
+-- ===== CREATOR LABEL =====
+local creator = Instance.new("TextLabel", page)
+creator.Position = UDim2.new(0,10,0,240)
+creator.Size = UDim2.new(1,-20,0,25)
+creator.BackgroundTransparency = 1
+creator.TextColor3 = Color3.fromRGB(255,220,150)
+creator.Font = Enum.Font.Gotham
+creator.TextScaled = true
+creator.TextXAlignment = Enum.TextXAlignment.Left
+creator.Text = "Creator: " .. creatorName
+
+-- ===== DISCORD ROW =====
+local discordFrame = Instance.new("Frame", page)
+discordFrame.Position = UDim2.new(0,10,0,270)
+discordFrame.Size = UDim2.new(1,-20,0,30)
+discordFrame.BackgroundTransparency = 1
+
+local discordLabel = Instance.new("TextLabel", discordFrame)
+discordLabel.Size = UDim2.new(0.6,0,1,0)
+discordLabel.BackgroundTransparency = 1
+discordLabel.TextColor3 = Color3.fromRGB(200,200,200)
+discordLabel.Font = Enum.Font.Gotham
+discordLabel.TextScaled = true
+discordLabel.TextXAlignment = Enum.TextXAlignment.Left
+discordLabel.Text = "Discord: " .. discordlink
+
+-- ===== COPY BUTTON =====
+local copyBtn = Instance.new("TextButton", discordFrame)
+copyBtn.AnchorPoint = Vector2.new(1,0.5)
+copyBtn.Position = UDim2.new(1,0,0.5,0)
+copyBtn.Size = UDim2.fromOffset(80,24)
+copyBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+copyBtn.Text = "Copy"
+copyBtn.TextScaled = true
+copyBtn.Font = Enum.Font.GothamBold
+copyBtn.TextColor3 = Color3.fromRGB(212,175,55)
+Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0,6)
+
+-- GOLD STROKE
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(212,175,55)
+stroke.Thickness = 2
+stroke.Transparency = 0.2
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.Parent = copyBtn
+
+-- PULSE
+local RunService = game:GetService("RunService")
+local pulseConn
+pulseConn = RunService.Heartbeat:Connect(function()
+	if not copyBtn.Parent then
+		pulseConn:Disconnect()
+		return
+	end
+	local t = tick() % 2
+	stroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+end)
+
+-- CLICK SOUND (dùng sound sẵn của m)
+copyBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	local link = discordlink
+
+	-- COPY CLIPBOARD
+	if setclipboard then
+		setclipboard(link)
+	elseif toclipboard then
+		toclipboard(link)
+	end
+
+	-- CHANGE TEXT
+	copyBtn.Text = "Copied"
+
+	-- NOTIFICATION
+	showNotification("Discord link copied!")
+
+	-- revert sau 3s
+	task.delay(3, function()
+		if copyBtn and copyBtn.Parent then
+			copyBtn.Text = "Copy"
+		end
+	end)
+end)
+
+-- 🔥 FIX QUAN TRỌNG
+StatsLabelRef = stats
+
+-- TẠO BOX CHA (không bị layout phá)
+local statsBox = Instance.new("Frame")
+statsBox.Parent = page
+statsBox.BackgroundColor3 = Color3.new(0,0,0)
+statsBox.BackgroundTransparency = 0.3
+statsBox.Size = stats.Size + UDim2.new(0,20,0,20)
+statsBox.ZIndex = stats.ZIndex
+
+Instance.new("UICorner", statsBox).CornerRadius = UDim.new(0,8)
+
+-- stroke DOORS
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(212,175,55)
+stroke.Thickness = 2
+stroke.Transparency = 0.2
+stroke.Parent = statsBox
+
+-- CHUYỂN stats vào trong box
+stats.Parent = statsBox
+stats.Position = UDim2.new(0,10,0,10)
+stats.Size = UDim2.new(1,-20,1,-20)
+statsBox.ZIndex = 50
+stats.ZIndex = 51
+
+task.spawn(function()
+	while task.wait(1) do
+		if StatsLabelRef then
+			local ping = getPing()
+			local session = getSession()
+			local most = getMostUsed()
+			local music = "Paused"
+
+if BackgroundMusic and BackgroundMusic.IsPlaying then
+	music = "Playing (DOORS)"
+else
+	for _, name in ipairs({"Metamorphosis","Forsaken","Pressure","Die of Death"}) do
+		local s = workspace:FindFirstChild(name)
+		if s and s.IsPlaying then
+			music = "Playing ("..name..")"
+			break
+		end
+	end
+end
+
+			StatsLabelRef.Text =
+				"Scripts executed: "..ScriptsExecuted..
+				"\nTier: "..PlayerTier..
+				"\nLast script: "..LastExecutedScript..
+				"\nDevice: "..DeviceType..
+				"\nMost used: "..most..
+				"\nSession: "..session..
+				"\nFPS: "..CurrentFPS..
+				"\nPing: "..ping.."ms"..
+				"\nMusic: "..music..
+				"\nHub version: v1.0\nStatus: Stable"
+		end
+	end
+end)
+	
+else
+	for i, buttonData in ipairs(tabData.Buttons) do
+		local container = createScriptButton(page, buttonData)
+		container.LayoutOrder = i
+	end
+end
+
+	-- HÀM PULSE
+	local function startPulse(targetStroke)
+
+		if pulseConnection then
+			pulseConnection:Disconnect()
+		end
+
+		pulseConnection = game:GetService("RunService").Heartbeat:Connect(function()
+			if activeStroke ~= targetStroke then return end
+			local t = tick() % 2
+			targetStroke.Transparency = 0.2 + math.abs(math.sin(t * math.pi)) * 0.4
+		end)
+	end
+
+	-- CLICK TAB
+	btn.MouseButton1Click:Connect(function()
+	playClickSound()
+	selectTab(btn, page)
+end)
+end
+
+local TabsConfig = {
+	{
+	Name = "Home",
+	Buttons = {}
+},
+
+	{
+		Name = "Modes",
+		Buttons = {
+			{
+	Name = "Dreamcore Mode",
+	ImageId = 123961768980557,
+	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	Code = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Dreamcore-Mode-Made-by-Guestly-and-Voorpr0"))()
+	end
+},
+			
+			{
+	Name = "Cataclysm Mode",
+	ImageId = 82766883740850,
+	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	Code = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Cataclysm-Mode-made-by-Guestly-and-Vuivuiviu3"))()
+	end
+},
+
+{
+	Name = "Cataclysmic Mode",
+	ImageId = 132419993309810,
+	HighlightColor = Color3.fromRGB(173, 2, 2), -- màu riêng
+	Code = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Cataclysmic-Mode-Made-by-Guestly-and-Vuivuiviu4"))()
+	end
+},
+
+{
+	Name = "Hallucination Mode (Easy)",
+	ImageId = 101502113770190,
+	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hallucination-Mode-(Easy-Version)-Made-by-Celestian-on-Discord"))()
+	end
+},
+
+{
+	Name = "Hallucination Mode (Hard)",
+	ImageId = 106197785545507,
+	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hallucination-Mode-(Hard-Version)-Made-by-Celestian-on-Discord"))()
+	end
+},
+
+{
+	Name = "Mayhem Mode",
+	ImageId = 73391519663982,
+	HighlightColor = Color3.fromRGB(3, 175, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-stuff/refs/heads/main/Mayhem%20mode%20recreate/Code"))()
+	end
+},
+
+{
+	Name = "Fragmented Mode",
+	ImageId = 127196343489842,
+	HighlightColor = Color3.fromRGB(161, 3, 252), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/talales/Nhankg/refs/heads/main/fragmented%20v5"))()
+	end
+},
+
+{
+	Name = "Hazy Mode (Recreated)",
+	ImageId = 130053850863219,
+	HighlightColor = Color3.fromRGB(244, 3, 252), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hazy-Mode-Recreated-made-by-Guestly-(Celestian)-on-Discord"))()
+
+	end
+},
+
+{
+	Name = "Extreme Mode (Recreated)",
+	ImageId = 86946627133874,
+	HighlightColor = Color3.fromRGB(191, 0, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Extreme-Mode-Recreated-made-by-Guestly"))()
+	end
+},
+
+{
+	Name = "Forbidden Mode (Recreated)",
+	ImageId = 99622637705464,
+	HighlightColor = Color3.fromRGB(214, 186, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Forbidden-Mode-recreated-by-Guestly"))()
+	end
+},
+
+{
+	Name = "Hardcore Re-remastered Mode",
+	ImageId = 138892776130651,
+	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hardcore-Mode-Re-Remastered-Made-By-Guestly-Vuivuiviu2-Nowhywhat-Voorpr0"))()
+	end
+},
+
+{
+	Name = "Lunacy Mode",
+	ImageId = 87962511579749,
+	HighlightColor = Color3.fromRGB(187, 0, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Lunacy-Mode-Made-By-Guestly-Vuivuiviu2-Nowhywhat-And-Voorpr0"))()
+	end
+},
+
+{
+	Name = "Inferno Mode",
+	ImageId = 136922189656082,
+	HighlightColor = Color3.fromRGB(174, 255, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Anctarus7105/My-Modes/main/Inferno.lua"))()
+	end
+},
+
+{
+	Name = "Hardcore Mode (Reworked)",
+	ImageId = 87047590074187,
+	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/rrealblueyt-oss/Hradcore-by-noonies-remakes/refs/heads/main/Hradcore%20reworker%20by%20RealblueYT%20chubeteliet%20LDLT_legacy"))()
+	end
+},
+
+{
+	Name = "OVERDOORS Mode",
+	ImageId = 103932237084791,
+	HighlightColor = Color3.fromRGB(36, 178, 255), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/binhlforsaken156-sys/THE-OVERDOORS-/refs/heads/main/OVERDOORS-2.9.2", true))()
+	end
+},
+
+{
+	Name = "Grace Mode",
+	ImageId = 129149769000371,
+	HighlightColor = Color3.fromRGB(255, 226, 5), -- màu riêng
+	Code = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/IdkMyNameLoll/PublicScripts/refs/heads/main/DoorsXGrace.lua"))()
+	end
+},
+		}
+	},
+}
+
+for _, tabData in pairs(TabsConfig) do
+	createTabGroup(tabData)
+end
+
+local firstTabName = TabsConfig[1].Name
+local firstPage = tabs[firstTabName]
+
+for _,btn in pairs(tabButtons:GetChildren()) do
+	if btn:IsA("TextButton") and btn.Text == firstTabName then
+		selectTab(btn, firstPage)
+		break
+	end
+end
+
+-- Demo nội dung
+local homePage = tabs["Home"]
+
+local lbl = Instance.new("TextLabel", homePage)
+lbl.Size = UDim2.new(1,0,0,50)
+lbl.BackgroundTransparency = 1
+lbl.Text = " "
+lbl.TextScaled = true
+lbl.TextColor3 = Color3.fromRGB(220,190,140)
+
+--// ===== OPEN/CLOSE ANIMATION =====
+openBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	main.Visible = true
+ updateHubMusic()
+	main.Size = UDim2.fromScale(0,0)
+
+	TweenService:Create(overlay, TweenInfo.new(0.3), {
+		BackgroundTransparency = 0.4
+	}):Play()
+
+	TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Back), {
+		Size = UDim2.fromScale(0.8,1)
+	}):Play()
+
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+
+	playClickSound()
+
+	TweenService:Create(main, TweenInfo.new(0.25), {
+		Size = UDim2.fromScale(0,0)
+	}):Play()
+
+	TweenService:Create(overlay, TweenInfo.new(0.3), {
+		BackgroundTransparency = 1
+	}):Play()
+
+	task.wait(0.25)
+	main.Visible = false
+ updateHubMusic()
+end)
+
+task.delay(0.5, function()
+	showNotification("DOORS hub successfully loaded (Made by Cool Guest)")
+end)
+
+task.spawn(function()
+	showIntroChat("Welcome to DOORS HUB. Don't forget to join our discord in the hub! :D")
+end)
