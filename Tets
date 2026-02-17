@@ -1859,7 +1859,8 @@ listHolder.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
 local rankToggleFrame = Instance.new("Frame")
 rankToggleFrame.Size = UDim2.new(1, -20, 0, 40)
 rankToggleFrame.BackgroundTransparency = 1
-rankToggleFrame.Parent = dashboardPage -- hoặc đúng parent dashboard m
+rankToggleFrame.Parent = settingsOverlay -- hoặc đúng parent dashboard m
+rankToggleFrame.ZIndex = 3005
 
 -- TEXT
 local rankText = Instance.new("TextLabel")
@@ -1869,6 +1870,7 @@ rankText.Text = "Head Rank [ON]"
 rankText.TextColor3 = Color3.fromRGB(230, 200, 120) -- bạc vàng
 rankText.Font = Enum.Font.GothamBold
 rankText.TextSize = 16
+rankText.ZIndex = 3006
 rankText.TextXAlignment = Enum.TextXAlignment.Left
 rankText.Parent = rankToggleFrame
 
@@ -1879,6 +1881,7 @@ rankToggle.Position = UDim2.new(1, -70, 0.5, -12)
 rankToggle.BackgroundColor3 = Color3.fromRGB(200,170,90)
 rankToggle.BorderSizePixel = 0
 rankToggle.Text = ""
+rankToggle.ZIndex =  3007
 rankToggle.AutoButtonColor = false
 rankToggle.Parent = rankToggleFrame
 Instance.new("UICorner", rankToggle).CornerRadius = UDim.new(1,0)
@@ -1889,6 +1892,7 @@ rankCircle.Size = UDim2.fromOffset(20,20)
 rankCircle.Position = UDim2.new(1, -22, 0.5, -10)
 rankCircle.BackgroundColor3 = Color3.new(1,1,1)
 rankCircle.Parent = rankToggle
+rankCircle.ZIndex = 3008
 Instance.new("UICorner", rankCircle).CornerRadius = UDim.new(1,0)
 
 local TweenService = game:GetService("TweenService")
