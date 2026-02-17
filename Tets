@@ -252,12 +252,21 @@ local musics = {
 	workspace:FindFirstChild("Die of Death")
 }
 
+local MusicEnabled = true -- đặt ở trên playMusic
+
+local CurrentMusic = nil -- lưu nhạc đang chọn
+
 local function playMusic(target)
+	CurrentMusic = target
+
 	for _, m in ipairs(musics) do
 		if m and m:IsA("Sound") then
 			m:Stop()
 		end
 	end
+
+	-- nếu đang tắt nhạc thì không play
+	if not MusicEnabled then return end
 
 	if target then
 		target:Play()
@@ -1915,8 +1924,13 @@ createMusicOption("Die of Death")
 
 -- ================= MUSIC TOGGLE =================
 
+-- ================= MUSIC TOGGLE (FIXED) =================
+
+local TweenService = game:GetService("TweenService")
+local workspace = game:GetService("Workspace")
+
 local musicEnabled = true
-local currentMusic = "DOORS" -- default
+local currentMusic = workspace:FindFirstChild("DOORS") -- default object
 
 -- LABEL TEXT
 local toggleLabel = Instance.new("TextLabel", settingsOverlay)
@@ -1934,31 +1948,54 @@ toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 local toggle = Instance.new("Frame", settingsOverlay)
 toggle.Size = UDim2.new(0,80,0,30)
 toggle.Position = toggleLabel.Position + UDim2.new(0,150,0,0)
-toggle.BackgroundColor3 = Color3.fromRGB(212,175,55) -- ON color
+toggle.BackgroundColor3 = Color3.fromRGB(212,175,55)
 toggle.ZIndex = 2000
 Instance.new("UICorner", toggle).CornerRadius = UDim.new(1,0)
 
--- CIRCLE
+-- KNOB
 local knob = Instance.new("Frame", toggle)
 knob.Size = UDim2.new(0,26,0,26)
-knob.Position = UDim2.new(1,-28,0.5,-13) -- start ON right
+knob.Position = UDim2.new(1,-28,0.5,-13)
 knob.BackgroundColor3 = Color3.fromRGB(255,255,255)
 knob.ZIndex = 2001
 Instance.new("UICorner", knob).CornerRadius = UDim.new(1,0)
 
-local TweenService = game:GetService("TweenService")
-local workspace = game:GetService("Workspace")
+-- ===== MUSIC CONTROL =====
 
-local function stopAllMusic()
+local function getAllMusics()
+	local list = {}
 	for _, v in ipairs({"DOORS","Metamorphosis","Forsaken","Pressure","Die of Death"}) do
 		local s = workspace:FindFirstChild(v)
-		if s then s:Pause() end
+		if s and s:IsA("Sound") then
+			table.insert(list, s)
+		end
+	end
+	return list
+end
+
+local function stopAllMusic()
+	for _, s in ipairs(getAllMusics()) do
+		s:Pause()
+	end
+end
+
+local function playMusic(sound)
+	currentMusic = sound
+
+	-- stop others
+	for _, s in ipairs(getAllMusics()) do
+		s:Stop()
+	end
+
+	if musicEnabled and sound then
+		sound:Play()
 	end
 end
 
 local function resumeCurrent()
-	local s = workspace:FindFirstChild(currentMusic)
-	if s then s:Resume() end
+	if musicEnabled and currentMusic then
+		currentMusic:Play()
+	end
 end
 
 local function updateDashboardMusic(state)
@@ -1969,13 +2006,13 @@ local function updateDashboardMusic(state)
 	end
 end
 
+-- ===== TOGGLE =====
+
 local function toggleMusic()
 	playClickSound()
-
 	musicEnabled = not musicEnabled
 
 	if musicEnabled then
-		-- ON
 		toggleLabel.Text = "Music: ON"
 
 		TweenService:Create(toggle, TweenInfo.new(0.25), {
@@ -1991,7 +2028,6 @@ local function toggleMusic()
 		showNotification("Music enabled!")
 
 	else
-		-- OFF
 		toggleLabel.Text = "Music: OFF"
 
 		TweenService:Create(toggle, TweenInfo.new(0.25), {
@@ -2008,25 +2044,45 @@ local function toggleMusic()
 	end
 end
 
--- CLICK
 toggle.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		toggleMusic()
 	end
 end)
 
-dropdown.MouseButton1Click:Connect(function()
-	playClickSound()
+-- ================= DROPDOWN FIX =================
+-- QUAN TRỌNG: thay createMusicOption của m bằng đoạn này
 
-	opened = not opened
-	arrow.Text = opened and "▴" or "▾"
+local function createMusicOption(name)
+	local btn = Instance.new("TextButton", listHolder)
+	btn.Size = UDim2.new(1, 0, 0, 30)
+	btn.BackgroundColor3 = Color3.fromRGB(45,30,20)
+	btn.Text = name
+	btn.Font = Enum.Font.Gotham
+	btn.TextScaled = true
+	btn.TextColor3 = Color3.fromRGB(255,221,140)
+	btn.AutoButtonColor = false
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0,4)
 
-	local goal = opened and dropdownHeight or 0
+	addPressAnimation(btn)
 
-	TweenService:Create(listHolder, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
-		Size = UDim2.new(1,0,0,goal)
-	}):Play()
-end)
+	btn.MouseButton1Click:Connect(function()
+		playClickSound()
+
+		local sound = workspace:FindFirstChild(name)
+		if sound then
+			playMusic(sound) -- FIX CHÍNH
+			label.Text = name
+		end
+
+		opened = false
+		arrow.Text = "▾"
+
+		TweenService:Create(listHolder, TweenInfo.new(0.25), {
+			Size = UDim2.new(1,0,0,0)
+		}):Play()
+	end)
+end
 
 -- CLOSE BUTTON (hub style)
 local closeBtn = Instance.new("TextButton")
