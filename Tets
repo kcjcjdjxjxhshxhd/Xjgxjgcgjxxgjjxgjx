@@ -1950,6 +1950,7 @@ rankToggleFrame.Size = UDim2.new(1, -20, 0, 40)
 rankToggleFrame.BackgroundTransparency = 1
 rankToggleFrame.Parent = settingsOverlay -- hoặc đúng parent dashboard m
 rankToggleFrame.ZIndex = 3005
+rankToggleFrame.Position = UDim2.new(0.5, -150, 0, 130)
 
 -- TEXT
 local rankText = Instance.new("TextLabel")
@@ -1959,7 +1960,7 @@ rankText.Text = "Head Rank [ON]"
 rankText.TextColor3 = Color3.fromRGB(230, 200, 120) -- bạc vàng
 rankText.Font = Enum.Font.GothamBold
 rankText.TextSize = 20
-rankText.Position = dropdown.Position + UDim2.new(0, 0, 0, dropdown.Size.Y.Offset + 15)
+rankText.Position = UDim2.new(0, 0, 0, 0)
 rankText.ZIndex = 3006
 rankText.TextXAlignment = Enum.TextXAlignment.Left
 rankText.Parent = rankToggleFrame
@@ -1967,7 +1968,7 @@ rankText.Parent = rankToggleFrame
 -- SLIDER BG
 local rankToggle = Instance.new("TextButton")
 rankToggle.Size = UDim2.fromOffset(60, 24)
-rankToggle.Position = rankText.Position + UDim2.new(0, 160, 0, 0)
+rankToggle.Position = UDim2.new(1, -70, 0.5, -12)
 rankToggle.BackgroundColor3 = Color3.fromRGB(200,170,90)
 rankToggle.BorderSizePixel = 0
 rankToggle.Text = ""
