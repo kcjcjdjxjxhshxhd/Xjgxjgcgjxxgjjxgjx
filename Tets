@@ -1830,6 +1830,50 @@ settingsTitle.TextScaled = true
 settingsTitle.TextColor3 = Color3.fromRGB(255, 221, 140)
 settingsTitle.ZIndex = 1000
 
+-- SAVE CONFIG BUTTON
+local saveBtn = Instance.new("TextButton", settingsFrame)
+saveBtn.Size = UDim2.new(0,140,0,32)
+saveBtn.Position = settingsTitle.Position + UDim2.new(1,-150,0,0)
+saveBtn.BackgroundColor3 = Color3.fromRGB(230,200,120)
+saveBtn.Text = "Save Config"
+saveBtn.Font = Enum.Font.GothamBold
+saveBtn.TextScaled = true
+saveBtn.TextColor3 = Color3.fromRGB(255,245,180)
+saveBtn.ZIndex = 2000
+
+Instance.new("UICorner", saveBtn).CornerRadius = UDim.new(0,8)
+
+-- STROKE
+local stroke = Instance.new("UIStroke", saveBtn)
+stroke.Color = Color3.fromRGB(255,215,140)
+stroke.Thickness = 2
+
+task.spawn(function()
+	while saveBtn.Parent do
+		TweenService:Create(stroke, TweenInfo.new(1), {
+			Transparency = 0.4
+		}):Play()
+		task.wait(1)
+		TweenService:Create(stroke, TweenInfo.new(1), {
+			Transparency = 0
+		}):Play()
+		task.wait(1)
+	end
+end)
+
+saveBtn.MouseButton1Click:Connect(function()
+	
+	playClickSound()
+	addPressAnimation(saveBtn)
+
+	saveConfig({
+		music = SelectedMusic,
+		headRank = HeadRankEnabled
+	})
+
+	showNotification("Config saved successfully!")
+end)
+
 -- ================= MUSIC DROPDOWN =================
 
 local workspace = game:GetService("Workspace")
