@@ -1,0 +1,428 @@
+-- Loading Ui
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Loading%20ui"))()
+wait(1)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(250, 0, 0)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Impossible Mode Re-Degenerate Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(250, 0, 0)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Credit by Guestly",true)
+
+game.ReplicatedStorage.ModulesClient.Name = "ClientModules"
+
+-- Doors sound changer
+coroutine.wrap(function()
+    while true do
+        wait()
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Unlock.SoundId = "rbxassetid://6431334087"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Open.SoundId = "rbxassetid://833871080"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Bell.SoundId = "rbxassetid://0"
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.SoundId = "rbxassetid://833871080"
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.TimePosition = 0
+    end
+end)()
+
+-- Pain Bar
+local tweenservice = game:GetService("TweenService")
+
+local gui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+local frame = Instance.new("Frame",gui)
+frame.BorderSizePixel = 0
+frame.BackgroundTransparency = 1
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
+frame.Position = UDim2.new(1, -320, 1, -35)
+frame.Size = UDim2.new(0, 310,0, 25)
+local corner = Instance.new("UICorner",frame)
+corner.CornerRadius = UDim.new(0.25,0)
+local stroke = Instance.new("UIStroke",frame)
+stroke.Color = Color3.fromRGB(255, 224, 189) 
+stroke.Thickness = 4
+
+local bar = Instance.new("Frame",frame)
+bar.Position = UDim2.new(0.016, 0,0.19, 0)
+bar.Size = UDim2.new(0, 50,0, 15)
+bar.BackgroundColor3 = Color3.fromRGB(255,107,8) 
+bar.BorderSizePixel = 0
+local corner1 = corner:Clone()
+corner1.Parent = bar
+
+local num = Instance.new("NumberValue",frame)
+num.Value = 0
+
+local scriptURLs = {
+    "https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Death%20v2"
+}
+
+num.Changed:Connect(function()
+    local anim = tweenservice:Create(bar,TweenInfo.new(5,Enum.EasingStyle.Linear),{Size = UDim2.new(0,num.Value,0,15)})
+    anim:Play()
+if num.Value >= 300 then
+wait(15)
+num.Value = 0 
+local index = math.random(1, #scriptURLs)
+        local url = scriptURLs[index]
+        local success, result = pcall(function()
+            return game:HttpGet(url)
+        end)
+        if success then
+            local func, err = loadstring(result)
+            if func then
+                func()
+end
+end
+end
+end)
+
+_G.stats = num
+_G.baseval = -2
+task.wait(0)
+_G.stats.Value += 1
+
+-- Paintings Images Changer
+coroutine.wrap(function()
+local painters = 1
+local paints = {
+	[1] = {"rbxassetid://12625633899","Depth The Dark."},
+	[2] = {"rbxassetid://11678966779","WH1T3..."},
+	[3] = {"rbxassetid://11877292178","???"},
+	[5] = {"rbxassetid://128206094637578","Guestly."},
+      [6] = {"rbxassetid://82969730394546","Vuivuiviu2."},
+	[8] = {"rbxassetid://13187070161","Smiler - Dupe."},
+	[9] = {"rbxassetid://91844042069377","Nowhywhat."}
+}
+
+-- New Paintings
+game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function()
+	local room = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value]
+	if room:FindFirstChild("Assets") then
+		local paintings = {}
+		for i,painting in next,room:FindFirstChild("Assets"):GetChildren() do
+			if painting.Name:find("Painting") then
+				table.insert(paintings,painting)
+			end
+		end
+		if #paintings > 0 then
+			local currentpainting
+			if paintings[#paintings] then
+				painters = painters + 1
+				currentpainting = paintings[#paintings]
+			else
+				currentpainting = paintings[1]
+			end
+			if currentpainting then
+				if currentpainting:FindFirstChild("Canvas") then
+					local selected = paints[math.random(1,#paints)]
+					if currentpainting:FindFirstChild("InteractPrompt") then
+						local cloning = currentpainting:FindFirstChild("InteractPrompt"):Clone()
+                        cloning.Name = "fakeInteract"
+						cloning.Parent = currentpainting
+						currentpainting:FindFirstChild("InteractPrompt"):Destroy()
+						local t = cloning.Triggered:Connect(function()
+							require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption(string.gsub("This painting is titled \"NAMEOFTHING\"","NAMEOFTHING",selected[2]), true)
+						end)
+					end
+					currentpainting:FindFirstChild("Canvas"):FindFirstChildOfClass("SurfaceGui"):FindFirstChildOfClass("ImageLabel").Image = selected[1]
+				end
+			end
+		end
+	end
+end)
+end)()
+
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#26ff00'>[Impossible Mode Re-Degenerate]: Script Succesfully Executed/Loaded.</font>")
+
+-- Nightmare Screech Changer
+game.ReplicatedStorage.Entities.Screech.Top.Eyes.Color = Color3.fromRGB(255, 0, 0)
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Caught.PlaybackSpeed = 0.7
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Attack.PlaybackSpeed = 0.7
+
+-- Intro
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Impossibleintro"))()
+
+-- Fake Screech
+coroutine.wrap(function()
+    while true do
+        wait(50)
+        local player = game.Players.LocalPlayer
+local mainGame = require(player.PlayerGui.MainUI.Initiator.Main_Game)
+local screechModule =
+require(player.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech)
+
+screechModule(mainGame)
+    end
+end)()
+
+-- Smiler
+coroutine.wrap(function()
+    while true do
+        wait(210)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Smiler%20spawner"))()
+    end
+end)()
+
+-- Wh1t3
+coroutine.wrap(function()
+    while true do
+        wait(560)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/White"))()
+    end
+end)()
+
+-- blink
+coroutine.wrap(function()
+    while true do
+        wait(70)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+        
+local cue2 = Instance.new("Sound")
+	cue2.Parent = game.Workspace
+	cue2.Name = "Spawn"
+	cue2.SoundId = "rbxassetid://7053083974"
+	cue2.Volume = 5
+	cue2.PlaybackSpeed = 1
+	cue2:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(0, 0, 0)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(209, 3, 255)})
+TW:Play()
+local cue2 = Instance.new("Sound")
+	cue2.Parent = game.Workspace
+	cue2.Name = "Spawn"
+	cue2.SoundId = "rbxassetid://165969964"
+	cue2.Volume = 1
+	cue2.PlaybackSpeed = 2
+	cue2:Play()
+loadstring(game:HttpGet("https://github.com/PABMAXICHAC/doors-monsters-scripts/raw/main/blinkcrux"))()
+local cue = Instance.new("Sound")
+	cue.Parent = game.Workspace
+	cue.Name = "Spawn"
+	cue.SoundId = "rbxassetid://175024455"
+	cue.Volume = 1
+	cue.PlaybackSpeed = 1.2
+	cue:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 107, 8)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 107, 8)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Pain: +5%",true)
+firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {"You died to who you call Blink...","He spawns in center of room and he will damage you if you dont follow his steps and rules","You can do it ! Keep going!"},"Blue")
+task.wait(0)
+_G.stats.Value += 5
+wait(10)
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(209, 3, 255)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+
+---====== Load achievement giver ======---
+local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+
+---====== Display achievement ======---
+achievementGiver({
+    Title = "Keep Blinking",
+    Desc = "No more blinking until i found you",
+    Reason = "Encounter Blink",
+    Image = "rbxassetid://113757885843910"
+})
+    end
+end)()
+
+-- Dread
+coroutine.wrap(function()
+    while true do
+        wait(280)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Dread%20spawner"))()
+    end
+end)()
+
+-- Silence
+coroutine.wrap(function()
+    while true do
+        wait(350)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Silenceje"))()
+local cue = Instance.new("Sound")
+	cue.Parent = game.Workspace
+	cue.Name = "Spawn"
+	cue.SoundId = "rbxassetid://175024455"
+	cue.Volume = 1
+	cue.PlaybackSpeed = 1.2
+	cue:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 107, 8)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 107, 8)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Pain: +10%",true)
+task.wait(0)
+_G.stats.Value += 10
+    end
+end)()
+
+-- Hunger
+coroutine.wrap(function()
+    while true do
+        wait(440)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Hunger%20remake"))()
+local cue = Instance.new("Sound")
+	cue.Parent = game.Workspace
+	cue.Name = "Spawn"
+	cue.SoundId = "rbxassetid://175024455"
+	cue.Volume = 1
+	cue.PlaybackSpeed = 1.2
+	cue:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 107, 8)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 107, 8)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Pain: +10%",true)
+task.wait(0)
+_G.stats.Value += 10
+    end
+end)()
+
+-- Dimensional Eye
+coroutine.wrap(function()
+    while true do
+        wait(180)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Dimensional%20Eye"))()
+local cue = Instance.new("Sound")
+	cue.Parent = game.Workspace
+	cue.Name = "Spawn"
+	cue.SoundId = "rbxassetid://175024455"
+	cue.Volume = 1
+	cue.PlaybackSpeed = 1.2
+	cue:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 107, 8)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 107, 8)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Pain: +5%",true)
+task.wait(0)
+_G.stats.Value += 5
+    end
+end)()
+
+-- Awaken Smiler
+coroutine.wrap(function()
+    while true do
+        wait(1100)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Awaken%20Smiler"))()
+    end
+end)()
+
+-- Awaken Silence
+coroutine.wrap(function()
+    while true do
+        wait(1400)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Awaken%20Silence"))()
+local cue = Instance.new("Sound")
+	cue.Parent = game.Workspace
+	cue.Name = "Spawn"
+	cue.SoundId = "rbxassetid://175024455"
+	cue.Volume = 1
+	cue.PlaybackSpeed = 1.2
+	cue:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 107, 8)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 107, 8)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Pain: +30%",true)
+task.wait(0)
+_G.stats.Value += 30
+    end
+end)()
+
+-- Stunner
+coroutine.wrap(function()
+    while true do
+        wait(35)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Stunner"))()
+    end
+end)()
+
+-- Awaken Wh1t3
+coroutine.wrap(function()
+    while true do
+        wait(1900)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Awaken%20Wh1t3"))()
+    end
+end)()
+
+-- Awaken Hunger
+coroutine.wrap(function()
+    while true do
+        wait(2800)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Awaken%20Hunger"))()
+local cue = Instance.new("Sound")
+	cue.Parent = game.Workspace
+	cue.Name = "Spawn"
+	cue.SoundId = "rbxassetid://175024455"
+	cue.Volume = 1
+	cue.PlaybackSpeed = 1.2
+	cue:Play()
+game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 107, 8)
+game.Lighting.MainColorCorrection.Contrast = 10
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 107, 8)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Pain: +30%",true)
+task.wait(0)
+_G.stats.Value += 30
+    end
+end)()
