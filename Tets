@@ -151,6 +151,22 @@ local function getMostUsed()
 	return best
 end
 
+--// CONFIG SYSTEM
+local CONFIG_FILE = "DoorsHub_Config.json"
+
+local function saveConfig(data)
+	if writefile then
+		writefile(CONFIG_FILE, HttpService:JSONEncode(data))
+	end
+end
+
+local function loadConfig()
+	if readfile and isfile and isfile(CONFIG_FILE) then
+		return HttpService:JSONDecode(readfile(CONFIG_FILE))
+	end
+	return nil
+end
+
 -- SAVE DATA
 local SAVE_FILE = "doorshub_stats.json"
 local TotalExecuted = 0
@@ -214,22 +230,6 @@ local function saveStats()
 	}
 	
 	writefile(SAVE_FILE, HttpService:JSONEncode(data))
-end
-
---// CONFIG SYSTEM
-local CONFIG_FILE = "DoorsHub_Config.json"
-
-local function saveConfig(data)
-	if writefile then
-		writefile(CONFIG_FILE, HttpService:JSONEncode(data))
-	end
-end
-
-local function loadConfig()
-	if readfile and isfile and isfile(CONFIG_FILE) then
-		return HttpService:JSONDecode(readfile(CONFIG_FILE))
-	end
-	return nil
 end
 
 --// ===== BACKGROUND MUSIC =====
