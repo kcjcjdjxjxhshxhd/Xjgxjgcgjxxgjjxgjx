@@ -1831,7 +1831,7 @@ settingsTitle.TextColor3 = Color3.fromRGB(255, 221, 140)
 settingsTitle.ZIndex = 1000
 
 -- SAVE CONFIG BUTTON
-local saveBtn = Instance.new("TextButton", settingsFrame)
+local saveBtn = Instance.new("TextButton", settingsOverlay)
 saveBtn.Size = UDim2.new(0,140,0,32)
 saveBtn.Position = settingsTitle.Position + UDim2.new(1,-150,0,0)
 saveBtn.BackgroundColor3 = Color3.fromRGB(230,200,120)
