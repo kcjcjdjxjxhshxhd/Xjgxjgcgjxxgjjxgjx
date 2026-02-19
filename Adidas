@@ -1,0 +1,67 @@
+print('TikTok:@x.an3929')
+
+local _LocalPlayer = game:GetService('Players').LocalPlayer
+local u2 = {
+    Idle1 = 122257458498464,
+    Idle2 = 102357151005774,
+    Walk = 122150855457006,
+    Run = 82598234841035,
+    Jump = 75290611992385,
+    Climb = 88763136693023,
+    Fall = 98600215928904,
+    Swim = 133308483266208,
+    SwimIdle = 109346520324160,
+}
+
+local function v5(p3)
+    task.spawn(function()
+        local _Animate = p3:WaitForChild('Animate', 10)
+
+        if _Animate then
+            pcall(function()
+                local humanoid = p3:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    -- Stop all current animation tracks to prevent overlap
+                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                        track:Stop()
+                    end
+                end
+
+                -- Assign new animation IDs
+                if _Animate.idle and _Animate.idle.Animation1 then
+                    _Animate.idle.Animation1.AnimationId = 'rbxassetid://' .. u2.Idle1
+                end
+                if _Animate.idle and _Animate.idle.Animation2 then
+                    _Animate.idle.Animation2.AnimationId = 'rbxassetid://' .. u2.Idle2
+                end
+                if _Animate.walk and _Animate.walk.WalkAnim then
+                    _Animate.walk.WalkAnim.AnimationId = 'rbxassetid://' .. u2.Walk
+                end
+                if _Animate.run and _Animate.run.RunAnim then
+                    _Animate.run.RunAnim.AnimationId = 'rbxassetid://' .. u2.Run
+                end
+                if _Animate.jump and _Animate.jump.JumpAnim then
+                    _Animate.jump.JumpAnim.AnimationId = 'rbxassetid://' .. u2.Jump
+                end
+                if _Animate.climb and _Animate.climb.ClimbAnim then
+                    _Animate.climb.ClimbAnim.AnimationId = 'rbxassetid://' .. u2.Climb
+                end
+                if _Animate.fall and _Animate.fall.FallAnim then
+                    _Animate.fall.FallAnim.AnimationId = 'rbxassetid://' .. u2.Fall
+                end
+                if _Animate.swim and _Animate.swim.Swim then
+                    _Animate.swim.Swim.AnimationId = 'rbxassetid://' .. u2.Swim
+                end
+                if _Animate.swimidle and _Animate.swimidle.SwimIdle then
+                    _Animate.swimidle.SwimIdle.AnimationId = 'rbxassetid://' .. u2.SwimIdle
+                end
+            end)
+        end
+    end)
+end
+
+if _LocalPlayer.Character then
+    v5(_LocalPlayer.Character)
+end
+
+_LocalPlayer.CharacterAdded:Connect(v5)
