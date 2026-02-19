@@ -1,0 +1,104 @@
+game.Players.LocalPlayer.PlayerGui.MainUI.Jumpscare.Jumpscare_Rush.ImageLabel.Image = "rbxassetid://95317701914807"
+game.Players.LocalPlayer.PlayerGui.MainUI.Jumpscare.Jumpscare_Rush.ImageLabelBig.Image = "rbxassetid://95317701914807"
+
+local workspace = game:GetService("Workspace")
+
+local running = true
+
+local function OnRushSpawned(model)
+game.Workspace.RushMoving.RushNew.Attachment.ParticleEmitter.Texture = "rbxassetid://95317701914807"   
+game.Workspace.RushMoving.RushNew.PlaySound:Destroy() game.Workspace.RushMoving.RushNew.Footsteps:Destroy()
+workspace.RushMoving.RushNew.Attachment.PointLight.Color = Color3.fromRGB(255, 255, 0)
+workspace.RushMoving.RushNew.Attachment.PointLight.Brightness = 2
+workspace.RushMoving.RushNew.Attachment.PointLight.Range = 20
+workspace.RushMoving.RushNew.Attachment.PointLight.Enabled = true
+workspace.RushMoving.RushNew.Attachment.BlackTrail.Texture = "rbxassetid://124439277843627"
+workspace.RushMoving.RushNew.Attachment.BlackTrail.Size = NumberSequence.new(5)
+workspace.RushMoving.RushNew.Attachment.ParticleEmitter.Size = NumberSequence.new(6)
+workspace.RushMoving.RushNew.Attachment.BlackTrail.Color = ColorSequence.new(Color3.fromRGB(0,0,0))
+wait(0.01)
+local black = game.Workspace.RushMoving.RushNew.Attachment.BlackTrail 
+local parent = black.Parent
+
+for i = 1, 10 do
+    local clone = black:Clone()
+    clone.Parent = parent
+end
+
+local face = game.Workspace.RushMoving.RushNew.Attachment.ParticleEmitter
+local parent2 = face.Parent
+
+for i = 1, 10 do
+    local clone2 = face:Clone()
+    clone2.Parent = parent2
+end
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = game.Workspace.RushMoving.RushNew
+    sound.Volume = 2
+    sound.PlaybackSpeed = 1
+    sound.Name = "far"
+    sound.RollOffMaxDistance = 350
+    sound.RollOffMinDistance = 100
+    sound.Looped = true
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/Guestly-Scripts/Items-Scripts/raw/refs/heads/main/xa.mp3?raw=true", 1, " faram")
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = game.Workspace.RushMoving.RushNew
+    sound.Volume = 2
+    sound.PlaybackSpeed = 1
+    sound.Name = "close"
+    sound.RollOffMaxDistance = 150
+    sound.RollOffMinDistance = 10
+    sound.Looped = true
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/Guestly-Scripts/Items-Scripts/raw/refs/heads/main/g%E1%BA%A7n_2.mp3?raw=true", 1, " closeam")
+end
+
+while true do
+	if running then
+		local rush = workspace:FindFirstChild("RushMoving")
+
+		if rush and rush:IsA("Model") then
+			running = false
+
+			task.spawn(function()
+				OnRushSpawned(rush)
+			end)
+
+			repeat
+				task.wait(0.1)
+				rush = workspace:FindFirstChild("RushMoving")
+			until not rush
+
+			running = true
+		end
+	end
+
+	task.wait(0.1)
+end
