@@ -1,0 +1,247 @@
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#ffffff'>[Suggestions Mode]: Script Succesfully Executed/Loaded.</font>")
+
+--// AUTO CLONE PATHFINDNODES SYSTEM
+
+local roomsFolder = workspace:WaitForChild("CurrentRooms")
+
+local SavedClones = {}
+
+local function clonePath(room)
+    if SavedClones[room] then return end
+
+    local nodes = room:FindFirstChild("PathfindNodes")
+    if not nodes then return end
+
+    local clone = nodes:Clone()
+    clone.Name = "PathfindNodes"
+    clone.Parent = room -- hoặc ReplicatedStorage nếu thích
+
+    SavedClones[room] = clone
+end
+
+local function removeClone(room)
+    if SavedClones[room] then
+        SavedClones[room]:Destroy()
+        SavedClones[room] = nil
+    end
+end
+
+-- 🔥 CHECK CỰC NHANH (Heartbeat level)
+game:GetService("RunService").Heartbeat:Connect(function()
+    for _, room in ipairs(roomsFolder:GetChildren()) do
+        if not SavedClones[room] then
+            clonePath(room)
+        end
+    end
+end)
+
+-- dọn clone nếu room bị xoá
+roomsFolder.ChildRemoved:Connect(function(room)
+    removeClone(room)
+end)
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Suggestions Mode Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Made by Guestly",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Credits to alot of people for the entities suggestions",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(164, 255, 156)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Enjoy the mode! :D",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Aggressive
+coroutine.wrap(function()
+    while true do
+        wait(650)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/Aggressive"))()
+    end
+end)()
+
+-- A-85
+coroutine.wrap(function()
+    while true do
+        wait(200)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.5 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A85"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- Pursure
+coroutine.wrap(function()
+    while true do
+        wait(300)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.4 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/Pursure"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- A-170
+coroutine.wrap(function()
+    while true do
+        wait(90)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.5 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A170"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- ????
+coroutine.wrap(function()
+    while true do
+        wait(150)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.1 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/%3F%3F%3F%3F"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- A-200
+coroutine.wrap(function()
+    while true do
+        wait(100)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.2 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+wait(3)
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A-200"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- A-400
+coroutine.wrap(function()
+    while true do
+        wait(200)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.6 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A400"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- Nightmare Silence
+coroutine.wrap(function()
+    while true do
+        wait(210)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.3 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Nightmare%20Silence"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
+
+-- Darkness
+coroutine.wrap(function()
+    while true do
+        wait(300)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.3 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Darkness"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
