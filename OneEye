@@ -12,8 +12,8 @@ local entity = spawner.Create({
 	},
 	Lights = {
 		Flicker = {
-			Enabled = false,
-			Duration = 5
+			Enabled = true,
+			Duration = 6
 		},
 		Shatter = true,
 		Repair = false
@@ -22,25 +22,25 @@ local entity = spawner.Create({
 		Enabled = false
 	},
 	CameraShake = {
-		Enabled = true,
-		Range = 200,
+		Enabled = false,
+		Range = 100,
 		Values = {2, 100, 10, 5} -- Magnitude, Roughness, FadeIn, FadeOut
 	},
 	Movement = {
-		Speed = 200,
-		Delay = 7,
-		Reversed = false
+		Speed = 15,
+		Delay = 6,
+		Reversed = true
 	},
 	Rebounding = {
 		Enabled = true,
 		Type = "Ambush", -- "Blitz"
-		Min = 10,
-		Max = 10,
+		Min = 3,
+		Max = 3,
 		Delay = 0
 	},
 	Damage = {
 		Enabled = true,
-		Range = 40,
+		Range = 20,
 		Amount = 125
 	},
 	Crucifixion = {
@@ -51,7 +51,7 @@ local entity = spawner.Create({
 	},
 	Death = {
 		Type = "Guiding", -- "Curious"
-		Hints = {"You died to an entity called One Eye", "He is insanely fast", "Try to hide as fast as you can", "Good luck."},
+		Hints = {"You died to an entity called One Eye", "He is pretty slow", "Try to get rid of him, i know you can", "Good luck."},
 		Cause = ""
 	}
 })
