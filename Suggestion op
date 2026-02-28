@@ -245,3 +245,25 @@ else
 end
     end
 end)()
+
+-- One Eye
+coroutine.wrap(function()
+    while true do
+        wait(150)
+-- random số thập phân từ 0 → 1
+local roll = math.random()
+
+if roll < 0.1 then
+    -- ===== SCRIPT 1 (60%) =====
+    print("Chạy Script 1")
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/OneEye"))()
+else
+    -- ===== SCRIPT 2 (40%) =====
+    print("Chạy Script 2")
+
+    -- code script 2 của m ở đây
+end
+    end
+end)()
