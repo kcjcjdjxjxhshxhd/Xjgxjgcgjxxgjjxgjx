@@ -97,12 +97,12 @@ end)
 entity:SetCallback("OnDespawned", function()
     print("Entity has despawned")
 -- One-time execute guard
-if getgenv()._SILENT_ALREADY_EXECUTED then
+if getgenv()._DARK_ALREADY_EXECUTED then
     warn("[SCRIPT] Script đã được chạy trước đó, từ chối execute!")
     return
 end
 
-getgenv()._SILENT_ALREADY_EXECUTED = true
+getgenv()._DARK_ALREADY_EXECUTED = true
 
 -- ======================
 -- SCRIPT CHÍNH BẮT ĐẦU Ở ĐÂY
