@@ -1,0 +1,433 @@
+local TextChatService = game:GetService('TextChatService')
+
+TextChatService.OnIncomingMessage = function(Message: TextChatMessage)
+    if Message.TextSource then
+        local player = game.Players:GetPlayerByUserId(Message.TextSource.UserId)
+        if player.Name == 'bre5be123' then
+            Message.PrefixText = " <font color='#7B11FD'>[Owner]</font> "
+                .. Message.PrefixText
+        end
+        if player.Name == 'vuivuiviu3' then
+            Message.PrefixText = " <font color='#7B11FD'>[Owner 2]</font> "
+                .. Message.PrefixText
+        end
+        if player.Name == 'Whywwhat3' then
+            Message.PrefixText = " <font color='#00BBFF'>[Helper]</font> "
+                .. Message.PrefixText
+        end
+        if player.Name == 'dimaalt4' or player.Name == 'dima_082ooo' then
+            Message.PrefixText = " <font color='#FFD800'>[Special]</font> "
+                .. Message.PrefixText
+        end
+    end
+end
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Volume = 1
+    sound.PlaybackSpeed = 1
+    sound.Name = "Suc"
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/Doors-Guest-Scripts/Tutorial/raw/refs/heads/main/XRecorder_Edited_20250902_02.mp3?raw=true", 1, " Suc1")
+
+local mainGameModule = game.Players.LocalPlayer.PlayerGui
+    :WaitForChild("MainUI", 10)
+    :WaitForChild("Initiator", 10)
+    :FindFirstChild("Main_Game")
+
+local chatService = game:GetService("TextChatService")
+local channel = chatService.TextChannels:FindFirstChild("RBXGeneral")
+
+local function showCaptionAndChat(captionText, chatText)
+    if mainGameModule then
+        local success, mainGame = pcall(require, mainGameModule)
+        if success and mainGame and mainGame.caption then
+            mainGame.caption("<font color='#ff69b4'>"..captionText.."</font>", true)
+        end
+    end
+    if channel then
+        channel:DisplaySystemMessage("<font color='#ff69b4'>"..chatText.."</font>")
+    end
+end
+
+showCaptionAndChat("Voidness Mode V2 Loaded Successfully.", "Cutie Light: Thanks for playing Voidness Mode")
+task.wait(5)
+
+showCaptionAndChat("Mode made by Vuivuiviu2, Guestly and Voorpr0", "Cutie Light: Mode made by Vuivuiviu2, Guestly and Voorpr0")
+task.wait(5)
+
+showCaptionAndChat("Have fun 👍", "Good Luck")
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+local camera = workspace.CurrentCamera
+
+--===== DARK ENVIRONMENT + FOG =====
+Lighting.Technology = Enum.Technology.Compatibility
+Lighting.Brightness = 0
+Lighting.ClockTime = 0
+Lighting.ExposureCompensation = -2.1
+Lighting.Ambient = Color3.fromRGB(20,20,20)
+Lighting.OutdoorAmbient = Color3.fromRGB(20,20,20)
+
+Lighting.FogColor = Color3.fromRGB(0,0,0)
+Lighting.FogStart = 20
+Lighting.FogEnd = 80
+
+for _, v in ipairs(Lighting:GetChildren()) do
+	if v:IsA("BloomEffect")
+	or v:IsA("SunRaysEffect")
+	or v:IsA("DepthOfFieldEffect") then
+		v.Enabled = false
+	end
+	if v:IsA("Atmosphere") then
+		v.Density = 1
+		v.Color = Color3.fromRGB(0,0,0)
+		v.Decay = Color3.fromRGB(0,0,0)
+	end
+end
+
+--===== FLASHLIGHT CONFIG =====
+local TOOL_ICON_ID = 71918796662539
+local MODEL_ID = 89780352154628
+local HOLD_ANIMATION_ID = 100296215597460
+
+local SPOTLIGHT_COLOR = Color3.fromRGB(255,0,255) -- hồng
+
+local MAX_BATTERY = 100
+local LOW_BATTERY = 20
+local DRAIN_RATE = 1
+local CHARGE_RATE = 0.75
+local BLINK_SPEED = 1.8
+
+local battery = MAX_BATTERY
+local equipped = false
+local blinkAlpha = 1
+local blinkDir = -1
+
+--===== LOAD TOOL MODEL =====
+local objects = game:GetObjects("rbxassetid://" .. MODEL_ID)
+if not objects or #objects == 0 then return end
+local model = objects[1]
+
+local tool = Instance.new("Tool")
+tool.Name = "Flashlight"
+tool.RequiresHandle = true
+tool.TextureId = "rbxassetid://"..TOOL_ICON_ID
+
+local handle = Instance.new("Part")
+handle.Name = "Handle"
+handle.Size = Vector3.new(1,1,1)
+handle.Transparency = 1
+handle.CanCollide = false
+handle.Parent = tool
+
+model.Parent = tool
+if model:IsA("Model") then
+	model:PivotTo(handle.CFrame * CFrame.new(0,0,-0.8))
+else
+	model.CFrame = handle.CFrame * CFrame.new(0,0,-0.8)
+end
+
+-- Gắn tất cả part với handle, giữ màu gốc
+for _, obj in ipairs(model:GetDescendants()) do
+	if obj:IsA("BasePart") then
+		obj.Anchored = false
+		obj.CanCollide = false
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = handle
+		weld.Part1 = obj
+		weld.Parent = handle
+	end
+end
+
+--===== SPOTLIGHT =====
+local attachment = Instance.new("Attachment", handle)
+local light = Instance.new("SpotLight")
+light.Parent = attachment
+light.Enabled = false
+light.Color = SPOTLIGHT_COLOR
+light.Brightness = 25
+light.Range = 100000
+light.Angle = 25
+light.Shadows = true
+light.Face = Enum.NormalId.Front
+
+tool.Parent = backpack
+
+--===== CAMERA FOLLOW =====
+local camConn
+local function startCameraFollow()
+	camConn = RunService.RenderStepped:Connect(function()
+		local origin = attachment.WorldPosition
+		attachment.WorldCFrame = CFrame.lookAt(origin, origin + camera.CFrame.LookVector)
+	end)
+end
+local function stopCameraFollow()
+	if camConn then
+		camConn:Disconnect()
+		camConn = nil
+	end
+end
+
+--===== UI =====
+local gui = Instance.new("ScreenGui")
+gui.ResetOnSpawn = false
+gui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame")
+frame.AnchorPoint = Vector2.new(1,0.5)
+frame.Position = UDim2.new(1,-30,0.45,0)
+frame.Size = UDim2.new(0,16,0,140)
+frame.BackgroundColor3 = Color3.fromRGB(15,15,20)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local bar = Instance.new("Frame")
+bar.AnchorPoint = Vector2.new(0.5,1)
+bar.Position = UDim2.new(0.5,0,1,0)
+bar.Size = UDim2.new(1,-4,1,-4)
+bar.BackgroundColor3 = SPOTLIGHT_COLOR
+bar.BorderSizePixel = 0
+bar.Parent = frame
+
+local percentText = Instance.new("TextLabel")
+percentText.Size = UDim2.new(3,0,0,22)
+percentText.Position = UDim2.new(-1,0,1,6)
+percentText.BackgroundTransparency = 1
+percentText.TextColor3 = SPOTLIGHT_COLOR
+percentText.TextScaled = true
+percentText.Font = Enum.Font.GothamBold
+percentText.Text = "100%"
+percentText.Parent = frame
+
+local function updateUI()
+	bar.Size = UDim2.new(1,-4,battery / MAX_BATTERY,-4)
+	percentText.Text = math.floor(battery) .. "%"
+end
+
+--===== HOLD ANIMATION =====
+local animTrack
+local function playHoldAnimation(character)
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+	local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
+	local animation = Instance.new("Animation")
+	animation.AnimationId = "rbxassetid://" .. HOLD_ANIMATION_ID
+	animTrack = animator:LoadAnimation(animation)
+	animTrack.Priority = Enum.AnimationPriority.Action
+	animTrack.Looped = true
+	animTrack:Play()
+end
+local function stopHoldAnimation()
+	if animTrack then
+		animTrack:Stop()
+		animTrack:Destroy()
+		animTrack = nil
+	end
+end
+
+--===== BATTERY LOGIC + PARTICLEEMITTER CONTROL =====
+local particleEmitters = {}
+for _, obj in ipairs(model:GetDescendants()) do
+	if obj:IsA("ParticleEmitter") then
+		table.insert(particleEmitters, obj)
+	end
+end
+
+RunService.RenderStepped:Connect(function(dt)
+	if equipped then
+		battery -= DRAIN_RATE * dt
+	else
+		battery += CHARGE_RATE * dt
+	end
+	battery = math.clamp(battery, 0, MAX_BATTERY)
+	updateUI()
+
+	-- bật/tắt spotlight và particle emitter
+	if battery <= 0 then
+		light.Enabled = false
+		for _, pe in ipairs(particleEmitters) do
+			pe.Enabled = false
+		end
+	else
+		if equipped then
+			light.Enabled = true
+		end
+		for _, pe in ipairs(particleEmitters) do
+			pe.Enabled = true
+		end
+	end
+
+	-- BLINK khi pin thấp
+	if equipped and battery <= LOW_BATTERY and battery > 0 then
+		blinkAlpha += blinkDir * BLINK_SPEED * dt
+		if blinkAlpha <= 0.2 then blinkDir = 1 end
+		if blinkAlpha >= 1 then blinkDir = -1 end
+		light.Brightness = 25 * blinkAlpha
+		bar.BackgroundTransparency = 1 - blinkAlpha
+	else
+		blinkAlpha = 1
+		light.Brightness = 25
+		bar.BackgroundTransparency = 0
+	end
+end)
+
+--===== EQUIP / UNEQUIP =====
+tool.Equipped:Connect(function()
+	equipped = true
+	playHoldAnimation(player.Character or player.CharacterAdded:Wait())
+	if battery > 0 then
+		light.Enabled = true
+	end
+	startCameraFollow()
+end)
+
+tool.Unequipped:Connect(function()
+	equipped = false
+	stopHoldAnimation()
+	light.Enabled = false
+	stopCameraFollow()
+end)
+
+--===== REMOVE LIGHTS CỦA ĐÈN TREO TƯỜNG =====
+local function removeWallLightFixture(obj)
+	if obj.Name:match("LightFixture") then
+		for _, lightObj in ipairs(obj:GetDescendants()) do
+			if lightObj:IsA("Light") then
+				lightObj.Enabled = false
+				if lightObj.Parent then lightObj:Destroy() end
+			end
+		end
+	end
+end
+
+Workspace.DescendantAdded:Connect(function(obj)
+	removeWallLightFixture(obj)
+end)
+
+for _, obj in ipairs(Workspace:GetDescendants()) do
+	removeWallLightFixture(obj)
+end
+
+-- Paintings Images Changer
+coroutine.wrap(function()
+local painters = 1
+local paints = {
+	[1] = {"rbxassetid://12625633899","Depth The Dark."},
+	[2] = {"rbxassetid://11678966779","WH1T3..."},
+	[3] = {"rbxassetid://11877292178","???"},
+	[5] = {"rbxassetid://128206094637578","Guestly."},
+      [6] = {"rbxassetid://82969730394546","Vuivuiviu2."},
+	[8] = {"rbxassetid://13187070161","Smiler - Dupe."},
+	[9] = {"rbxassetid://91844042069377","Nowhywhat."}
+}
+
+-- New Paintings
+game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function()
+	local room = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value]
+	if room:FindFirstChild("Assets") then
+		local paintings = {}
+		for i,painting in next,room:FindFirstChild("Assets"):GetChildren() do
+			if painting.Name:find("Painting") then
+				table.insert(paintings,painting)
+			end
+		end
+		if #paintings > 0 then
+			local currentpainting
+			if paintings[#paintings] then
+				painters = painters + 1
+				currentpainting = paintings[#paintings]
+			else
+				currentpainting = paintings[1]
+			end
+			if currentpainting then
+				if currentpainting:FindFirstChild("Canvas") then
+					local selected = paints[math.random(1,#paints)]
+					if currentpainting:FindFirstChild("InteractPrompt") then
+						local cloning = currentpainting:FindFirstChild("InteractPrompt"):Clone()
+                        cloning.Name = "fakeInteract"
+						cloning.Parent = currentpainting
+						currentpainting:FindFirstChild("InteractPrompt"):Destroy()
+						local t = cloning.Triggered:Connect(function()
+							require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption(string.gsub("This painting is titled \"NAMEOFTHING\"","NAMEOFTHING",selected[2]), true)
+						end)
+					end
+					currentpainting:FindFirstChild("Canvas"):FindFirstChildOfClass("SurfaceGui"):FindFirstChildOfClass("ImageLabel").Image = selected[1]
+				end
+			end
+		end
+	end
+end)
+end)()
+
+-- Guiding light turn to Cutie light
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-Second-Account/DOORS/refs/heads/main/Cutielight"))()
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Blitz
+coroutine.wrap(function()
+    while true do
+        wait(135)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Blit"))()
+    end
+end)()
+
+-- Darkness
+coroutine.wrap(function()
+    while true do
+        wait(290)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Dakness"))()
+    end
+end)()
+
+-- A-60
+coroutine.wrap(function()
+    while true do
+        wait(700)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/A60voidness"))()
+    end
+end)()
+
+-- Stalker
+coroutine.wrap(function()
+    while true do
+        wait(75)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Stalker"))()
+    end
+end)()
+
+-- Seraphim Mortis
+coroutine.wrap(function()
+    while true do
+        wait(850)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Seraphim"))()
+    end
+end)()
