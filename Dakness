@@ -1,0 +1,305 @@
+-- Darkness (sửa lỗi & an toàn)
+-- Dành cho executor local (Doors / client)
+
+--// Load Spawner (bọc pcall để tránh crash nếu HttpGet lỗi)
+local ok, spawner = pcall(function()
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/VoorPhale012/Fogroom/refs/heads/main/Wwwhyyyyil"))()
+end)
+
+if not ok or not spawner or not spawner.Create then
+	warn("Spawner không tải được hoặc thiếu hàm Create! (Kiểm tra URL hoặc quyền HttpGet)")
+	return
+end
+
+--/ Helper an toàn
+local function safeDestroy(obj)
+	if obj and obj.Parent then
+		pcall(function() obj:Destroy() end)
+	end
+end
+
+-- Tải âm thanh từ URL (nếu executor hỗ trợ writefile + getcustomasset/getsynasset)
+local function GitAud(soundUrl, filename)
+	filename = filename or "temp_sound"
+	local success, result = pcall(function()
+		if writefile and (getcustomasset or getsynasset) then
+			local data = game:HttpGet(soundUrl)
+			writefile(filename .. ".mp3", data)
+			return (getcustomasset or getsynasset)(filename .. ".mp3")
+		else
+			-- Nếu không có writefile thì trả về nguyên url (một số executor/Roblox không cho play từ http)
+			return soundUrl
+		end
+	end)
+	if success and result then
+		return result
+	end
+	return soundUrl
+end
+
+local function CustomGitSound(soundlink, vol, filename)
+	vol = vol or 1
+	local sound = Instance.new("Sound")
+	local asset = GitAud(soundlink, filename)
+	-- Nếu GitAud trả về rbxassetid hoặc url thì dùng nó
+	sound.SoundId = tostring(asset)
+	sound.Volume = 1.5
+	sound.Looped = true
+	sound.Name = "DarknessAmbient"
+	sound.Parent = workspace
+	pcall(function() sound:Play() end)
+	return sound
+end
+
+--// Tạo entity
+local entity = spawner.Create({
+	Entity = {
+		Name = "Darkness",
+		Asset = "rbxassetid://121725853188313",
+		HeightOffset = 0
+	},
+	Lights = {
+		Flicker = {
+			Enabled = false,
+			Duration = 4
+		},
+		Shatter = true,
+		Repair = false
+	},
+	Light = {
+		Color = {1, 1, 1}
+	},
+	Earthquake = { Enabled = false },
+	CameraShake = {
+		Enabled = false,
+		Range = 100,
+		Values = {2.5, 35, 0.15, 2}
+	},
+	Movement = {
+		Speed = 15,
+		Delay = 0,
+		Reversed = false
+	},
+	Rebounding = {
+		Enabled = false,
+		Type = "Ambush",
+		Min = 1,
+		Max = 1,
+		Delay = 2
+	},
+	Damage = {
+		Enabled = true,
+		Range = 30,
+		Amount = 0.01
+	},
+	Crucifixion = {
+		Enabled = true,
+		Range = 40,
+		Resist = false,
+		Break = true
+	},
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"Welcome back, what did you get now?",
+			"Hm.. I don't really know who you dead to",
+			"Maybe you can call him Darkness",
+			"Whenever he appears, you will hear the wind noises",
+			"Anyways you can do it! Bye!! :>"
+		},
+		Cause = ""
+	}
+})
+
+--// Jumpscare function (được gọi khi player chết bởi thực thể)
+local function ShowJumpscare()
+	local RunService = game:GetService("RunService")
+	local player = game.Players.LocalPlayer
+	if not player then return end
+	local playerGui = player:FindFirstChild("PlayerGui")
+	if not playerGui then return end
+
+	-- Assets (thay đổi id nếu cần)
+	local entityImageIdle = "rbxassetid://122446161872338"
+	local entityImageJumpscare = "rbxassetid://115667019397281"
+	local jumpSound = "rbxassetid://130990524400761"
+
+	-- Create ScreenGui
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "JumpscareGui"
+	gui.IgnoreGuiInset = true
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+
+	-- Background
+	local bg = Instance.new("Frame")
+	bg.Size = UDim2.new(1, 0, 1, 0)
+	bg.Position = UDim2.new(0,0,0,0)
+	bg.BackgroundColor3 = Color3.new(1,1,1)
+	bg.BackgroundTransparency = 0
+	bg.Parent = gui
+
+	-- Entity Image
+	local img = Instance.new("ImageLabel")
+	img.Size = UDim2.new(0.3, 0, 0.3, 0)
+	img.Position = UDim2.new(0.35, 0, 0.35, 0)
+	img.BackgroundTransparency = 1
+	img.Image = entityImageIdle
+	img.Parent = gui
+
+	-- Sound (chỉ phát khi jumpscare)
+	local sound = Instance.new("Sound")
+	sound.SoundId = jumpSound
+	sound.Volume = 1
+	sound.Looped = false
+	sound.Parent = gui
+
+	-- Camera shake effect (simple by moving image)
+	local shaking = true
+	local intensity = 2
+	local conn
+	conn = RunService.RenderStepped:Connect(function()
+		if not shaking then return end
+		-- jitter vị trí
+		local x = math.random(-intensity, intensity)
+		local y = math.random(-intensity, intensity)
+		img.Position = UDim2.new(0.35, x, 0.35, y)
+	end)
+
+	-- Stage 1: xa và rung nhẹ (nếu muốn hoãn, chỉnh task.wait)
+	intensity = 2
+	task.wait(5) -- rút ngắn từ 5s -> 0.5s để phản hồi nhanh hơn
+
+	-- Stage 2: Jumpscare (1 giây)
+	img.Image = entityImageJumpscare
+	img:TweenSize(UDim2.new(0.9, 0, 0.9, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
+	img:TweenPosition(UDim2.new(0.05, 0, 0.05, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
+	intensity = 15
+	pcall(function() sound:Play() end)
+
+	-- Nền đổi trắng <-> đen mỗi 0.2s trong 1 giây (5 lần)
+	for i = 1, 5 do
+		if i % 2 == 0 then
+			bg.BackgroundColor3 = Color3.new(0,0,0)
+		else
+			bg.BackgroundColor3 = Color3.new(1,1,1)
+		end
+		task.wait(0.2)
+	end
+
+	-- Giết player (nếu có humanoid)
+	pcall(function()
+		local char = player.Character
+		if char then
+			local hum = char:FindFirstChildOfClass("Humanoid")
+			if hum then hum.Health = 0 end
+		end
+	end)
+
+	-- Gửi death hints (nếu firesignal tồn tại)
+	pcall(function()
+		if firesignal and game.ReplicatedStorage:FindFirstChild("RemotesFolder") and game.ReplicatedStorage.RemotesFolder:FindFirstChild("DeathHint") then
+			firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+				"Welcome back, what did you get now?",
+				"Hm.. I don't really know who you dead to",
+				"Maybe you can call him Darkness",
+				"Whenever he appears, you will hear the wind noises",
+				"Anyways you can do it! Bye!! :>"
+			}, "Blue")
+		end
+	end)
+
+	-- Ghi nguyên nhân chết (nếu cấu trúc GameStats tồn tại)
+	pcall(function()
+		local gs = game.ReplicatedStorage:FindFirstChild("GameStats")
+		if gs and gs:FindFirstChild("Player_" .. player.Name) and gs["Player_" .. player.Name].Total and gs["Player_" .. player.Name].Total:FindFirstChild("DeathCause") then
+			gs["Player_" .. player.Name].Total.DeathCause.Value = "Darkness"
+		end
+	end)
+
+	-- Stage 3: Fade out (mặt tan biến + nền mờ dần + rung giảm dần)
+	for i = 1, 20 do
+		img.ImageTransparency = i / 20
+		bg.BackgroundTransparency = i / 20
+		intensity = math.max(0, 15 - i)
+		task.wait(0.05)
+	end
+
+	-- Kết thúc và dọn dẹp
+	shaking = false
+	if conn then conn:Disconnect() end
+	safeDestroy(gui)
+end
+
+--// Callbacks
+entity:SetCallback("OnSpawned", function()
+	print("Entity has spawned")
+	-- Play ambient (bảo vệ bằng pcall)
+	pcall(function()
+		CustomGitSound("https://github.com/nervehammer1/throwawaystuff/raw/refs/heads/main/NightmareAmbient.mp3?raw=true", 1, "Amb")
+	end)
+
+	-- Xoá Footsteps nếu có
+	local darkness = workspace:FindFirstChild("Darkness")
+	local foot = darkness and darkness:FindFirstChild("RushNew")
+	if foot and foot:FindFirstChild("Footsteps") then
+		safeDestroy(foot.Footsteps)
+	end
+end)
+
+entity:SetCallback("OnStartMoving", function()
+	print("Entity has started moving")
+end)
+
+entity:SetCallback("OnEnterRoom", function(room, firstTime)
+	if firstTime then
+		print("Entity has entered room: " .. (room and room.Name or "unknown") .. " for the first time")
+	else
+		print("Entity has entered room: " .. (room and room.Name or "unknown") .. " again")
+	end
+end)
+
+entity:SetCallback("OnLookAt", function(lineOfSight)
+	if lineOfSight then
+		print("Player is looking at entity")
+	else
+		print("Player view is obstructed")
+	end
+end)
+
+entity:SetCallback("OnRebounding", function(startOfRebound)
+	if startOfRebound then
+		print("Entity has started rebounding")
+	else
+		print("Entity has finished rebounding")
+	end
+end)
+
+entity:SetCallback("OnDespawning", function()
+	print("Entity is despawning")
+end)
+
+entity:SetCallback("OnDespawned", function()
+	print("Entity has despawned")
+	-- safe destroy ambient
+	if workspace:FindFirstChild("DarknessAmbient") then
+		safeDestroy(workspace.DarknessAmbient)
+	end
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+	if newHealth == 0 then
+		print("Entity has killed the player")
+	else
+		print("Entity has damaged the player. New health:", newHealth)
+pcall(function()
+			if workspace:FindFirstChild("DarknessAmbient") then safeDestroy(workspace.DarknessAmbient) end
+			if workspace:FindFirstChild("Darkness") then safeDestroy(workspace.Darkness) end
+		end)
+		-- Hiển thị jumpscare (bọc pcall để không crash)
+		pcall(function() ShowJumpscare() end)
+	end
+end)
+
+--// Run entity
+entity:Run()
