@@ -1,0 +1,337 @@
+-- Darkness Light
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Darknesslight"))()
+
+-- Sprint Bar
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Hardcore%20Sprint%20System%20(PC%20and%20Mobile%20Adaptation).lua.txt"))()
+
+-- DOORS - Remove All Lights
+local Lighting = game:GetService("Lighting")
+local CollectionService = game:GetService("CollectionService")
+
+-- 1. Tắt ánh sáng môi trường
+Lighting.Brightness = 0
+Lighting.GlobalShadows = true
+Lighting.Ambient = Color3.new(0,0,0)
+Lighting.OutdoorAmbient = Color3.new(0,0,0)
+Lighting.EnvironmentDiffuseScale = 0
+Lighting.EnvironmentSpecularScale = 0
+Lighting.ClockTime = 0
+
+-- 2. Hàm xóa / tắt mọi nguồn sáng
+local function removeLight(obj)
+    -- 🔒 KHÔNG XÓA ĐÈN PIN PLAYER
+    if CollectionService:HasTag(obj, "PlayerFlashlight") then
+        return
+    end
+
+    if obj:IsA("PointLight")
+    or obj:IsA("SpotLight")
+    or obj:IsA("SurfaceLight") then
+        obj.Enabled = false
+        obj:Destroy()
+    end
+
+    -- Lửa (lò sưởi, đuốc…)
+    if obj:IsA("Fire") then
+        obj.Enabled = false
+        obj:Destroy()
+    end
+
+    -- Hạt phát sáng
+    if obj:IsA("ParticleEmitter")
+    or obj:IsA("Smoke") then
+        obj.Enabled = false
+        obj:Destroy()
+    end
+
+    -- Part phát sáng (Neon)
+    if obj:IsA("BasePart") then
+        if obj.Material == Enum.Material.Neon then
+            obj.Material = Enum.Material.Plastic
+        end
+    end
+end
+
+-- 3. Quét toàn bộ map
+for _, v in pairs(workspace:GetDescendants()) do
+    pcall(function()
+        removeLight(v)
+    end)
+end
+
+-- 4. Ngăn đèn mới spawn sau này
+workspace.DescendantAdded:Connect(function(v)
+    task.wait()
+    pcall(function()
+        removeLight(v)
+    end)
+end)
+
+print(">> All lights removed (flashlight protected)")
+
+local lighting = game:GetService("Lighting")
+local players = game:GetService("Players")
+local chatService = game:GetService("TextChatService")
+local rs = game:GetService("ReplicatedStorage")
+
+local player = players.LocalPlayer
+local channel = chatService.TextChannels:FindFirstChild("RBXGeneral")
+
+local mainGameModule = player.PlayerGui
+    :WaitForChild("MainUI", 10)
+    :WaitForChild("Initiator", 10)
+    :FindFirstChild("Main_Game")
+
+local function showCaptionAndChat(captionText, chatText)
+    if mainGameModule then
+        local success, mainGame = pcall(require, mainGameModule)
+        if success and mainGame and mainGame.caption then
+            mainGame.caption("<font color='#ffffff'>" .. captionText .. "</font>", true)
+        end
+    end
+    if channel then
+        channel:DisplaySystemMessage("<font color='#000000'>" .. chatText .. "</font>")
+    end
+end
+
+task.spawn(function()
+    showCaptionAndChat("Hallucination Mode Loaded Successfully", "Will you escape this, Hotel?")
+    task.wait(3)
+    showCaptionAndChat("Mode made by Celestian on Discord", "We are waiting for you.")
+    task.wait(3)
+    showCaptionAndChat("ðŸ‘", "Good luck.")
+end)
+
+lighting.FogColor = Color3.new(0, 0, 0)
+lighting.FogStart = 0
+lighting.FogEnd = 30
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Torness
+coroutine.wrap(function()
+    while true do
+        wait(180)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Torness"))()
+    end
+end)()
+
+-- The Boiled One
+coroutine.wrap(function()
+    while true do
+        wait(300)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/The%20boiled%20one"))()
+    end
+end)()
+
+-- TOE1
+coroutine.wrap(function()
+    while true do
+        wait(350)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Toe1"))()
+    end
+end)()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Text"))()
+wait(3)
+
+-- Flashlight (Forward Only) - SAME AS OLD VERSION
+-- Executor / Client-side
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CollectionService = game:GetService("CollectionService")
+
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local head = char:WaitForChild("Head")
+local camera = workspace.CurrentCamera
+
+-- XÓA ĐÈN CŨ (nếu có)
+for _, v in pairs(head:GetChildren()) do
+    if v:IsA("SpotLight") or v:IsA("Sound") or v:IsA("Attachment") then
+        v:Destroy()
+    end
+end
+
+-- ATTACHMENT (GIỐNG HỆT)
+local att = Instance.new("Attachment")
+att.Name = "FlashlightAttachment"
+att.Parent = head
+
+-- 🔒 TAG BẢO VỆ (KHÔNG ẢNH HƯỞNG HÀNH VI)
+CollectionService:AddTag(att, "PlayerFlashlight")
+
+-- SPOTLIGHT (GIỐNG HỆT THÔNG SỐ CŨ)
+local light = Instance.new("SpotLight")
+light.Name = "Flashlight"
+light.Parent = att
+light.Color = Color3.fromRGB(255,255,255)
+light.Brightness = 1.7
+light.Range = 28
+light.Angle = 50
+light.Shadows = false
+light.Enabled = true
+
+-- 🔒 TAG BẢO VỆ
+CollectionService:AddTag(light, "PlayerFlashlight")
+
+-- SOUND TRỤC TRẶC (BẠN TỰ GẮN)
+local flickerSound = Instance.new("Sound")
+flickerSound.Parent = head
+flickerSound.Volume = 1
+-- flickerSound.SoundId = "rbxassetid://ID_CUA_BAN"
+
+-- THEO HƯỚNG CAMERA (Y HỆT)
+RunService.RenderStepped:Connect(function()
+    if camera and att then
+        att.WorldCFrame = CFrame.lookAt(
+            head.Position,
+            head.Position + camera.CFrame.LookVector
+        )
+    end
+end)
+
+-- NHẤP NHÁY (Y HỆT)
+local function flicker()
+    local times = math.random(2,3)
+
+    if flickerSound.SoundId ~= "" then
+        flickerSound:Play()
+    end
+
+    for i = 1, times do
+        light.Enabled = false
+        task.wait(0.07)
+        light.Enabled = true
+        task.wait(0.1)
+    end
+end
+
+-- RANDOM TRỤC TRẶC (Y HỆT)
+task.spawn(function()
+    while light and light.Parent do
+        task.wait(math.random(20,30))
+        if light and light.Parent then
+            flicker()
+        end
+    end
+end)
+
+print("✅ Flashlight loaded (same behavior)")
+
+-- Flashlight Alert Script (Rush + Ambush, one-shot sound)
+
+local CollectionService = game:GetService("CollectionService")
+local Workspace = game:GetService("Workspace")
+local SoundService = game:GetService("SoundService")
+
+-- TÌM ĐÈN PIN PLAYER
+local flashlight
+for _, v in ipairs(Workspace:GetDescendants()) do
+    if v:IsA("SpotLight") and CollectionService:HasTag(v, "PlayerFlashlight") then
+        flashlight = v
+        break
+    end
+end
+
+if not flashlight then
+    warn("Flashlight not found")
+    return
+end
+
+-- MÀU
+local NORMAL_COLOR = Color3.fromRGB(255,255,255)
+local ALERT_COLOR  = Color3.fromRGB(255,0,0)
+
+-- ENTITY HỢP LỆ
+local VALID_ENTITIES = {
+    RushMoving = true,
+    AmbushMoving = true
+}
+
+-- TRẠNG THÁI
+local flickerActive = false
+local alertId = 0
+
+-- ===== NHẤP NHÁY 1 LẦN / 0.5s =====
+task.spawn(function()
+    while true do
+        if flickerActive then
+            flashlight.Enabled = false
+            task.wait(0.25)
+            flashlight.Enabled = true
+            task.wait(0.25)
+        else
+            task.wait(0.1)
+        end
+    end
+end)
+
+-- ===== ALERT LOGIC =====
+local function startAlert()
+    alertId += 1
+    local id = alertId
+
+    -- Delay 2 giây
+    task.wait(2)
+    if id ~= alertId then return end
+
+    flashlight.Color = ALERT_COLOR
+    flickerActive = true
+
+    -- 🔊 TẠO & PHÁT ÂM THANH (1 LẦN)
+    local alertSound = Instance.new("Sound")
+    alertSound.Name = "FlashlightAlertSound"
+    alertSound.Parent = SoundService
+    alertSound.Volume = 1
+    alertSound.Looped = false
+    alertSound.SoundId = "rbxassetid://4288784832"
+
+    if alertSound.SoundId ~= "" then
+        alertSound:Play()
+    end
+
+    -- Sau 5 giây → reset + xóa sound
+    task.wait(5)
+    if id ~= alertId then
+        alertSound:Destroy()
+        return
+    end
+
+    flickerActive = false
+    flashlight.Enabled = true
+    flashlight.Color = NORMAL_COLOR
+
+    -- 🧼 XÓA ÂM THANH
+    alertSound:Destroy()
+end
+
+-- ENTITY XUẤT HIỆN
+Workspace.ChildAdded:Connect(function(obj)
+    if obj:IsA("Model") and VALID_ENTITIES[obj.Name] then
+        task.spawn(startAlert)
+    end
+end)
+
+print("✅ Entity alert (Rush + Ambush, one-shot sound) loaded")
+wait(0.3)
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Text2"))()
+
+local sound = Instance.new("Sound")
+sound.Name = "Ambience"
+sound.Parent = game.Workspace
+sound.Looped = true
+sound.Volume = 1
+sound.SoundId = "rbxassetid://133838630142849"
+sound:Play()
+
+-- Hallucination
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Hallucination"))()
