@@ -1,0 +1,57 @@
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#a00d00'>[Extreme Mode (Recreated)]: Script Succesfully Executed/Loaded.</font>")
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(128, 1, 1)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Extreme Mode Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Original made by someone that idk.",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 115, 115)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Recreated made by Guestly",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(164, 255, 156)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Enjoy the mode! :D",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Admiration
+coroutine.wrap(function()
+    while true do
+        wait(100)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Admiration%20op"))()
+    end
+end)()
+
+-- Whisper
+coroutine.wrap(function()
+    while true do
+        wait(140)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Whisper"))()
+    end
+end)()
+
+-- Threat
+coroutine.wrap(function()
+    while true do
+        wait(350)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Threat"))()
+    end
+end)()
+
+-- G-95
+coroutine.wrap(function()
+    while true do
+        wait(590)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/G-95"))()
+    end
+end)()
