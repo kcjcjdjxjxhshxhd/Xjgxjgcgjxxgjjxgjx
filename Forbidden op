@@ -1,0 +1,110 @@
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#a78800'>[Forbidden Mode (Recreated)]: Script Succesfully Executed/Loaded.</font>")
+
+-- Floor 2 theme
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Floor%202%20theme"))()
+
+-- Dark
+game:GetService("Lighting").Sanity.Contrast = 1
+game:GetService("Lighting").Sanity.Brightness = 0
+game:GetService("Lighting").Sanity.Enabled = true
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(176, 156, 2)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Forbidden Mode Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 0, 0)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Original made by Noah.",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 115, 115)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Recreated made by Guestly",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(164, 255, 156)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Enjoy the mode! :D",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Hunger
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Forbidden%20hunger"))()
+
+-- Greed
+coroutine.wrap(function()
+    while true do
+        wait(90)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Forbidden%20greed"))()
+    end
+end)()
+
+-- Depth
+coroutine.wrap(function()
+    while true do
+        wait(200)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(4) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Forbidden%20depth"))()
+    end
+end)()
+
+-- Surge
+coroutine.wrap(function()
+    while true do
+        wait(320)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Surge"))()
+    end
+end)()
+
+-- Lightshaker
+coroutine.wrap(function()
+    while true do
+        wait(380)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Lightshaker"))()
+    end
+end)()
+
+-- Delt
+coroutine.wrap(function()
+    while true do
+        wait(450)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Delt"))()
+    end
+end)()
+
+-- Faiser
+coroutine.wrap(function()
+    while true do
+        wait(550)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(1) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Faiser"))()
+    end
+end)()
+
+-- Re-Rebound
+coroutine.wrap(function()
+    while true do
+        wait(490)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Re-rebound%20forbid"))()
+    end
+end)()
+
+-- UNKNOWN-60
+coroutine.wrap(function()
+    while true do
+        wait(666)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/UNKNOWN-60"))()
+    end
+end)()
