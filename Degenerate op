@@ -1,0 +1,346 @@
+-- Loading Ui
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Loading%20Ui"))()
+wait(1)
+local mainGameModule = game.Players.LocalPlayer.PlayerGui
+    :WaitForChild("MainUI", 10)
+    :WaitForChild("Initiator", 10)
+    :FindFirstChild("Main_Game")
+
+if mainGameModule then
+    local success, mainGame = pcall(require, mainGameModule)
+    if success and mainGame and mainGame.caption then
+        mainGame.caption("Degenerate Mode Actived!", true)
+    else
+        warn("Không thể gọi caption cho 'Degenerate Mode Actived!'")
+    end
+else
+    warn("Module Main_Game không tồn tại.")
+end
+
+wait(2)
+local mainGameModule = game.Players.LocalPlayer.PlayerGui
+    :WaitForChild("MainUI", 10)
+    :WaitForChild("Initiator", 10)
+    :FindFirstChild("Main_Game")
+
+if mainGameModule then
+    local success, mainGame = pcall(require, mainGameModule)
+    if success and mainGame and mainGame.caption then
+        mainGame.caption("All credit to Guestly (the one who made the whole mode)", true)
+    else
+        warn("Không thể gọi caption cho 'Degenerate Mode Actived!'")
+    end
+else
+    warn("Module Main_Game không tồn tại.")
+end
+
+-- Animation Idle
+local pl = game.Players.LocalPlayer.Character
+        local animation = Instance.new("Animation")
+        animation.AnimationId = "rbxassetid://507777623"
+
+fallen = pl:FindFirstChildOfClass('Humanoid'):LoadAnimation(animation)
+
+fallen:Play()
+
+game.ReplicatedStorage.ModulesClient.Name = "ClientModules"
+
+-- Doors sound changer
+coroutine.wrap(function()
+    while true do
+        wait()
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Unlock.SoundId = "rbxassetid://0"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Open.SoundId = "rbxassetid://6431334087"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Bell.SoundId = "rbxassetid://0"
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.SoundId = "rbxassetid://6431334087"
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.TimePosition = 0
+    end
+end)()
+
+-- Jump Enable
+game.Players.LocalPlayer.Character:SetAttribute("CanJump", true)
+
+-- Sprint Bar
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Hardcore%20Sprint%20System%20(PC%20and%20Mobile%20Adaptation).lua.txt"))()
+
+-- Guiding light turn to Viridis light
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Darker-TheDarkestGuy/DOORS/refs/heads/main/Viridislight"))()
+
+-- Toxic Bar
+local tweenservice = game:GetService("TweenService")
+
+local gui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+local frame = Instance.new("Frame",gui)
+frame.BorderSizePixel = 0
+frame.BackgroundTransparency = 1
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  
+frame.Position = UDim2.new(1, -320, 1, -35)
+frame.Size = UDim2.new(0, 310,0, 25)
+local corner = Instance.new("UICorner",frame)
+corner.CornerRadius = UDim.new(0.25,0)
+local stroke = Instance.new("UIStroke",frame)
+stroke.Color = Color3.fromRGB(255, 224, 189) 
+stroke.Thickness = 4
+
+local bar = Instance.new("Frame",frame)
+bar.Position = UDim2.new(0.016, 0,0.19, 0)
+bar.Size = UDim2.new(0, 50,0, 15)
+bar.BackgroundColor3 = Color3.fromRGB(8,255,8) 
+bar.BorderSizePixel = 0
+local corner1 = corner:Clone()
+corner1.Parent = bar
+
+local num = Instance.new("NumberValue",frame)
+num.Value = 0
+
+local scriptURLs = {
+    "https://raw.githubusercontent.com/DoorsHubs/Doors-Hubs/refs/heads/main/Death%20v2"
+}
+
+num.Changed:Connect(function()
+    local anim = tweenservice:Create(bar,TweenInfo.new(5,Enum.EasingStyle.Linear),{Size = UDim2.new(0,num.Value,0,15)})
+    anim:Play()
+if num.Value >= 300 then
+wait(15)
+num.Value = 0 
+local index = math.random(1, #scriptURLs)
+        local url = scriptURLs[index]
+        local success, result = pcall(function()
+            return game:HttpGet(url)
+        end)
+        if success then
+            local func, err = loadstring(result)
+            if func then
+                func()
+end
+end
+end
+end)
+
+_G.stats = num
+_G.baseval = -2
+task.wait(0)
+_G.stats.Value += 1
+
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#26ff00'>[Degenerate Mode]: Script Succesfully Executed/Loaded.</font>")
+
+-- Paintings Images Changer
+coroutine.wrap(function()
+local painters = 1
+local paints = {
+	[1] = {"rbxassetid://12625633899","Depth The Dark."},
+	[2] = {"rbxassetid://11678966779","WH1T3..."},
+	[3] = {"rbxassetid://11877292178","???"},
+	[5] = {"rbxassetid://128206094637578","Guestly."},
+      [6] = {"rbxassetid://82969730394546","Vuivuiviu2."},
+	[8] = {"rbxassetid://13187070161","Smiler - Dupe."},
+	[9] = {"rbxassetid://91844042069377","Nowhywhat."}
+}
+
+-- New Paintings
+game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function()
+	local room = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value]
+	if room:FindFirstChild("Assets") then
+		local paintings = {}
+		for i,painting in next,room:FindFirstChild("Assets"):GetChildren() do
+			if painting.Name:find("Painting") then
+				table.insert(paintings,painting)
+			end
+		end
+		if #paintings > 0 then
+			local currentpainting
+			if paintings[#paintings] then
+				painters = painters + 1
+				currentpainting = paintings[#paintings]
+			else
+				currentpainting = paintings[1]
+			end
+			if currentpainting then
+				if currentpainting:FindFirstChild("Canvas") then
+					local selected = paints[math.random(1,#paints)]
+					if currentpainting:FindFirstChild("InteractPrompt") then
+						local cloning = currentpainting:FindFirstChild("InteractPrompt"):Clone()
+                        cloning.Name = "fakeInteract"
+						cloning.Parent = currentpainting
+						currentpainting:FindFirstChild("InteractPrompt"):Destroy()
+						local t = cloning.Triggered:Connect(function()
+							require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption(string.gsub("This painting is titled \"NAMEOFTHING\"","NAMEOFTHING",selected[2]), true)
+						end)
+					end
+					currentpainting:FindFirstChild("Canvas"):FindFirstChildOfClass("SurfaceGui"):FindFirstChildOfClass("ImageLabel").Image = selected[1]
+				end
+			end
+		end
+	end
+end)
+end)()
+
+-- Intro
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Intro"))()
+
+-- Stunner
+coroutine.wrap(function()
+    while true do
+        wait(35)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Stunner"))()
+    end
+end)()
+
+-- Blinker
+coroutine.wrap(function()
+    while true do
+        wait(165)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Blinker"))()
+    end
+end)()
+
+-- Subtlety
+coroutine.wrap(function()
+    while true do
+        wait(125)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Subtlety"))()
+    end
+end)()
+
+-- Itemmer
+coroutine.wrap(function()
+    while true do
+        wait(150)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Semi-Gambler"))()
+    end
+end)()
+
+-- Looper
+coroutine.wrap(function()
+    while true do
+        wait(300)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Looper"))()
+    end
+end)()
+
+-- Coersion
+coroutine.wrap(function()
+    while true do
+        wait(440)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Coersion"))()
+    end
+end)()
+
+-- Forcibly
+coroutine.wrap(function()
+    while true do
+        wait(650)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Forcibly"))()
+    end
+end)()
+
+-- Grief
+coroutine.wrap(function()
+    while true do
+        wait(790)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Grief"))()
+    end
+end)()
+
+-- Gambler
+coroutine.wrap(function()
+    while true do
+        wait(290)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Gambler"))()
+    end
+end)()
+
+-- Fugitive
+coroutine.wrap(function()
+    while true do
+        wait(897)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Fugitive"))()
+    end
+end)()
+
+-- Reflector
+coroutine.wrap(function()
+    while true do
+        wait(1120)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Reflector"))()
+    end
+end)()
+
+-- Phonker
+coroutine.wrap(function()
+    while true do
+        wait(450)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Phonker"))()
+    end
+end)()
+
+-- Obstructioner
+coroutine.wrap(function()
+    while true do
+        wait(160)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/DoorsHubs/Tutorial/refs/heads/main/Obstructioner"))()
+    end
+end)()
+
+-- Goofier
+coroutine.wrap(function()
+    while true do
+        wait(130)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Goofier"))()
+    end
+end)()
+
+-- Watcher
+coroutine.wrap(function()
+    while true do
+        wait(230)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Watcher"))()
+    end
+end)()
+
+-- Tricker
+coroutine.wrap(function()
+    while true do
+        wait(330)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Tricker"))()
+    end
+end)()
+
+-- Healer
+coroutine.wrap(function()
+    while true do
+        wait(315)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Healer"))()
+    end
+end)()
