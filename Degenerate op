@@ -43,8 +43,6 @@ fallen = pl:FindFirstChildOfClass('Humanoid'):LoadAnimation(animation)
 
 fallen:Play()
 
-game.ReplicatedStorage.ModulesClient.Name = "ClientModules"
-
 -- Doors sound changer
 coroutine.wrap(function()
     while true do
