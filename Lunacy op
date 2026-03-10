@@ -1,0 +1,585 @@
+-- Hàm tải âm thanh từ GitHub
+function GitAud(soundlink, filename)
+    local url = soundlink
+    local FileName = filename
+    if not isfile(FileName..".mp3") then
+        writefile(FileName..".mp3", game:HttpGet(url))
+    end
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+-- Hàm phát âm thanh custom từ GitHub (LOOP)
+function CustomGitSound(soundlink, vol, filename)
+    local Sound = Instance.new("Sound")
+    Sound.SoundId = GitAud(soundlink, filename)
+    Sound.Parent = workspace
+    Sound.Volume = vol
+    Sound.Looped = true
+    Sound:Play()
+    return Sound
+end
+
+-- ===== Logic phát nhạc cửa đầu tiên =====
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GameData = ReplicatedStorage:WaitForChild("GameData")
+
+local played = false
+local musicSound = nil
+
+GameData.LatestRoom:GetPropertyChangedSignal("Value"):Connect(function()
+    if played then return end
+    if GameData.LatestRoom.Value >= 1 then
+        played = true
+        musicSound = CustomGitSound(
+            "https://raw.githubusercontent.com/VoorPhale012/spawnnn/refs/heads/main/Lunacy%20Ambient%20Music.mp3",
+            2,
+            "LunacyAmbient"
+        )
+    end
+end)
+
+-- ===== Tắt nhạc khi Rush xuất hiện =====
+coroutine.wrap(function()
+    while true do
+        GameData.LatestRoom.Changed:Wait()
+        wait(0)
+
+        if workspace:FindFirstChild("RushMoving") then
+            if musicSound then
+                musicSound:Stop()
+                musicSound:Destroy()
+                musicSound = nil
+            end
+            break
+        end
+    end
+end)()
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(169, 3, 252)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Lunacy Mode Remade Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(169, 3, 252)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Credits by Guestly, Vuivuiviu2, Nowhywhat and Voorpr0",true)
+
+-- Doors sound changer
+coroutine.wrap(function()
+    while true do
+        wait()
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Open.SoundId = "rbxassetid://833871080"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Open.PlaybackSpeed = 1.2
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Bell.SoundId = "rbxassetid://0"
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.SoundId = "rbxassetid://833871080"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.PlaybackSpeed = 1.2
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.TimePosition = 0
+    end
+end)()
+
+-- Mc spawn in door 0
+loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/Lunacy-mode/main/Minecraft%20block"))()
+
+-- Guiding light turn to Lunacy light
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Lunacy%20light"))()
+
+-- Paintings Images Changer
+coroutine.wrap(function()
+local painters = 1
+local paints = {
+	[1] = {"rbxassetid://12625633899","Depth The Dark."},
+	[2] = {"rbxassetid://11678966779","WH1T3..."},
+	[3] = {"rbxassetid://11877292178","???"},
+	[5] = {"rbxassetid://128206094637578","Guestly."},
+      [6] = {"rbxassetid://82969730394546","Vuivuiviu2."},
+	[8] = {"rbxassetid://13187070161","Smiler - Dupe."},
+	[9] = {"rbxassetid://91844042069377","Nowhywhat."}
+}
+
+-- New Paintings
+game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function()
+	local room = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value]
+	if room:FindFirstChild("Assets") then
+		local paintings = {}
+		for i,painting in next,room:FindFirstChild("Assets"):GetChildren() do
+			if painting.Name:find("Painting") then
+				table.insert(paintings,painting)
+			end
+		end
+		if #paintings > 0 then
+			local currentpainting
+			if paintings[#paintings] then
+				painters = painters + 1
+				currentpainting = paintings[#paintings]
+			else
+				currentpainting = paintings[1]
+			end
+			if currentpainting then
+				if currentpainting:FindFirstChild("Canvas") then
+					local selected = paints[math.random(1,#paints)]
+					if currentpainting:FindFirstChild("InteractPrompt") then
+						local cloning = currentpainting:FindFirstChild("InteractPrompt"):Clone()
+                        cloning.Name = "fakeInteract"
+						cloning.Parent = currentpainting
+						currentpainting:FindFirstChild("InteractPrompt"):Destroy()
+						local t = cloning.Triggered:Connect(function()
+							require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption(string.gsub("This painting is titled \"NAMEOFTHING\"","NAMEOFTHING",selected[2]), true)
+						end)
+					end
+					currentpainting:FindFirstChild("Canvas"):FindFirstChildOfClass("SurfaceGui"):FindFirstChildOfClass("ImageLabel").Image = selected[1]
+				end
+			end
+		end
+	end
+end)
+end)()
+
+-- Lighting Stand Model Changer
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Lunacy%20light%20chabger"))()
+
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#9400ff'>[Lunacy Mode]: Script Succesfully Executed/Loaded.</font>")
+
+-- Intro
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(169, 3, 252)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Lunacy Mode initiated!",true)
+
+-- Jumpscare Bủn Tím
+game.Players.LocalPlayer.PlayerGui.MainUI.Jumpscare.Jumpscare_Rush.ImageLabel.Image = "rbxassetid://116146835376358"
+game.Players.LocalPlayer.PlayerGui.MainUI.Jumpscare.Jumpscare_Rush.ImageLabelBig.Image = "rbxassetid://116146835376358"
+
+-- Lunacy Screech Changer
+game.ReplicatedStorage.Entities.Screech.Top.Eyes.Color = Color3.fromRGB(189, 23, 255)
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Caught.PlaybackSpeed = 0.7
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Attack.PlaybackSpeed = 0.7
+
+-- Fake Screech
+coroutine.wrap(function()
+    while true do
+        wait(50)
+        local player = game.Players.LocalPlayer
+local mainGame = require(player.PlayerGui.MainUI.Initiator.Main_Game)
+local screechModule =
+require(player.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech)
+
+screechModule(mainGame)
+    end
+end)()
+
+-- Động đất bủn tím
+coroutine.wrap(function()
+    while true do
+        wait(0)
+
+if game.Workspace:FindFirstChild("RushMoving") then
+
+local spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/Voor-Pr00/Fogroom/refs/heads/main/Spawner%20v3"))()
+
+---====== Create entity ======---
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Dongdat",
+		Asset = "rbxassetid://104261822446449",
+		HeightOffset = 0
+	},
+	Lights = {
+		Flicker = {
+			Enabled = false,
+			Duration = 4
+		},
+		Shatter = false,
+		Repair = false
+	},
+	Light = {
+		Color = {1, 1, 1}
+	},
+
+	Earthquake = {
+		Enabled = true
+	},
+	CameraShake = {
+		Enabled = false,
+		Range = 100,
+		Values = {2.5, 35, 0.15, 2}
+	},
+	Movement = {
+		Speed = 1,
+		Delay = 10,
+		Reversed = false
+	},
+	Rebounding = {
+		Enabled = false,
+		Type = "Ambush",
+		Min = 1,
+		Max = 1,
+		Delay = 2
+	},
+	Damage = {
+		Enabled = false,
+		Range = 40,
+		Amount = 120
+	},
+	Crucifixion = {
+		Enabled = false,
+		Range = 40,
+		Resist = false,
+		Break = true
+	},
+	Death = {
+		Type = "Guiding",
+		Hints = {"Hmm, Blitz?", "is being a bully, huh?", "Don’t worry, I believe in you ", "When it screams and the ground shakes, just hide quickly, okay? You can do it", "bye :3"},
+		Cause = ""
+	}
+})
+
+---====== Debug entity ======---
+
+entity:SetCallback("OnSpawned", function()
+    print("Entity has spawned")
+wait(6)
+game.Workspace.Dongdat:Destroy()
+end)
+
+entity:SetCallback("OnStartMoving", function()
+    print("Entity has started moving")
+end)
+
+entity:SetCallback("OnEnterRoom", function(room, firstTime)
+    if firstTime == true then
+        print("Entity has entered room: ".. room.Name.. " for the first time")
+    else
+        print("Entity has entered room: ".. room.Name.. " again")
+    end
+end)
+
+entity:SetCallback("OnLookAt", function(lineOfSight)
+	if lineOfSight == true then
+		print("Player is looking at entity")
+	else
+		print("Player view is obstructed by something")
+	end
+end)
+
+entity:SetCallback("OnRebounding", function(startOfRebound)
+    if startOfRebound == true then
+        print("Entity has started rebounding")
+	else
+        print("Entity has finished rebounding")
+	end
+end)
+
+entity:SetCallback("OnDespawning", function()
+    print("Entity is despawning")
+end)
+
+entity:SetCallback("OnDespawned", function()
+    print("Entity has despawned")
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+	if newHealth == 0 then
+		print("Entity has killed the player")
+	else
+		print("Entity has damaged the player")
+	end
+end)
+
+--[[
+DEVELOPER NOTE:
+By overwriting 'CrucifixionOverwrite' the default crucifixion callback will be replaced with your custom callback.
+
+entity:SetCallback("CrucifixionOverwrite", function()
+    print("Custom crucifixion callback")
+end)
+]]--
+
+---====== Run entity ======---
+
+entity:Run()
+end
+end
+end)()
+
+-- Bủn Tím
+coroutine.wrap(function()
+    while true do
+        wait(0)
+
+if game.Workspace:FindFirstChild("RushMoving") then
+game.Workspace.RushMoving.RushNew.Attachment.ParticleEmitter.Texture = "rbxassetid://116146835376358"    game.Workspace.RushMoving.RushNew.PlaySound.PlaybackSpeed = 0.2
+game.Workspace.RushMoving.RushNew.PlaySound.RollOfMaxDistance = 500 game.Workspace.RushMoving.RushNew.Footsteps.PlaybackSpeed = 2
+workspace.RushMoving.RushNew.Footsteps.SoundId = "rbxassetid://18695345785"
+workspace.RushMoving.RushNew.Footsteps.RollOffMaxDistance = 250
+workspace.RushMoving.RushNew.PlaySound.SoundId = "rbxassetid://9113218672"
+workspace.RushMoving.RushNew.Footsteps.DistortionSoundEffect:Destroy()
+workspace.RushMoving.RushNew.Footsteps.EqualizerSoundEffect:Destroy()
+workspace.RushMoving.RushNew.Footsteps.FlangeSoundEffect:Destroy()
+workspace.RushMoving.RushNew.Footsteps.TremoloSoundEffect:Destroy()
+workspace.RushMoving.RushNew.PlaySound.DistortionSoundEffect:Destroy()
+workspace.RushMoving.RushNew.PlaySound.EqualizerSoundEffect:Destroy()
+workspace.RushMoving.RushNew.PlaySound.FlangeSoundEffect:Destroy()
+workspace.RushMoving.RushNew.PlaySound.TremoloSoundEffect:Destroy()
+workspace.RushMoving.RushNew.Attachment.PointLight.Color = Color3.fromRGB(146, 3, 255)
+workspace.RushMoving.RushNew.Attachment.PointLight.Brightness = 5
+workspace.RushMoving.RushNew.Attachment.PointLight.Range = 20
+workspace.RushMoving.RushNew.Attachment.PointLight.Enabled = true
+game.ReplicatedStorage.GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "Lunacy Rush"
+
+local smoke = Instance.new("Smoke")
+	smoke.Parent = game.Workspace.RushMoving.RushNew.Attachment
+	smoke.Name = "Smoke"
+  smoke.Color = Color3.fromRGB(146, 3, 255)
+workspace.RushMoving.RushNew.Attachment.BlackTrail:Destroy()
+workspace.RushMoving.RushNew.Attachment.Black:Destroy()
+end
+end
+end)()
+
+-- Electricer
+coroutine.wrap(function()
+    while true do
+        wait(35)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Electricer"))()
+    end
+end)()
+
+-- Fake Eyes
+coroutine.wrap(function()
+    while true do
+        wait(115)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Fake-Eyes"))()
+    end
+end)()
+
+-- Minecraft Block
+coroutine.wrap(function()
+    while true do
+        wait(69)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/Lunacy-mode/main/Minecraft%20block"))()
+    end
+end)()
+
+-- Lunacy PointLight
+coroutine.wrap(function()
+    while true do
+        wait()
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Lunacy%20pointlight"))()
+    end
+end)()
+
+-- Supervisor
+coroutine.wrap(function()
+    while true do
+        wait(150)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Lunacy-Supervisor"))()
+    end
+end)()
+
+-- Painer
+coroutine.wrap(function()
+    while true do
+        wait(430)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Painer"))()
+    end
+end)()
+
+-- The Fallen
+coroutine.wrap(function()
+    while true do
+        wait(700)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/The%20Fallen%20DH"))()
+    end
+end)()
+
+-- Vioblaze
+coroutine.wrap(function()
+    while true do
+        wait(120)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Vioblaze%20remake"))()
+    end
+end)()
+
+-- Trun
+coroutine.wrap(function()
+    while true do
+        wait(550)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Trun%20DH"))()
+    end
+end)()
+
+-- Chaser
+coroutine.wrap(function()
+    while true do
+        wait(380)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Chaser%20DH"))()
+    end
+end)()
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Command = "LHQ"
+
+local Activated = false
+
+local function SelectedScript()
+    local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+-- ===== Ã‚M THANH GITHUB =====
+local function GitAud(soundlink, filename)
+	if not isfile(filename .. ".mp3") then
+		writefile(filename .. ".mp3", game:HttpGet(soundlink))
+	end
+	return (getcustomasset or getsynasset)(filename .. ".mp3")
+end
+
+local function CustomGitSound(soundlink, vol, filename, duration)
+	local s = Instance.new("Sound")
+	s.SoundId = GitAud(soundlink, filename)
+	s.Volume = vol
+	s.Looped = true
+	s.Parent = workspace
+	s:Play()
+
+	task.delay(duration, function()
+		if s then s:Destroy() end
+	end)
+end
+
+-- ===== LOAD SPAWNER =====
+local src = game:HttpGet("https://raw.githubusercontent.com/VoorPhale012/Fogroom/refs/heads/main/Wwwhyyyyil")
+local spawner = loadstring(src)()
+
+-- ===== CREATE ENTITY =====
+local entity = spawner.Create({
+	Entity = {
+		Name = "Template Entity",
+		Asset = "https://github.com/vuivuiviu2/Lunacy-mode/raw/refs/heads/main/jayvavva.rbxm",
+		HeightOffset = 0
+	},
+	Lights = { Flicker = {Enabled=false}, Shatter=false, Repair=false },
+	Earthquake = {Enabled=false},
+	Movement = {Speed=60, Delay=3, Reversed=false},
+	Damage = {Enabled=true, Range=40, Amount=999},
+	Death = {
+		Type="Guiding",
+		Hints={"It heard the signal.", "Do not call it again."},
+		Cause="LHQ"
+	}
+})
+
+-- ===== JUNPSCARE FUNCTION =====
+local function DoJumpscare(player)
+	local playerGui = player:FindFirstChild("PlayerGui")
+	if not playerGui then return end
+
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.IgnoreGuiInset = true
+	screenGui.ResetOnSpawn = false
+	screenGui.Parent = playerGui
+
+	local img = Instance.new("ImageLabel")
+	img.Image = "rbxassetid://106729398431112" -- áº£nh jumpscare
+	img.Size = UDim2.new(1,0,1,0)
+	img.Position = UDim2.new(0,0,0,0)
+	img.BackgroundTransparency = 1
+	img.Parent = screenGui
+
+	-- Hiá»‡n 3 giÃ¢y
+	task.delay(3, function()
+		screenGui:Destroy()
+		game:Shutdown() -- kill game
+	end)
+end
+
+-- ===== KHI GIáº¾T NGÆ¯á»œI CHÆ I â†’ JUNPSCARE + VÄ‚NG GAME =====
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+	if newHealth <= 0 then
+		local player = game.Players.LocalPlayer
+		if player then
+			DoJumpscare(player)
+		else
+			game:Shutdown()
+		end
+	end
+end)
+
+-- ===== CHAT TRIGGER =====
+local spawned = false
+
+local function onChat(player, msg)
+	if spawned then return end
+	if string.find(string.lower(msg), "lhq") then
+		spawned = true
+
+		-- ðŸ”Š PHÃT Ã‚M THANH KHI SPAWN
+		CustomGitSound(
+			"https://github.com/vuivuiviu2/Lunacy-mode/raw/refs/heads/main/JAYYYY.mp3",
+			1,
+			"LHQ_Sound",
+			24
+		)
+
+		entity:Run()
+	end
+end
+
+for _, p in ipairs(Players:GetPlayers()) do
+	p.Chatted:Connect(function(m)
+		onChat(p, m)
+	end)
+end
+
+Players.PlayerAdded:Connect(function(p)
+	p.Chatted:Connect(function(m)
+		onChat(p, m)
+	end)
+end)
+end
+
+local function Activate()
+    if Activated then return end
+    Activated = true
+    SelectedScript()
+end
+
+local function HookPlayer(player)
+    player.Chatted:Connect(function(msg)
+        if Activated then return end
+        if msg == Command then
+            Activate()
+        end
+    end)
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    HookPlayer(player)
+end
+
+Players.PlayerAdded:Connect(function(player)
+    HookPlayer(player)
+end)
