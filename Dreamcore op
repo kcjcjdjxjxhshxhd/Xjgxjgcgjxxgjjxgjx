@@ -1,0 +1,541 @@
+--//================ SYSTEM MESSAGE ================//
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#ffffff'>[Dreamcore Mode]: Script Successfully Executed/Loaded.</font>")
+
+local done = {}
+
+local function runSubScript(rush)
+    if done[rush] then return end
+    done[rush] = true
+
+    -- ===== SCRIPT PHỤ CỦA MÀY ĐẶT Ở ĐÂY =====
+    game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(0, 0, 0)
+game.Lighting.MainColorCorrection.Contrast = 0.01
+local tween = game:GetService("TweenService")
+tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(), {Contrast = 0}):Play()
+local TweenService = game:GetService("TweenService")
+local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(5),{TintColor = Color3.fromRGB(255, 255, 255)})
+TW:Play()
+
+    -- ví dụ:
+    -- rush:Destroy()
+    -- hoặc gọi function khác
+end
+
+local function check(obj)
+    if obj:IsA("Model") and obj.Name == "RushMoving" then
+        runSubScript(obj)
+    end
+end
+
+-- check những cái đã tồn tại sẵn
+for _,v in ipairs(workspace:GetDescendants()) do
+    check(v)
+end
+
+-- check khi có object mới spawn
+workspace.DescendantAdded:Connect(check)
+
+-- DOORS - Remove All Lights
+local Lighting = game:GetService("Lighting")
+local CollectionService = game:GetService("CollectionService")
+
+-- 1. Tắt ánh sáng môi trường
+Lighting.Brightness = 0
+Lighting.GlobalShadows = true
+Lighting.Ambient = Color3.new(0,0,0)
+Lighting.OutdoorAmbient = Color3.new(0,0,0)
+Lighting.EnvironmentDiffuseScale = 0
+Lighting.EnvironmentSpecularScale = 0
+Lighting.ClockTime = 0
+
+-- 2. Hàm xóa / tắt mọi nguồn sáng
+local function removeLight(obj)
+    -- 🔒 KHÔNG XÓA ĐÈN PIN PLAYER
+    if CollectionService:HasTag(obj, "PlayerFlashlight") then
+        return
+    end
+
+    if obj:IsA("PointLight")
+    or obj:IsA("SpotLight")
+    or obj:IsA("SurfaceLight") then
+        obj.Enabled = false
+        obj:Destroy()
+    end
+
+    -- Lửa (lò sưởi, đuốc…)
+    if obj:IsA("Fire") then
+        obj.Enabled = false
+        obj:Destroy()
+    end
+
+    -- Hạt phát sáng
+    if obj:IsA("ParticleEmitter")
+    or obj:IsA("Smoke") then
+        obj.Enabled = false
+        obj:Destroy()
+    end
+
+    -- Part phát sáng (Neon)
+    if obj:IsA("BasePart") then
+        if obj.Material == Enum.Material.Neon then
+            obj.Material = Enum.Material.Plastic
+        end
+    end
+end
+
+-- 3. Quét toàn bộ map
+for _, v in pairs(workspace:GetDescendants()) do
+    pcall(function()
+        removeLight(v)
+    end)
+end
+
+-- 4. Ngăn đèn mới spawn sau này
+workspace.DescendantAdded:Connect(function(v)
+    task.wait()
+    pcall(function()
+        removeLight(v)
+    end)
+end)
+
+print(">> All lights removed (flashlight protected)")
+
+local Players = game:GetService("Players")
+local TextChatService = game:GetService("TextChatService")
+local Lighting = game:GetService("Lighting")
+local RS = game:GetService("ReplicatedStorage")
+local Rooms = workspace:WaitForChild("CurrentRooms")
+local GameData = RS:WaitForChild("GameData")
+local LatestRoom = GameData:WaitForChild("LatestRoom")
+
+--//================ CHAT TAG SYSTEM ================//
+local tags = {
+	gftfujtrtr = "<font color='#7B11FD'>[The Creator]</font> ",
+	bre5be123 = "<font color='#7B11FD'>[The Creator]</font> ",
+	vuivuiviu3 = "<font color='#7B11FD'>[Special]</font> ",
+	vuivuiviu2 = "<font color='#7B11FD'>[Special]</font> ",
+	lechivy2020 = "<font color='#7B11FD'>[The Nd Creator]</font> ",
+	dimaalt4 = "<font color='#FFD800'>[Special]</font> ",
+	["dima_082ooo"] = "<font color='#FFD800'>[Special]</font> "
+}
+
+TextChatService.OnIncomingMessage = function(message)
+	if message.TextSource then
+		local plr = Players:GetPlayerByUserId(message.TextSource.UserId)
+		if plr and tags[plr.Name] then
+			message.PrefixText = tags[plr.Name] .. message.PrefixText
+		end
+	end
+end
+
+game.Players.LocalPlayer.Character:SetAttribute("CanJump", true)
+
+--//================ WARDROBE CONVERTER ================//
+local SOUND_ENTER_ID = "rbxassetid://7038967181"
+local SOUND_EXIT_ID  = "rbxassetid://6058561902"
+
+local function ConvertWardrobe(w)
+	for _,n in ipairs({"Door1","Door2","Main","Wood"}) do
+		local p=w:FindFirstChild(n,true)
+		if p and p:IsA("BasePart") then
+			p.Material=Enum.Material.CeramicTiles
+		end
+	end
+	local main=w:FindFirstChild("Main",true)
+	if main then
+		local e=main:FindFirstChild("SoundEnter")
+		local x=main:FindFirstChild("SoundExit")
+		if e then e.SoundId=SOUND_ENTER_ID end
+		if x then x.SoundId=SOUND_EXIT_ID end
+	end
+end
+
+local function ProcessRoom(room)
+	local assets=room:FindFirstChild("Assets")
+	if not assets then return end
+	for _,i in ipairs(assets:GetDescendants()) do
+		if i.Name=="Wardrobe" and i:IsA("Model") then
+			ConvertWardrobe(i)
+		end
+	end
+end
+
+for _,r in ipairs(Rooms:GetChildren()) do ProcessRoom(r) end
+LatestRoom.Changed:Connect(function()
+	task.wait(.4)
+	for _,r in ipairs(Rooms:GetChildren()) do ProcessRoom(r) end
+end)
+
+--//================ DOOR SOUND CHANGER ================//
+local function UpdateDoor(roomNum)
+	local room=Rooms:FindFirstChild(roomNum)
+	if not room then return end
+	local door=room:FindFirstChild("Door") and room.Door:FindFirstChild("Door")
+	if not door then return end
+
+	if door:FindFirstChild("Open") then
+		door.Open.SoundId="rbxassetid://125209584906878"
+		door.Open.PlaybackSpeed=.9
+	end
+	if door:FindFirstChild("SlamOpen") then
+		door.SlamOpen.SoundId="rbxassetid://125209584906878"
+		door.SlamOpen.PlaybackSpeed=.9
+		door.SlamOpen.TimePosition=0
+	end
+	if door:FindFirstChild("Bell") then
+		door.Bell.SoundId="rbxassetid://0"
+	end
+end
+LatestRoom.Changed:Connect(UpdateDoor)
+
+--//================ DREAMCORE LIGHTING ================//
+Lighting.FogEnd=200
+Lighting.FogStart=10
+Lighting.FogColor = Color3.fromRGB(255, 255, 255)
+
+-- Dreamcore Light (gốc)
+pcall(function()
+	-- MischeviousLight.lua
+-- [Comet Development] By Chrono
+-- This file is part of the Hotel ++ Project.
+-- + Cred to Dripo for that stupid sound path for the original guiding lighht music :D
+
+_G.DO_RED_GUY = true -- enabled for debugging purposes only.
+
+local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+
+local Camera = workspace.CurrentCamera
+local DeathName = "DeathBackgroundBlue"
+
+local RedPrimary = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+})
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
+local MainUI = PlayerGui.MainUI
+local Death = MainUI.Death
+local HelpfulDialogue = Death.HelpfulDialogue
+local MainGame = MainUI.Initiator.Main_Game
+local Health = MainGame.Health
+local Music = Health.Music
+
+local function getGitSoundId(GithubSoundPath: string, AssetName: string): Sound
+    local Url = GithubSoundPath
+
+    if not isfile(AssetName..".mp3") then 
+        writefile(AssetName..".mp3", game:HttpGet(Url)) 
+    end
+
+    local Sound = Instance.new("Sound")
+    Sound.SoundId = getcustomasset(AssetName..".mp3", true)
+    return Sound 
+end
+
+Camera.ChildAdded:Connect(
+    function(Child): ()
+        if Child.Name ~= DeathName then
+            return
+        end
+
+        if not _G.DO_RED_GUY then
+            return
+        end
+
+        for _, Asset in Music:GetChildren() do
+            if Asset:IsA("Sound") then
+                Asset:Destroy() -- lazy 
+            end
+        end
+
+        local Lights = Child.Lights
+        local Fog = Child.FogAndSmaller
+        local Water = Child.Water
+
+        for _, Light in Lights:GetDescendants() do
+            if Light:IsA("SpotLight") then
+                Light.Color = Color3.fromRGB(0, 0, 0)
+            end
+
+            if Light:IsA("ParticleEmitter") then
+                Light.Color = RedPrimary
+            end
+        end
+
+        for _, FogL in Fog:GetChildren() do
+            FogL.Color = RedPrimary
+        end
+
+        for _, WaterL in Water:GetChildren() do
+            WaterL.Color = RedPrimary
+        end
+
+        local BigLight = Lights.BigLight
+        local Attachment = BigLight.Attachment
+        local Moon = Attachment.Moon
+        Moon.Texture = "rbxassetid://0"
+        HelpfulDialogue.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+        local CustomMusic = getGitSoundId("https://github.com/Guestly-V2-2/Music-Sound/raw/refs/heads/main/XRecorder_Edited_20260123_05.mp3", "DreamLight")
+        CustomMusic.Parent = SoundService
+        CustomMusic.Looped = false
+        CustomMusic.Volume = 0
+        CustomMusic:Play()
+    end
+)
+
+end)
+
+--//================ FLOOR + RUG REMOVER ================//
+LatestRoom.Changed:Connect(function(num)
+	local room=Rooms:FindFirstChild(num)
+	if not room then return end
+
+	local parts=room:FindFirstChild("Parts")
+	local assets=room:FindFirstChild("Assets")
+
+	if parts then
+		for _,o in pairs(parts:GetDescendants()) do
+			if o:IsA("BasePart") and o.Name=="Floor" then
+				o.Material=Enum.Material.Grass
+				o.MaterialVariant="PatchyGrass"
+				o.Color=Color3.fromRGB(30,195,0)
+			elseif o.Name=="CarpetLight" then
+				o:Destroy()
+			elseif o.Name=="Rug" then
+				o:Destroy()
+			end
+		end
+	end
+
+	if assets then
+		for _,o in pairs(assets:GetDescendants()) do
+			if o.Name=="Rug" then o:Destroy() end
+		end
+	end
+end)
+
+--//================ DOOR MATERIAL LOCK ================//
+local function ForceDoor(room)
+	local door=room:FindFirstChild("Door") and room.Door:FindFirstChild("Door")
+	if not door then return end
+	for _,v in ipairs(door:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.Material=Enum.Material.CeramicTiles
+			v:GetPropertyChangedSignal("Material"):Connect(function()
+				if v.Material~=Enum.Material.CeramicTiles then
+					v.Material=Enum.Material.CeramicTiles
+				end
+			end)
+		end
+	end
+end
+
+for _,r in ipairs(Rooms:GetChildren()) do ForceDoor(r) end
+Rooms.ChildAdded:Connect(ForceDoor)
+
+--//================ SIGN REMOVER ================//
+LatestRoom.Changed:Connect(function(num)
+	local room=Rooms:FindFirstChild(num)
+	if room and room:FindFirstChild("Door") and room.Door:FindFirstChild("Door") then
+		local s=room.Door.Door:FindFirstChild("Sign")
+		if s then s:Destroy() end
+	end
+end)
+
+--//================ CAPTIONS ================//
+local caption=require(Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
+caption.caption("Dreamcore Mode Activated!",true)
+task.wait(2)
+caption.caption("Made by Guestly and Voorpr0",true)
+task.wait(2)
+caption.caption("There will be many joys..",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Mushcore
+coroutine.wrap(function()
+    while true do
+        wait(105)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) 
+math.randomseed(tick())
+
+local pick = math.random(1, 2)
+
+if pick == 1 then
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Mushcore%20billboard"))()
+
+
+
+else
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Mushcore%20billboard"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Mushcore%20billboard"))()
+
+
+
+end
+    end
+end)()
+
+-- The Fallen Angel
+coroutine.wrap(function()
+    while true do
+        wait(676)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/pfgj32633-ux/My-Scripts/refs/heads/main/TheFallenAngel"))()
+    end
+end)()
+
+-- Dreye
+coroutine.wrap(function()
+    while true do
+        wait(75)
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pfgj32633-ux/My-Scripts/refs/heads/main/Dreyeblahblah"))()
+    end
+end)()
+
+-- Traumatize
+coroutine.wrap(function()
+    while true do
+        wait(300)
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pfgj32633-ux/My-Scripts/refs/heads/main/Traumatize"))()
+    end
+end)()
+
+-- Frens
+coroutine.wrap(function()
+    while true do
+        wait(175)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/pfgj32633-ux/My-Scripts/refs/heads/main/SmileyBall"))()
+    end
+end)()
+
+-- The Tree?
+
+
+-- Trees
+coroutine.wrap(function()
+    while true do
+        wait(0)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ASSET_ID = "rbxassetid://4881565832"
+local latestRoomNumber = ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom").Value
+local room = workspace:WaitForChild("CurrentRooms"):FindFirstChild(latestRoomNumber)
+if not room then return end
+
+-- Lấy sàn phòng hiện tại
+local floor = room:FindFirstChild("Parts") and room.Parts:FindFirstChild("Floor")
+if not floor then return end
+
+local floorCF = floor.CFrame
+local floorSize = floor.Size
+
+local existingHitboxes = {}
+
+-- ===== ENSURE PRIMARY PART =====
+local function ensurePrimaryPart(model)
+	if model.PrimaryPart then return end
+	local base = model:FindFirstChildWhichIsA("BasePart", true)
+	if not base then
+		base = Instance.new("Part")
+		base.Size = Vector3.new(2,2,2)
+		base.Transparency = 1
+		base.CanCollide = false
+		base.Anchored = true
+		base.Name = "AutoPrimary"
+		base.Parent = model
+	end
+	model.PrimaryPart = base
+end
+
+-- ===== TẠO HITBOX =====
+local function createHitbox(pos)
+	local hb = Instance.new("Part")
+	hb.Size = Vector3.new(0.1,0.1,0.1)
+	hb.Transparency = 1
+	hb.CanCollide = false
+	hb.Anchored = true
+	hb.Position = pos
+	hb.Name = "SpawnHitbox"
+	hb.Parent = workspace
+	return hb
+end
+
+-- ===== RANDOM VỊ TRÍ HỢP LỆ TRÊN SÀN =====
+local function getValidSpawn(model)
+	for _ = 1, 30 do
+		local offsetX = (math.random() - 0.5) * (floorSize.X - 10)
+		local offsetZ = (math.random() - 0.5) * (floorSize.Z - 10)
+
+		local height = model:GetExtentsSize().Y
+		local worldPos = (floorCF * CFrame.new(offsetX, height/2 + 0.1, offsetZ)).Position
+
+		local valid = true
+		for _,hb in pairs(existingHitboxes) do
+			if (hb.Position - worldPos).Magnitude < 15 then
+				valid = false
+				break
+			end
+		end
+
+		if valid then
+			return CFrame.new(worldPos)
+		end
+	end
+
+	return floorCF
+end
+
+-- ===== SPAWN 6–8 MODELS =====
+local amount = math.random(5,6)
+
+for i = 1, amount do
+	local model = game:GetObjects(ASSET_ID)[1]
+	if model then
+		model.Parent = workspace
+		model:ScaleTo(1.5)
+
+		ensurePrimaryPart(model)
+
+		local cf = getValidSpawn(model)
+		model:SetPrimaryPartCFrame(cf)
+
+		table.insert(existingHitboxes, createHitbox(cf.Position))
+	end
+end
+    end
+end)()
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Volume = 1
+    sound.PlaybackSpeed = 1
+    sound.Name = "HORROR"
+    sound.Looped = true
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/pfgj32633-ux/My-Scripts/raw/refs/heads/main/YTDown.com_YouTube_silence-sound-effect-empty-room_Media_VrfyB2gMAUg_001_1080p.mp3?raw=true", 1, " bgmusic")
