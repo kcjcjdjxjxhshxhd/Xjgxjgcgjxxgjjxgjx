@@ -1,0 +1,507 @@
+local lighting = game:GetService("Lighting")
+
+lighting.FogColor = Color3.fromRGB(30, 0, 0)
+lighting.FogStart = 0
+lighting.FogEnd = 0
+
+task.spawn(function()
+    for i = 0, 30 do
+        lighting.FogStart = i
+        task.wait(0.05)
+    end
+end)
+
+task.spawn(function()
+    for i = 0, 95 do
+        lighting.FogEnd = i
+        task.wait(0.05)
+    end
+end)
+
+local mainGameModule = game.Players.LocalPlayer.PlayerGui
+    :WaitForChild("MainUI", 10)
+    :WaitForChild("Initiator", 10)
+    :FindFirstChild("Main_Game")
+
+local chatService = game:GetService("TextChatService")
+local channel = chatService.TextChannels:FindFirstChild("RBXGeneral")
+
+local function showCaptionAndChat(captionText, chatText)
+    if mainGameModule then
+        local success, mainGame = pcall(require, mainGameModule)
+        if success and mainGame and mainGame.caption then
+            mainGame.caption("<font color='#ff0000'>"..captionText.."</font>", true)
+        end
+    end
+    if channel then
+        channel:DisplaySystemMessage("<font color='#ff0000'>"..chatText.."</font>")
+    end
+end
+
+showCaptionAndChat("Cataclysmic Mode Loaded Successfully.", "Cata Light: Thanks for playing Cataclysmic Mode")
+task.wait(5)
+
+showCaptionAndChat("Mode made by Vuivuiviu2 and Guestly", "Cata Light: Mode made by Vuivuiviu2 and Guestly")
+task.wait(5)
+
+showCaptionAndChat("Have fun 👍", "Good Luck")
+
+-- =========================
+-- CATACLYSMIC MODE THEME V2
+-- =========================
+task.spawn(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/Vault-Mode/refs/heads/main/Cataclysmic%20Mode%20theme%20v2"))()
+end)
+
+-- ==============================
+-- Äá»”I Váº¬T LIá»†U + MÃ€U Cá»¬A
+-- ==============================
+task.spawn(function()
+
+    local DoorMaterial = Enum.Material.DiamondPlate
+    local DoorColor    = Color3.fromRGB(55, 55, 55)
+
+    local function ConvertRoom(Room)
+        task.wait(1.5)
+        if not Room:IsA("Model") then return end
+
+        for _, obj in pairs(Room:GetDescendants()) do
+            if obj:IsA("BasePart") and obj.Name == "Door" then
+                obj.Material = DoorMaterial
+                obj.Color = DoorColor
+
+                for _, child in pairs(obj:GetDescendants()) do
+                    if child:IsA("BasePart") then
+                        child.Material = DoorMaterial
+                        child.Color = DoorColor
+                    end
+                end
+            end
+        end
+    end
+
+    workspace.CurrentRooms.ChildAdded:Connect(ConvertRoom)
+
+    for _, room in pairs(workspace.CurrentRooms:GetChildren()) do
+        ConvertRoom(room)
+    end
+
+end)
+
+-- =====================================
+-- Äá»”I TEXT Cá»¬A â†’ ":)" (GIá»® KHUNG)
+-- =====================================
+task.spawn(function()
+
+    local GameData = game:GetService("ReplicatedStorage"):WaitForChild("GameData")
+    local Rooms = workspace:WaitForChild("CurrentRooms")
+    local CUSTOM_FONT = Enum.Font.Oswald
+
+    local function editDoorText(room)
+        if not room then return end
+
+        for _, ui in pairs(room:GetDescendants()) do
+            if (ui:IsA("TextLabel") or ui:IsA("TextButton")) and ui.Text then
+                
+                if not ui:GetAttribute("CustomDoorTag") then
+                    
+                    ui.Text = ":)"
+                    ui.TextColor3 = Color3.fromRGB(255, 0, 0)
+                    ui.Font = CUSTOM_FONT
+                    ui.TextScaled = true
+                    
+                    ui:SetAttribute("CustomDoorTag", true)
+                end
+            end
+        end
+    end
+
+    GameData.LatestRoom.Changed:Connect(function()
+        task.wait(0.2)
+        local room = Rooms:FindFirstChild(GameData.LatestRoom.Value)
+        editDoorText(room)
+    end)
+
+    task.wait(1)
+    editDoorText(Rooms:FindFirstChild(GameData.LatestRoom.Value))
+
+end)
+
+-- MischeviousLight RED Edition
+-- Modified for Full Red Theme
+
+_G.DO_RED_GUY = true 
+
+local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+
+local Camera = workspace.CurrentCamera
+local DeathName = "DeathBackgroundBlue"
+
+-- Äá»•i sequence sang mÃ u Ä‘á» rá»±c
+local RedPrimary = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 0))
+})
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
+local MainUI = PlayerGui.MainUI
+local Death = MainUI.Death
+local HelpfulDialogue = Death.HelpfulDialogue
+local MainGame = MainUI.Initiator.Main_Game
+local Health = MainGame.Health
+local Music = Health.Music
+
+local function getGitSoundId(GithubSoundPath: string, AssetName: string): Sound
+    local Url = GithubSoundPath
+
+    if not isfile(AssetName..".mp3") then 
+        writefile(AssetName..".mp3", game:HttpGet(Url)) 
+    end
+
+    local Sound = Instance.new("Sound")
+    Sound.SoundId = getcustomasset(AssetName..".mp3", true)
+    return Sound 
+end
+
+Camera.ChildAdded:Connect(
+    function(Child): ()
+        if Child.Name ~= DeathName then
+            return
+        end
+
+        if not _G.DO_RED_GUY then
+            return
+        end
+
+        for _, Asset in Music:GetChildren() do
+            if Asset:IsA("Sound") then
+                Asset:Destroy() 
+            end
+        end
+
+        local Lights = Child.Lights
+        local Fog = Child.FogAndSmaller
+        local Water = Child.Water
+
+        -- Äá»•i Ã¡nh sÃ¡ng Ä‘Ã¨n Spotlight sang mÃ u Ä‘á»
+        for _, Light in Lights:GetDescendants() do
+            if Light:IsA("SpotLight") then
+                Light.Color = Color3.fromRGB(255, 0, 0)
+            end
+
+            if Light:IsA("ParticleEmitter") then
+                Light.Color = RedPrimary
+            end
+        end
+
+        -- Äá»•i mÃ u sÆ°Æ¡ng mÃ¹ sang Ä‘á»
+        for _, FogL in Fog:GetChildren() do
+            FogL.Color = RedPrimary
+        end
+
+        -- Äá»•i mÃ u nÆ°á»›c sang Ä‘á»
+        for _, WaterL in Water:GetChildren() do
+            WaterL.Color = RedPrimary
+        end
+
+        local BigLight = Lights.BigLight
+        local Attachment = BigLight.Attachment
+        local Moon = Attachment.Moon
+        
+        -- Thay Ä‘á»•i ID hÃ¬nh áº£nh theo yÃªu cáº§u
+        Moon.Texture = "rbxassetid://95704191460526"
+        
+        -- Chá»‰nh mÃ u chá»¯ hÆ°á»›ng dáº«n thÃ nh Ä‘á» hoáº·c tráº¯ng tÃ¹y báº¡n (Ä‘ang Ä‘á»ƒ Ä‘á» cho Ä‘á»“ng bá»™)
+        HelpfulDialogue.TextColor3 = Color3.fromRGB(255, 0, 0)
+
+        local CustomMusic = getGitSoundId("https://github.com/vuivuiviu2/Vault-Mode/raw/refs/heads/main/cata_1.mp3", "Darkness")
+        CustomMusic.Parent = SoundService
+        CustomMusic.Looped = true
+        CustomMusic.Volume = 1.5
+        CustomMusic:Play()
+    end
+)
+
+-- Screech changer
+game.ReplicatedStorage.Entities.Screech.Top.Eyes.Color = Color3.fromRGB(255, 0, 0)
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Caught.SoundId = "rbxassetid://84864462000645"
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Caught.PlaybackSpeed = 1.2
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Attack.SoundId = "rbxassetid://18564431123"
+
+-- Cataclysm Screech
+coroutine.wrap(function()
+    while true do
+        wait(50)
+        local player = game.Players.LocalPlayer
+local mainGame = require(player.PlayerGui.MainUI.Initiator.Main_Game)
+local screechModule =
+require(player.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech)
+
+screechModule(mainGame)
+    end
+end)()
+
+-- The Hiders
+coroutine.wrap(function()
+    while true do
+        wait(250)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/The%20Hiders"))()
+    end
+end)()
+
+-- Eclipser
+coroutine.wrap(function()
+    while true do
+        wait(160)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Eclipser"))()
+    end
+end)()
+
+-- Havurseer
+coroutine.wrap(function()
+    while true do
+        wait(777)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Havurseer"))()
+    end
+end)()
+
+-- Swallow
+coroutine.wrap(function()
+    while true do
+        wait(290) loadstring(game:HttpGet("https://raw.githubusercontent.com/pfgj32633-ux/My-Scripts/refs/heads/main/Swallow"))()
+    end
+end)()
+
+-- A-60
+coroutine.wrap(function()
+    while true do
+        wait(10) 
+local function rollChance()
+    local roll = math.random(1,100) -- random từ 1 tới 100
+    
+    if roll == 1 then -- 1% tỉ lệ
+        print("TRÚNG 1% >:D kích hoạt script")
+
+        --====== Load Spawner ======--
+loadstring = _G.loadstring
+
+local spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/VoorPhale012/Fogroom/refs/heads/main/Wwwhyyyyil"))()
+
+--====== Create Entity ======--
+local entity = spawner.Create({
+	Entity = {
+		Name = "A-60",
+		Asset = "https://github.com/vuivuiviu2/Pressure-/raw/main/a-600.rbxm",
+		HeightOffset = 0
+	},
+	Lights = {  -- nÃ o 
+		Flicker = {
+			Enabled = false,
+			Duration = 0.8
+		},
+		Shatter = false,
+		Repair = false
+	},
+	Earthquake = { Enabled = false },
+	CameraShake = { Enabled = true, Range = 100, Values = {1.5, 20, 0.1, 1} },
+	Movement = { Speed = 200, Delay = 4, Reversed = false },
+	Rebounding = { Enabled = true, Type = "Blitz", Min = 1, Max = 1, Delay = 0 },
+	Damage = { Enabled = true, Range = 50, Amount = 66 },
+	Crucifixion = { Enabled = true, Range = 50, Resist = false, Break = true },
+	Death = { Type = "Default", Hints = {"Lol", "LOL", "LOLLLLLLLLLL"}, Cause = "A-60 The Multi Monster" }
+})
+
+--====== Callbacks ======--
+entity:SetCallback("OnSpawned", function()
+	print("A-60 has spawned")
+	local Player = game.Players.LocalPlayer
+	if not Player then return end
+	local PlayerGui = Player:WaitForChild("PlayerGui")
+
+	-- ===== Static nháº¥p nhÃ¡y =====
+	local staticGui = Instance.new("ScreenGui")
+	staticGui.Name = "A60Static"
+	staticGui.IgnoreGuiInset = true
+	staticGui.ResetOnSpawn = false
+	staticGui.Parent = PlayerGui
+
+	local staticImg = Instance.new("ImageLabel")
+	staticImg.Size = UDim2.new(1,0,1,0)
+	staticImg.Position = UDim2.new(0,0,0,0)
+	staticImg.BackgroundTransparency = 1
+	staticImg.Image = "rbxassetid://120865463688240" -- texture static má»›i
+	staticImg.ImageTransparency = 0.95
+	staticImg.ZIndex = 50
+	staticImg.Parent = staticGui
+
+	-- Nháº¥p nhÃ¡y nháº¹
+	local running = true
+	spawn(function()
+		while running do
+			if staticImg then
+				staticImg.ImageTransparency = 0.93 + math.random() * 0.2
+			end
+			task.wait(0.1)
+		end
+	end)
+
+	-- XÃ³a static sau 5 giÃ¢y náº¿u chÆ°a despawn
+	task.delay(5, function()
+		running = false
+		if staticGui then staticGui:Destroy() end
+	end)
+
+	-- ===== OnSpawned gá»‘c (text label) =====
+	task.delay(4, function()
+		local ScreenGui = Instance.new("ScreenGui")
+		ScreenGui.Name = "A60Message"
+		ScreenGui.IgnoreGuiInset = true
+		ScreenGui.ResetOnSpawn = false
+		ScreenGui.Parent = PlayerGui
+
+		local label = Instance.new("TextLabel")
+		label.Size = UDim2.new(0, 400, 0, 50)
+		label.Position = UDim2.new(0.5, -200, 0.5, 50)
+		label.BackgroundTransparency = 1
+		label.TextScaled = false
+		label.TextSize = 26
+		label.Font = Enum.Font.Oswald
+		label.TextColor3 = Color3.fromRGB(255, 64, 64)
+		label.TextStrokeTransparency = 0.2
+		label.TextStrokeColor3 = Color3.new(0, 0, 0)
+		label.TextWrapped = true
+		label.Text = ({
+			"coming through.",
+			"heads up.",
+			"incoming.",
+			"ready?",
+			"think fast."
+		})[math.random(1, 5)]
+		label.Parent = ScreenGui
+
+		task.delay(2.5, function()
+			if ScreenGui then ScreenGui:Destroy() end
+		end)
+	end)
+end)
+
+entity:SetCallback("OnStartMoving", function() print("A-60 has started moving") end)
+entity:SetCallback("OnRebounding", function(start)
+	if start then print("A-60 is rebounding") else print("A-60 finished rebound") end
+end)
+
+entity:SetCallback("OnDespawned", function()
+	print("A-60 has despawned")
+	local Player = game.Players.LocalPlayer
+	if Player then
+		local PlayerGui = Player:FindFirstChild("PlayerGui")
+		if PlayerGui then
+			local static = PlayerGui:FindFirstChild("A60Static")
+			if static then static:Destroy() end
+		end
+	end
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+	local Player = game.Players.LocalPlayer
+	if not Player then return end
+	local PlayerGui = Player:WaitForChild("PlayerGui")
+
+	if newHealth == 0 then
+		print("A-60 has killed the player")
+
+		local screenGui = Instance.new("ScreenGui")
+		screenGui.IgnoreGuiInset = true
+		screenGui.ResetOnSpawn = false
+		screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+		screenGui.Parent = PlayerGui
+
+		local imageLabel = Instance.new("ImageLabel")
+		imageLabel.BackgroundTransparency = 1
+		imageLabel.Size = UDim2.new(1,0,1,0)
+		imageLabel.Position = UDim2.new(0,0,0,0)
+		imageLabel.Image = "rbxassetid://88727249929792"
+		imageLabel.ImageColor3 = Color3.new(1,1,1)
+		imageLabel.ZIndex = 1
+		imageLabel.Parent = screenGui
+
+		local lines = {
+			"funny. i got to meet you here too.",
+			"perhaps it is fate bringing us together?",
+			"remember me?\ni remember you.",
+			"your taste in games suck.\ngo play something else.",
+			"start paying attention.\nyou're getting sloppy.",
+			"come on.\nyou can do better than that.",
+			"we've been doing the same song and dance for years.\nwhy do you still continue to fail?",
+			"it was nice seeing you again.\nso sad it had to be cut so short.",
+			"happy to see me?\nim happy to see you too."
+		}
+
+		local selected = lines[math.random(1,#lines)]
+		local splitLines = string.split(selected,"\n")
+
+		local text1 = Instance.new("TextLabel")
+		text1.Size = UDim2.new(1,0,0,50)
+		text1.Position = UDim2.new(0.5,0,0.65,0)
+		text1.AnchorPoint = Vector2.new(0.5,0.5)
+		text1.BackgroundTransparency = 1
+		text1.Text = ""
+		text1.Font = Enum.Font.Oswald
+		text1.TextSize = 42
+		text1.TextColor3 = Color3.fromRGB(180,0,0)
+		text1.TextStrokeTransparency = 0.3
+		text1.TextStrokeColor3 = Color3.fromRGB(80,0,0)
+		text1.TextXAlignment = Enum.TextXAlignment.Center
+		text1.TextYAlignment = Enum.TextYAlignment.Center
+		text1.ZIndex = 2
+		text1.Parent = screenGui
+
+		local text2 = Instance.new("TextLabel")
+		text2.Size = UDim2.new(1,0,0,50)
+		text2.Position = UDim2.new(0.5,0,0.71,0)
+		text2.AnchorPoint = Vector2.new(0.5,0.5)
+		text2.BackgroundTransparency = 1
+		text2.Text = ""
+		text2.Font = Enum.Font.Oswald
+		text2.TextSize = 42
+		text2.TextColor3 = Color3.fromRGB(180,0,0)
+		text2.TextStrokeTransparency = 0.3
+		text2.TextStrokeColor3 = Color3.fromRGB(80,0,0)
+		text2.TextXAlignment = Enum.TextXAlignment.Center
+		text2.TextYAlignment = Enum.TextYAlignment.Center
+		text2.ZIndex = 2
+		text2.Parent = screenGui
+
+		task.wait(1)
+		text1.Text = splitLines[1]
+		if splitLines[2] then task.wait(2) text2.Text = splitLines[2] end
+
+		task.delay(6,function() if screenGui then screenGui:Destroy() end end)
+	else
+		print("A-60 has damaged the player")
+	end
+end)
+
+--====== Run Entity ======--
+entity:Run()
+
+
+
+        
+    else
+        print("Xịt rồi :( ra số:", roll)
+        return
+    end
+end
+
+rollChance()
+    end
+end)()
