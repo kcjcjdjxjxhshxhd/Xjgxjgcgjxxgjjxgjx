@@ -1,0 +1,808 @@
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#8480ff'>[Cataclysm Mode]: Script Succesfully Executed/Loaded.</font>")
+
+local TextChatService = game:GetService('TextChatService')
+
+TextChatService.OnIncomingMessage = function(Message: TextChatMessage)
+    if Message.TextSource then
+        local player = game.Players:GetPlayerByUserId(Message.TextSource.UserId)
+        if player.Name == 'gftfujtrtr' then
+            Message.PrefixText = " <font color='#7B11FD'>[The Creator]</font> "
+                .. Message.PrefixText
+        end
+       if player.Name == 'bre5be123' then
+            Message.PrefixText = " <font color='#7B11FD'>[The Creator]</font> "
+                .. Message.PrefixText
+        end
+        if player.Name == 'vuivuiviu3' then
+            Message.PrefixText = " <font color='#7B11FD'>[Nd Creator]</font> "
+                .. Message.PrefixText
+        end
+       if player.Name == 'vuivuiviu2' then
+            Message.PrefixText = " <font color='#7B11FD'>[Nd Creator]</font> "
+                .. Message.PrefixText
+        end
+        if player.Name == 'Whywwhat3' then
+            Message.PrefixText = " <font color='#00BBFF'>[Special]</font> "
+                .. Message.PrefixText
+        end
+        if player.Name == 'dimaalt4' or player.Name == 'dima_082ooo' then
+            Message.PrefixText = " <font color='#FFD800'>[Special]</font> "
+                .. Message.PrefixText
+        end
+    end
+end
+
+-- flashlight
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+
+local ASSET_ID = 516522664 -- AssetId item (model / tool public)
+local HOLD_ANIMATION_ID = 100296215597460 -- AnimationId hold (idle/hold)
+
+local objects = game:GetObjects("rbxassetid://" .. ASSET_ID)
+if not objects or #objects == 0 then
+    warn("Cay thế nhờ")
+    return
+end
+
+local asset = objects[1]
+asset.Parent = nil
+
+local tool
+
+if asset:IsA("Tool") then
+    tool = asset
+else
+    tool = Instance.new("Tool")
+    tool.Name = asset.Name
+    tool.RequiresHandle = false
+    asset.Parent = tool
+end
+
+tool.Parent = backpack
+
+local animTrack
+
+local function playHoldAnimation(character)
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+
+    local animator = humanoid:FindFirstChildOfClass("Animator")
+    if not animator then
+        animator = Instance.new("Animator")
+        animator.Parent = humanoid
+    end
+
+    local animation = Instance.new("Animation")
+    animation.AnimationId = "rbxassetid://" .. HOLD_ANIMATION_ID
+
+    animTrack = animator:LoadAnimation(animation)
+    animTrack.Priority = Enum.AnimationPriority.Action
+    animTrack.Looped = true
+    animTrack:Play()
+end
+
+local function stopHoldAnimation()
+    if animTrack then
+        animTrack:Stop()
+        animTrack:Destroy()
+        animTrack = nil
+    end
+end
+
+tool.Equipped:Connect(function()
+    local character = player.Character or player.CharacterAdded:Wait()
+    playHoldAnimation(character)
+end)
+
+tool.Unequipped:Connect(function()
+    stopHoldAnimation()
+end)
+
+game:GetService("Players").LocalPlayer.Backpack.Flashlight.Handle.SpotLight.Brightness = 2
+game:GetService("Players").LocalPlayer.Backpack.Flashlight.Handle.SpotLight.Enabled = true
+
+print("Giờ làm model cho tôi đc chx? =)))")
+
+-- Basalt Wardrobes
+-- DOORS | CONVERT ALL WARDROBES TO METAL (MULTI-WARDROBE FIX)
+-- AUTO APPLY FOR EVERY ROOM
+
+local Rooms = workspace:WaitForChild("CurrentRooms")
+local GameData = game.ReplicatedStorage:WaitForChild("GameData")
+local LatestRoom = GameData:WaitForChild("LatestRoom")
+
+-- CONFIG
+local METAL_COLOR = Color3.fromRGB(171, 171, 171)
+local HIDE_DURATION = 1.5
+
+local SOUND_ENTER_ID = "rbxassetid://4416839551"
+local SOUND_EXIT_ID  = "rbxassetid://75433549183486"
+
+local function ConvertWardrobe(wardrobe)
+    -- ===== WOOD → METAL =====
+    local woodParts = {
+        "Door1",
+        "Door2",
+        "Main",
+        "Wood"
+    }
+
+    for _, partName in ipairs(woodParts) do
+        local part = wardrobe:FindFirstChild(partName, true)
+        if part and part:IsA("BasePart") then
+            pcall(function()
+                part.Material = Enum.Material.Basalt
+                part.Color = METAL_COLOR
+            end)
+        end
+    end
+
+    -- ===== SOUND =====
+    local main = wardrobe:FindFirstChild("Main", true)
+    if main then
+        local enterSound = main:FindFirstChild("SoundEnter")
+        if enterSound and enterSound:IsA("Sound") then
+            enterSound.SoundId = SOUND_ENTER_ID
+        end
+
+        local exitSound = main:FindFirstChild("SoundExit")
+        if exitSound and exitSound:IsA("Sound") then
+            exitSound.SoundId = SOUND_EXIT_ID
+        end
+    end
+
+    -- ===== HIDE PROMPT =====
+    local prompt = wardrobe:FindFirstChild("HidePrompt", true)
+    if prompt then
+        prompt.HoldDuration = HIDE_DURATION
+    end
+end
+
+local function ProcessRoom(room)
+    local assets = room:FindFirstChild("Assets")
+    if not assets then return end
+
+    -- DUYỆT TẤT CẢ WARDROBE TRONG PHÒNG
+    for _, inst in ipairs(assets:GetDescendants()) do
+        if inst.Name == "Wardrobe" and inst:IsA("Model") then
+            ConvertWardrobe(inst)
+        end
+    end
+end
+
+-- Áp dụng cho phòng đã spawn
+for _, room in ipairs(Rooms:GetChildren()) do
+    ProcessRoom(room)
+end
+
+-- Mỗi lần qua phòng mới → chạy lại (fix spawn trễ)
+LatestRoom.Changed:Connect(function()
+    task.wait(0.4)
+    for _, room in ipairs(Rooms:GetChildren()) do
+        ProcessRoom(room)
+    end
+end)
+
+print("✅ ALL wardrobes in ALL rooms converted successfully")
+
+-- Remove lights
+-- DOORS | AUTO REMOVE LIGHT_FIXTURES + CHANDELIERS
+-- RUN 3 TIMES EVERY ROOM CHANGE
+-- FIX LATE ASSET SPAWN (ROOM 8+)
+
+local Rooms = workspace:WaitForChild("CurrentRooms")
+local GameData = game.ReplicatedStorage:WaitForChild("GameData")
+local LatestRoom = GameData:WaitForChild("LatestRoom")
+
+local function CleanAllRooms()
+    for _, room in ipairs(Rooms:GetChildren()) do
+        local assets = room:FindFirstChild("Assets")
+        if assets then
+            -- Xóa Light_Fixtures
+            local lf = assets:FindFirstChild("Light_Fixtures")
+            if lf then
+                pcall(function()
+                    lf:Destroy()
+                end)
+            end
+
+            -- Xóa Chandelier
+            local ch = assets:FindFirstChild("Chandelier")
+            if ch then
+                pcall(function()
+                    ch:Destroy()
+                end)
+            end
+        end
+    end
+end
+
+-- Chạy lần đầu (phòng hiện tại)
+for i = 1, 3 do
+    CleanAllRooms()
+    task.wait(0.15)
+end
+
+-- Mỗi lần mở phòng mới → chạy lại 3 lần
+LatestRoom.Changed:Connect(function()
+    task.spawn(function()
+        for i = 1, 3 do
+            CleanAllRooms()
+            task.wait(0.15)
+        end
+    end)
+end)
+
+print("✅ Auto-clean lights EVERY ROOM (3x per room)")
+
+-- Doors sound changer
+coroutine.wrap(function()
+    while true do
+        wait()
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Open.SoundId = "rbxassetid://7309104360"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Open.PlaybackSpeed = 0.9
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.Bell.SoundId = "rbxassetid://0"
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.SoundId = "rbxassetid://7309104360"
+
+workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.PlaybackSpeed = 0.9
+        workspace.CurrentRooms[game.ReplicatedStorage.GameData.LatestRoom.Value].Door.Door.SlamOpen.TimePosition = 0
+    end
+end)()
+
+-- Floor 2 theme
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Floor%202%20theme"))()
+
+local Lighting = game:GetService("Lighting")
+local CollectionService = game:GetService("CollectionService")
+
+-- 1. Tắt ánh sáng môi trường
+Lighting.Brightness = 0
+Lighting.GlobalShadows = true
+Lighting.Ambient = Color3.new(0,0,0)
+Lighting.OutdoorAmbient = Color3.new(0,0,0)
+Lighting.EnvironmentDiffuseScale = 0
+Lighting.EnvironmentSpecularScale = 0
+Lighting.ClockTime = 0
+
+-- Cataclysm Light
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Cataclysmlight"))()
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(122, 129, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Cataclysm Mode Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Made by Vuivuiviu3 and Guestly",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(164, 255, 156)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Enjoy the mode! :D",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Volume = 1
+    sound.PlaybackSpeed = 1
+    sound.Name = "Background"
+    sound.Looped = false
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/Guestly-V2-2/Music-Sound/raw/refs/heads/main/YTSave.com_YouTube_Guiding-Light-Remix-Doors-But-Decent-OST_Media_aZavjylX1n0_002_720p.mp3?raw=true", 1, " bgmusic")
+
+--// CONFIG
+local TEXT = "CATACLYSM"
+local TYPE_SPEED = 0.05 -- time between each character when displayed
+local DELETE_SPEED = 0.05 -- time between each character when disappeared
+local WAIT_AFTER = 5 -- wait after display (seconds)
+local SOUND_ID = "rbxassetid://4621722813" -- change the ID yourself if desired
+
+--// SERVICES
+local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+local LocalPlayer = Players.LocalPlayer
+
+--// GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "TypeTextGui"
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Size = UDim2.new(1, 0, 0, 120)
+TextLabel.Position = UDim2.new(0.5, 0, 0, 20)
+TextLabel.AnchorPoint = Vector2.new(0.5, 0)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Text = ""
+TextLabel.TextColor3 = Color3.fromRGB(122, 129, 255)
+TextLabel.TextStrokeTransparency = 0
+TextLabel.TextScaled = true
+TextLabel.Font = Enum.Font.GothamBlack
+TextLabel.Parent = ScreenGui
+
+--// SOUND
+local TypeSound = Instance.new("Sound")
+TypeSound.SoundId = SOUND_ID
+TypeSound.Volume = 3
+TypeSound.Parent = SoundService
+
+--// TYPE EFFECT
+for i = 1, #TEXT do
+    TextLabel.Text = string.sub(TEXT, 1, i)
+    TypeSound:Play()
+    task.wait(TYPE_SPEED)
+end
+
+--// WAIT
+task.wait(WAIT_AFTER)
+
+--// DELETE EFFECT
+for i = #TEXT, 0, -1 do
+    TextLabel.Text = string.sub(TEXT, 1, i)
+    TypeSound:Play()
+    task.wait(DELETE_SPEED)
+end
+
+--// CLEANUP
+ScreenGui:Destroy() 
+
+task.spawn(function()
+    local ok, err = pcall(function()
+       wait(64)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Cataclysm"))()
+
+-- ================= CLEAN CONFIG =================
+local UNIQUE_GUI_NAME = "TypewriterSubtitle_CLEAN"
+
+local TextToShow = "Look behind you."
+local TypingSpeed = 0.05
+local DeleteSpeed = 0.05
+local WaitBeforeDelete = 3
+
+local TypingSoundId = "rbxassetid://6042053626"
+-- =================================================
+
+local CoreGui = game:GetService("CoreGui")
+
+-- 🔥 XOÁ GUI CŨ NẾU CÒN SÓT
+pcall(function()
+	if CoreGui:FindFirstChild(UNIQUE_GUI_NAME) then
+		CoreGui[UNIQUE_GUI_NAME]:Destroy()
+	end
+end)
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = UNIQUE_GUI_NAME
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = ScreenGui
+TextLabel.Size = UDim2.new(0.9, 0, 0.18, 0)
+TextLabel.Position = UDim2.new(0.05, 0, 0.75)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Text = ""
+TextLabel.TextWrapped = true
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.TextScaled = false
+TextLabel.TextSize = 30
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextStrokeTransparency = 0
+
+-- 🔊 SOUND (đặt TRONG GUI để destroy cùng)
+local Sound = Instance.new("Sound")
+Sound.SoundId = TypingSoundId
+Sound.Volume = 1
+Sound.Parent = ScreenGui
+
+-- ===== HIỆN CHỮ =====
+for i = 1, #TextToShow do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(TypingSpeed)
+end
+
+-- ⏳ ĐỢI
+task.wait(WaitBeforeDelete)
+
+-- ===== XOÁ CHỮ NGƯỢC =====
+for i = #TextToShow, 0, -1 do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(DeleteSpeed)
+end
+
+-- 🧹 CLEANUP TUYỆT ĐỐI
+pcall(function()
+	TextLabel.Text = ""
+	Sound:Stop()
+	Sound:Destroy()
+	TextLabel:Destroy()
+	ScreenGui:Destroy()
+end)
+
+-- 💀 SCRIPT KẾT THÚC – KHÔNG CÒN GÌ TỒN TẠI
+
+wait(2)
+
+-- ================= CLEAN CONFIG =================
+local UNIQUE_GUI_NAME = "TypewriterSubtitle_CLEAN"
+
+local TextToShow = "He will chase you forever."
+local TypingSpeed = 0.05
+local DeleteSpeed = 0.05
+local WaitBeforeDelete = 3
+
+local TypingSoundId = "rbxassetid://6042053626"
+-- =================================================
+
+local CoreGui = game:GetService("CoreGui")
+
+-- 🔥 XOÁ GUI CŨ NẾU CÒN SÓT
+pcall(function()
+	if CoreGui:FindFirstChild(UNIQUE_GUI_NAME) then
+		CoreGui[UNIQUE_GUI_NAME]:Destroy()
+	end
+end)
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = UNIQUE_GUI_NAME
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = ScreenGui
+TextLabel.Size = UDim2.new(0.9, 0, 0.18, 0)
+TextLabel.Position = UDim2.new(0.05, 0, 0.75)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Text = ""
+TextLabel.TextWrapped = true
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.TextScaled = false
+TextLabel.TextSize = 30
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextStrokeTransparency = 0
+
+-- 🔊 SOUND (đặt TRONG GUI để destroy cùng)
+local Sound = Instance.new("Sound")
+Sound.SoundId = TypingSoundId
+Sound.Volume = 1
+Sound.Parent = ScreenGui
+
+-- ===== HIỆN CHỮ =====
+for i = 1, #TextToShow do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(TypingSpeed)
+end
+
+-- ⏳ ĐỢI
+task.wait(WaitBeforeDelete)
+
+-- ===== XOÁ CHỮ NGƯỢC =====
+for i = #TextToShow, 0, -1 do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(DeleteSpeed)
+end
+
+-- 🧹 CLEANUP TUYỆT ĐỐI
+pcall(function()
+	TextLabel.Text = ""
+	Sound:Stop()
+	Sound:Destroy()
+	TextLabel:Destroy()
+	ScreenGui:Destroy()
+end)
+
+-- 💀 SCRIPT KẾT THÚC – KHÔNG CÒN GÌ TỒN TẠI
+    end)
+
+    if not ok then
+        warn("Secondary script error:", err)
+    end
+end)
+
+-- Screech changer
+game.ReplicatedStorage.Entities.Screech.Top.Eyes.Color = Color3.fromRGB(122, 129, 255)
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Caught.SoundId = "rbxassetid://84864462000645"
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Caught.PlaybackSpeed = 1.2
+game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech.Attack.SoundId = "rbxassetid://18564431123"
+
+-- Cataclysm Screech
+coroutine.wrap(function()
+    while true do
+        wait(50)
+        local player = game.Players.LocalPlayer
+local mainGame = require(player.PlayerGui.MainUI.Initiator.Main_Game)
+local screechModule =
+require(player.PlayerGui.MainUI.Initiator.Main_Game.RemoteListener.Modules.Screech)
+
+screechModule(mainGame)
+    end
+end)()
+
+-- The Hiders
+coroutine.wrap(function()
+    while true do
+        wait(250)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/The%20Hiders"))()
+    end
+end)()
+
+-- Eclipser
+coroutine.wrap(function()
+    while true do
+        wait(160)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Eclipser"))()
+    end
+end)()
+
+-- Havurseer
+coroutine.wrap(function()
+    while true do
+        wait(777)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Havurseer"))()
+    end
+end)()
+
+-- Swallow
+coroutine.wrap(function()
+    while true do
+        wait(290) loadstring(game:HttpGet("https://raw.githubusercontent.com/pfgj32633-ux/My-Scripts/refs/heads/main/Swallow"))()
+    end
+end)()
+
+-- Termanel
+coroutine.wrap(function()
+    while true do
+        wait(75)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0)
+-- Random seed
+math.randomseed(tick())
+
+-- Random từ 1 đến 100
+local roll = math.random(1, 100)
+
+if roll <= 70 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Termanel"))()
+
+else
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/X-Termanel"))()
+
+end
+end
+end)()
+
+-- Finding Rush
+coroutine.wrap(function()
+    while true do
+        wait(0)
+-- FINDING RUSH (FIXED & CLEAN)
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Volume = 10
+    sound.PlaybackSpeed = 1
+    sound.Name = "Chaos"
+    sound.Looped = false
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/Guestly-V2-2/Doors/raw/refs/heads/main/YTSave.com_YouTube_Cinematic-Boom-sound-effect-High-quality_Media_dz6Lp_PyX_Q_002_360p.mp3?raw=true", 1, " chaos")
+
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+
+-- ================= CONFIG =================
+local UNIQUE_GUI_NAME = "TypewriterSubtitle_CLEAN"
+
+local TextToShow = "The chaos just BEGAN."
+local TypingSpeed = 0.05
+local DeleteSpeed = 0.05
+local WaitBeforeDelete = 3
+
+local TypingSoundId = "rbxassetid://6042053626"
+-- =========================================
+
+-- 🔁 CHỜ RUSH SPAWN
+local Rush
+repeat
+	Rush = Workspace:FindFirstChild("RushMoving")
+	task.wait(0.2)
+until Rush
+
+-- 🔊 BACKGROUND SOUND (nếu có)
+local BackgroundSound = Workspace:FindFirstChild("Background")
+if BackgroundSound and BackgroundSound:IsA("Sound") then
+	TweenService:Create(
+		BackgroundSound,
+		TweenInfo.new(5),
+		{ Volume = 0 }
+	):Play()
+end
+
+-- 🧹 XOÁ GUI CŨ
+pcall(function()
+	if CoreGui:FindFirstChild(UNIQUE_GUI_NAME) then
+		CoreGui[UNIQUE_GUI_NAME]:Destroy()
+	end
+end)
+
+-- 🖥 GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = UNIQUE_GUI_NAME
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = ScreenGui
+TextLabel.Size = UDim2.new(0.9, 0, 0.18, 0)
+TextLabel.Position = UDim2.new(0.05, 0, 0.75)
+TextLabel.BackgroundTransparency = 1
+TextLabel.TextWrapped = true
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.TextSize = 30
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextStrokeTransparency = 0
+TextLabel.Text = ""
+
+-- 🔊 SOUND
+local Sound = Instance.new("Sound")
+Sound.SoundId = TypingSoundId
+Sound.Volume = 1
+Sound.Parent = ScreenGui
+
+-- ⌨ TYPE EFFECT
+for i = 1, #TextToShow do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(TypingSpeed)
+end
+
+task.wait(WaitBeforeDelete)
+
+-- ⌫ DELETE EFFECT
+for i = #TextToShow, 0, -1 do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(DeleteSpeed)
+end
+
+-- 🧹 CLEANUP
+Sound:Destroy()
+ScreenGui:Destroy()
+       break
+    end
+end)()
+
+-- Highlight
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Highlight"))()
+
+-- ================= CLEAN CONFIG =================
+local UNIQUE_GUI_NAME = "TypewriterSubtitle_CLEAN"
+
+local TextToShow = "You are safe."
+local TypingSpeed = 0.05
+local DeleteSpeed = 0.05
+local WaitBeforeDelete = 3
+
+local TypingSoundId = "rbxassetid://6042053626"
+-- =================================================
+
+local CoreGui = game:GetService("CoreGui")
+
+-- 🔥 XOÁ GUI CŨ NẾU CÒN SÓT
+pcall(function()
+	if CoreGui:FindFirstChild(UNIQUE_GUI_NAME) then
+		CoreGui[UNIQUE_GUI_NAME]:Destroy()
+	end
+end)
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = UNIQUE_GUI_NAME
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = ScreenGui
+TextLabel.Size = UDim2.new(0.9, 0, 0.18, 0)
+TextLabel.Position = UDim2.new(0.05, 0, 0.75)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Text = ""
+TextLabel.TextWrapped = true
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.TextScaled = false
+TextLabel.TextSize = 30
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextStrokeTransparency = 0
+
+-- 🔊 SOUND (đặt TRONG GUI để destroy cùng)
+local Sound = Instance.new("Sound")
+Sound.SoundId = TypingSoundId
+Sound.Volume = 1
+Sound.Parent = ScreenGui
+
+-- ===== HIỆN CHỮ =====
+for i = 1, #TextToShow do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(TypingSpeed)
+end
+
+-- ⏳ ĐỢI
+task.wait(WaitBeforeDelete)
+
+-- ===== XOÁ CHỮ NGƯỢC =====
+for i = #TextToShow, 0, -1 do
+	TextLabel.Text = TextToShow:sub(1, i)
+	Sound:Stop()
+	Sound.TimePosition = 0
+	Sound:Play()
+	task.wait(DeleteSpeed)
+end
+
+-- 🧹 CLEANUP TUYỆT ĐỐI
+pcall(function()
+	TextLabel.Text = ""
+	Sound:Stop()
+	Sound:Destroy()
+	TextLabel:Destroy()
+	ScreenGui:Destroy()
+end)
+
+-- 💀 SCRIPT KẾT THÚC – KHÔNG CÒN GÌ TỒN TẠI
