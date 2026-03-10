@@ -1,0 +1,75 @@
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#a46bff'>[Hazy Mode (Recreated)]: Script Succesfully Executed/Loaded.</font>")
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(189, 97, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Hazy Mode Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(153, 240, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Original made by Jabiss.",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 115, 115)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Recreated made by Guestly",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(164, 255, 156)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Enjoy the mode! :D",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Glitched Eyes
+coroutine.wrap(function()
+    while true do
+        wait(90)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Glitched%20Eyes"))()
+    end
+end)()
+
+-- Light down
+coroutine.wrap(function()
+    while true do
+        wait(110)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Light%20down"))()
+    end
+end)()
+
+-- Nightmare Ambush
+coroutine.wrap(function()
+    while true do
+        wait(700)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Nightmare%20Ambush"))()
+    end
+end)()
+
+-- Foul
+coroutine.wrap(function()
+    while true do
+        wait(280)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Foul"))()
+    end
+end)()
+
+-- Haggish
+coroutine.wrap(function()
+    while true do
+        wait(400)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Haggish"))()
+    end
+end)()
+
+-- Trauma
+coroutine.wrap(function()
+    while true do
+        wait(150)
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(2)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Doors/refs/heads/main/Trauma"))()
+    end
+end)()
