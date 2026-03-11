@@ -212,6 +212,14 @@ if cfg then
 	end
 end
 
+local function showAllHeadRanks()
+    -- code hiển thị head rank
+end
+
+local function hideAllHeadRanks()
+    -- code ẩn head rank
+end
+
 local function saveStats()
 	if not writefile then return end
 	
