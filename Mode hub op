@@ -400,8 +400,8 @@ local expandedMap = {}
 --// ===== GUI ROOT =====
 local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
 gui.Name = "DoorsStyleHub"
-local discordlink = "https://discord.gg/CuJ4fWVeT"
-local creatorName = "Sixer (Cool Guest)"
+local discordlink = "https://discord.gg/kWhhqsuz4"
+local creatorName = "Guestly"
 
 --// ===== INTRO CHAT SYSTEM =====
 local introPlayed = false
@@ -2599,7 +2599,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/IdkMyNameLoll/PublicS
 
 {
 	Name = "Water Rises Mode",
-	ImageId = 129149769000371,
+	ImageId = 131118641746405,
 	HighlightColor = Color3.fromRGB(3, 227, 252), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://pastefy.app/mrM9vA2L/raw"))()
@@ -2608,7 +2608,7 @@ loadstring(game:HttpGet("https://pastefy.app/mrM9vA2L/raw"))()
 
 {
 	Name = "Voidness Mode",
-	ImageId = 129149769000371,
+	ImageId = 124609654890885,
 	HighlightColor = Color3.fromRGB(255, 92, 255), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Voidness-Mode-Made-By-Guestly-Vuivuiviu2-And-Voorpr0", true))()
@@ -2617,7 +2617,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/ref
 
 {
 	Name = "Impossible Mode (Re-degenerated)",
-	ImageId = 129149769000371,
+	ImageId = 124040494825301,
 	HighlightColor = Color3.fromRGB(255, 129, 3), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Impossible-Mode-Re-Degenerate-Made-By-Guestly", true))()
@@ -2626,7 +2626,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/ref
 
 {
 	Name = "Degenerate Mode",
-	ImageId = 129149769000371,
+	ImageId = 104269136988130,
 	HighlightColor = Color3.fromRGB(0, 255, 0), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Degenerate-Mode-Made-By-Guestly", true))()
@@ -2635,7 +2635,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/ref
 
 {
 	Name = "Suggestions Mode",
-	ImageId = 129149769000371,
+	ImageId = 116850941375368,
 	HighlightColor = Color3.fromRGB(250, 255, 148), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Suggestions-Mode", true))()
@@ -2644,7 +2644,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/ref
 
 {
 	Name = "Immersive Mode",
-	ImageId = 129149769000371,
+	ImageId = 76607882033441,
 	HighlightColor = Color3.fromRGB(255, 218, 148), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-stuff/refs/heads/main/Immersive%20mode/Main%20Script"))()
@@ -2652,8 +2652,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-st
 },
 
 {
-	Name = "Grace Mode",
-	ImageId = 129149769000371,
+	Name = "Ringer Mode",
+	ImageId = 88208166452518,
 	HighlightColor = Color3.fromRGB(255, 226, 5), -- màu riêng
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/chubeteliet-cpu/Ringer-doors/refs/heads/main/RINGER-DOORS-NEW!", true))()
