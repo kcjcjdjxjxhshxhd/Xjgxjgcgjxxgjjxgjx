@@ -190,6 +190,14 @@ loadStats()
 local cfg = loadConfig()
 if cfg then
 	
+	local function showAllHeadRanks()
+    print("enabled")
+end
+
+local function hideAllHeadRanks()
+    print("nah")
+end
+	
 	-- restore music
 	if cfg.music then
 		local m = workspace:FindFirstChild(cfg.music)
@@ -210,14 +218,6 @@ if cfg then
 			hideAllHeadRanks()
 		end
 	end
-end
-
-local function showAllHeadRanks()
-    -- code hiển thị head rank
-end
-
-local function hideAllHeadRanks()
-    -- code ẩn head rank
 end
 
 local function saveStats()
