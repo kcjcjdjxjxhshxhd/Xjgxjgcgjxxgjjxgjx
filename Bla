@@ -1,0 +1,1328 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+local backpack = player:WaitForChild("Backpack")
+
+local TweenService = game:GetService("TweenService")
+local addPrompt
+local lifecycle
+local updateParticleSize
+
+-- HOOK
+local function BigPartHook(part)
+print("MAX SIZE BIG PART",part)
+end
+
+local holdAnimationId = "rbxassetid://100296215597460"
+
+local currentTrack = nil
+local inventory = {}
+local selectedIndex = nil
+local maxSlots = 15
+
+local function playHoldAnimation(tool)
+
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+
+	local animator = humanoid:FindFirstChildOfClass("Animator")
+	if not animator then return end
+
+	local anim = Instance.new("Animation")
+	anim.AnimationId = holdAnimationId
+
+	currentTrack = animator:LoadAnimation(anim)
+	currentTrack:Play()
+
+end
+
+local function stopHoldAnimation()
+
+	if currentTrack then
+		currentTrack:Stop()
+		currentTrack = nil
+	end
+
+end
+
+local function setupToolAnimation(tool)
+
+	tool.Equipped:Connect(function()
+		playHoldAnimation(tool)
+	end)
+
+	tool.Unequipped:Connect(function()
+		stopHoldAnimation()
+	end)
+
+end
+
+-- GUI
+local gui = Instance.new("ScreenGui",player.PlayerGui)
+
+local function showInventoryFull()
+
+	local label = Instance.new("TextLabel")
+	label.Parent = gui
+	label.Size = UDim2.new(0,300,0,50)
+	label.Position = UDim2.new(0.5,-150,0.2,0)
+	label.BackgroundTransparency = 1
+	label.TextColor3 = Color3.fromRGB(255,0,0)
+	label.TextScaled = true
+	label.Font = Enum.Font.SourceSansBold
+	label.Text = "Your inventory is full!"
+	
+	local failed = Instance.new("Sound", gui)
+	failed.Volume = 1
+	failed.RollOffMaxDistance = 9999
+	failed.SoundId = "rbxassetid://128827503277042"
+	failed:Play()
+
+	task.wait(2)
+
+	local tween = TweenService:Create(
+		label,
+		TweenInfo.new(3),
+		{TextTransparency = 1}
+	)
+
+	tween:Play()
+
+	tween.Completed:Connect(function()
+		label:Destroy()
+	end)
+
+end
+
+-- MONEY
+local money = 0
+local sellSoundId = "rbxassetid://131875549436395" -- m cÃ³ thá»ƒ Ä‘á»•i sound
+
+local moneyText = Instance.new("TextLabel",gui)
+moneyText.Size = UDim2.new(0,200,0,50)
+moneyText.Position = UDim2.new(1,-210,0,10)
+moneyText.BackgroundTransparency = 1
+moneyText.TextColor3 = Color3.fromRGB(0,255,0)
+moneyText.TextScaled = true
+moneyText.Font = Enum.Font.SourceSansBold
+moneyText.Text = "$0"
+
+local function updateMoney()
+	moneyText.Text = "$"..string.format("%.2f",money)
+end
+
+local invButton = Instance.new("TextButton",gui)
+invButton.Text = "Inventory"
+invButton.Size = UDim2.new(0,120,0,40)
+invButton.Position = UDim2.new(0,10,0.4,0)
+invButton.BackgroundColor3 = Color3.new(0,0,0)
+invButton.TextColor3 = Color3.new(1,1,1)
+
+-- INVENTORY FRAME (center ngang)
+local invFrame = Instance.new("Frame",gui)
+invFrame.Size = UDim2.new(0,600,0,200)
+invFrame.Position = UDim2.new(0.5,-300,0.5,-100)
+invFrame.BackgroundColor3 = Color3.new(0,0,0)
+invFrame.Visible = false
+
+local slotText = Instance.new("TextLabel",invFrame)
+slotText.Size = UDim2.new(1,0,0,25)
+slotText.Position = UDim2.new(0,0,0,-25)
+slotText.BackgroundTransparency = 1
+slotText.TextColor3 = Color3.new(1,1,1)
+slotText.Text = "0/15 slots"
+slotText.TextScaled = true
+
+local function updateSlots()
+	slotText.Text = #inventory.."/"..maxSlots.." slots"
+end
+
+-- SCROLL
+local scroll = Instance.new("ScrollingFrame",invFrame)
+scroll.Size = UDim2.new(1,0,1,0)
+scroll.CanvasSize = UDim2.new(0,0,0,0)
+scroll.BackgroundTransparency = 1
+scroll.ScrollBarThickness = 6
+
+local layout = Instance.new("UIListLayout",scroll)
+layout.Padding = UDim.new(0,5)
+
+invButton.MouseButton1Click:Connect(function()
+	invFrame.Visible = not invFrame.Visible
+	local click = Instance.new("Sound", workspace)
+	click.Volume = 1
+	click.RollOffMaxDistance = 9999
+	click.SoundId = "rbxassetid://138950973730250"
+	click:Play()
+	click.Ended:Connect(function()
+		click:Destroy()
+	end)
+end)
+
+-- OPTION FRAME
+local optionFrame = Instance.new("Frame",gui)
+optionFrame.Size = UDim2.new(0,200,0,100)
+optionFrame.Position = UDim2.new(0.5,-100,0.5,-50)
+optionFrame.BackgroundColor3 = Color3.new(0,0,0)
+optionFrame.Visible = false
+
+local unstoreButton = Instance.new("TextButton",optionFrame)
+unstoreButton.Size = UDim2.new(1,0,0.5,0)
+unstoreButton.Text = "UNSTORE"
+unstoreButton.BackgroundColor3 = Color3.new(0,0,0)
+unstoreButton.TextColor3 = Color3.new(1,1,1)
+
+local cancelButton = Instance.new("TextButton",optionFrame)
+cancelButton.Size = UDim2.new(1,0,0.5,0)
+cancelButton.Position = UDim2.new(0,0,0.5,0)
+cancelButton.Text = "CANCEL"
+cancelButton.BackgroundColor3 = Color3.new(0,0,0)
+cancelButton.TextColor3 = Color3.new(1,1,1)
+
+local function getPartValue(part)
+
+	local size = part.Size.X
+	local value = 0
+
+	-- BIG PART
+	if size >= 1.5 then
+
+		local minSize = 1.5
+		local maxSize = 15
+
+		local minValue = 3
+		local maxValue = 50
+
+		local t = math.clamp((size - minSize) / (maxSize - minSize),0,1)
+		
+		if part:GetAttribute("Mutated") then
+	value *= 10
+end
+
+		value = minValue + (maxValue - minValue) * t
+
+
+	-- SMALL PART
+	elseif size < 1 then
+
+		local minSize = 0.01
+		local maxSize = 0.99
+
+		local minValue = 0.01
+		local maxValue = 0.5
+
+		local t = math.clamp((size - minSize) / (maxSize - minSize),0,1)
+
+		value = minValue + (maxValue - minValue) * t
+
+
+	-- NORMAL PART
+	else
+		value = 1
+	end
+
+
+	-- PARTICLE BONUS
+	local particle =
+		part:FindFirstChildOfClass("Smoke") or
+		part:FindFirstChildOfClass("Fire") or
+		part:FindFirstChildOfClass("Sparkles") or
+		part:FindFirstChildOfClass("PointLight")
+
+	if particle then
+
+		if particle:IsA("Smoke") or particle:IsA("Fire") then
+			value += particle.Size * 0.25
+
+		elseif particle:IsA("PointLight") then
+			value += particle.Range / 30
+
+		elseif particle:IsA("Sparkles") then
+			value += 0.15
+		end
+
+	end
+
+
+	-- MULTIPLIERS
+
+	-- Neon material
+	if part.Material == Enum.Material.Neon then
+		value *= 2
+	end
+
+	-- PointLight multiplier
+	local light = part:FindFirstChildOfClass("PointLight")
+	if light then
+		value *= 1.5
+	end
+
+
+	-- ðŸ”’ LIMIT VALUE (ANTI ECONOMY BREAK)
+	value = math.clamp(value,0,100)
+
+	return value
+
+end
+
+local function playSellSound()
+
+	local sound = Instance.new("Sound")
+	sound.SoundId = sellSoundId
+	sound.Volume = 1
+	sound.Parent = workspace
+
+	sound:Play()
+
+	sound.Ended:Connect(function()
+		sound:Destroy()
+	end)
+
+end
+
+local sellButton = Instance.new("TextButton",gui)
+sellButton.Text = "Sell"
+sellButton.Size = UDim2.new(0,120,0,40)
+sellButton.Position = UDim2.new(0.85,0,0.32,0)
+sellButton.BackgroundColor3 = Color3.new(0,0,0)
+sellButton.TextColor3 = Color3.new(1,1,1)
+sellButton.Visible = false
+
+-- STORE / DROP BUTTONS
+local storeButton = Instance.new("TextButton",gui)
+storeButton.Text = "Store"
+storeButton.Size = UDim2.new(0,120,0,40)
+storeButton.Position = UDim2.new(0.85,0,0.4,0)
+storeButton.BackgroundColor3 = Color3.new(0,0,0)
+storeButton.TextColor3 = Color3.new(1,1,1)
+storeButton.Visible = false
+
+local dropButton = Instance.new("TextButton",gui)
+dropButton.Text = "Drop"
+dropButton.Size = UDim2.new(0,120,0,40)
+dropButton.Position = UDim2.new(0.85,0,0.48,0)
+dropButton.BackgroundColor3 = Color3.new(0,0,0)
+dropButton.TextColor3 = Color3.new(1,1,1)
+dropButton.Visible = false
+
+-- CHECK HOLD TOOL
+game:GetService("RunService").RenderStepped:Connect(function()
+
+	local tool = character:FindFirstChildOfClass("Tool")
+
+	if tool and tool.Name == "Part" then
+		storeButton.Visible = true
+dropButton.Visible = true
+sellButton.Visible = true
+	else
+		storeButton.Visible = false
+dropButton.Visible = false
+sellButton.Visible = false
+	end
+
+end)
+
+-- ADD ITEM TO INVENTORY UI
+local function addInventoryItem(part)
+
+	local index = table.find(inventory, part)
+
+	local particleText = ""
+
+	local particle = part:GetAttribute("ParticleType")
+
+	if particle then
+		particleText = " ["..particle.."]"
+	end
+
+	local info =
+	"["..part.Material.Name.."] "..
+	"["..part.Shape.Name.."] "..
+	"[Part] "..
+	"["..string.format("%.2f",part.Size.X).."]"..
+	particleText
+
+	local button = Instance.new("TextButton")
+	button.Parent = scroll
+	button.Size = UDim2.new(1,-10,0,30)
+	button.BackgroundColor3 = Color3.new(0,0,0)
+	button.TextColor3 = Color3.new(1,1,1)
+	button.Text = info
+
+	button.MouseButton1Click:Connect(function()
+
+		selectedIndex = table.find(inventory, part)
+		optionFrame.Visible = true
+		
+		local click2 = Instance.new("Sound", workspace)
+	click2.Volume = 1
+	click2.RollOffMaxDistance = 9999
+	click2.SoundId = "rbxassetid://138950973730250"
+	click2:Play()
+	click2.Ended:Connect(function()
+		click2:Destroy()
+	end)
+
+		unstoreButton.MouseButton1Click:Once(function()
+
+			if not selectedIndex then return end
+
+			local part = inventory[selectedIndex]
+			if not part then return end
+
+			local tool = Instance.new("Tool")
+			tool.Name = "Part"
+
+			local handle = part:Clone()
+			handle.Name = "Handle"
+			handle.Parent = tool
+
+			setupToolAnimation(tool)
+
+			tool.Parent = backpack
+
+			table.remove(inventory,selectedIndex)
+			
+			updateSlots()
+
+			button:Destroy() -- ðŸ”¥ XOÃ UI ITEM
+
+			selectedIndex = nil
+			optionFrame.Visible = false
+			
+			local click3 = Instance.new("Sound", workspace)
+	click3.Volume = 1
+	click3.RollOffMaxDistance = 9999
+	click3.SoundId = "rbxassetid://138950973730250"
+	click3:Play()
+	click3.Ended:Connect(function()
+		click3:Destroy()
+	end)
+
+		end)
+
+	end)
+
+end
+
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	scroll.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 10)
+end)
+
+-- STORE
+storeButton.MouseButton1Click:Connect(function()
+
+	local tool = character:FindFirstChildOfClass("Tool")
+	if not tool then return end
+	if tool.Name ~= "Part" then return end
+
+	-- INVENTORY FULL CHECK
+	if #inventory >= maxSlots then
+		
+		optionFrame.Visible = false -- trÃ¡nh spam event
+		showInventoryFull()
+
+		return
+	end
+
+	local part = tool:FindFirstChild("Handle")
+	if not part then return end
+
+	local clone = part:Clone()
+
+	table.insert(inventory, clone)
+
+	addInventoryItem(clone)
+	updateSlots()
+
+	tool:Destroy()
+	
+	local click = Instance.new("Sound", workspace)
+	click.Volume = 1
+	click.RollOffMaxDistance = 9999
+	click.SoundId = "rbxassetid://138950973730250"
+	click:Play()
+	click.Ended:Connect(function()
+		click:Destroy()
+	end)
+
+end)
+
+-- DROP
+dropButton.MouseButton1Click:Connect(function()
+
+	local tool = character:FindFirstChildOfClass("Tool")
+	if not tool then return end
+
+	local handle = tool:FindFirstChild("Handle")
+	if not handle then return end
+
+	local part = handle:Clone()
+
+	part.Parent = workspace
+	part.Position = hrp.Position + Vector3.new(0,3,0)
+
+	part.Anchored = false
+	part.CanCollide = true
+	part.AssemblyLinearVelocity = hrp.CFrame.LookVector * 10
+
+	task.defer(function()
+		addPrompt(part,0)
+	end)
+
+	lifecycle(part)
+	updateParticleSize(part)
+
+	handle:Destroy()
+	tool:Destroy()
+	
+	local click = Instance.new("Sound", workspace)
+	click.Volume = 1
+	click.RollOffMaxDistance = 9999
+	click.SoundId = "rbxassetid://138950973730250"
+	click:Play()
+	click.Ended:Connect(function()
+		click:Destroy()
+	end)
+
+end)
+
+sellButton.MouseButton1Click:Connect(function()
+
+	local tool = character:FindFirstChildOfClass("Tool")
+	if not tool then return end
+
+	local handle = tool:FindFirstChild("Handle")
+	if not handle then return end
+
+	local value = getPartValue(handle)
+
+	money += value
+	updateMoney()
+	
+	playSellSound()
+
+	handle:Destroy()
+	tool:Destroy()
+	
+	local click = Instance.new("Sound", workspace)
+	click.Volume = 1
+	click.RollOffMaxDistance = 9999
+	click.SoundId = "rbxassetid://138950973730250"
+	click:Play()
+	click.Ended:Connect(function()
+		click:Destroy()
+	end)
+
+end)
+
+-- CANCEL
+cancelButton.MouseButton1Click:Connect(function()
+	optionFrame.Visible = false
+	local click = Instance.new("Sound", workspace)
+	click.Volume = 1
+	click.RollOffMaxDistance = 9999
+	click.SoundId = "rbxassetid://138950973730250"
+	click:Play()
+	click.Ended:Connect(function()
+		click:Destroy()
+	end)
+end)
+
+-- RANDOM COLOR
+local function randomColor()
+return Color3.fromRGB(math.random(0,255),math.random(0,255),math.random(0,255))
+end
+
+-- RANDOM SHAPE
+local shapes = {
+Enum.PartType.Block,
+Enum.PartType.Ball,
+Enum.PartType.Cylinder
+}
+
+local function randomShape(part)
+part.Shape = shapes[math.random(1,#shapes)]
+end
+
+local function getBigPartHoldDuration(size)
+
+	local minSize = 1.5
+	local maxSize = 15
+
+	local minHold = 1
+	local maxHold = 5
+
+	local t = math.clamp((size - minSize) / (maxSize - minSize),0,1)
+
+	local hold = minHold + (maxHold - minHold) * t
+
+	return hold
+
+end
+
+-- RANDOM MATERIAL
+local materials = {
+Enum.Material.Plastic,
+Enum.Material.Metal,
+Enum.Material.Glass,
+Enum.Material.Wood,
+Enum.Material.Concrete,
+Enum.Material.Granite,
+Enum.Material.Neon,
+Enum.Material.SmoothPlastic,
+Enum.Material.ForceField,
+Enum.Material.DiamondPlate,
+Enum.Material.CorrodedMetal,
+Enum.Material.Foil,
+Enum.Material.Slate,
+Enum.Material.Marble,
+Enum.Material.Basalt,
+Enum.Material.Limestone,
+Enum.Material.Rock,
+Enum.Material.Asphalt,
+Enum.Material.Pavement,
+Enum.Material.Ground,
+Enum.Material.Mud,
+Enum.Material.Sand,
+Enum.Material.Sandstone,
+Enum.Material.Pebble,
+Enum.Material.Salt,
+Enum.Material.Grass,
+Enum.Material.LeafyGrass,
+Enum.Material.Snow,
+Enum.Material.WoodPlanks,
+Enum.Material.Brick,
+Enum.Material.Cobblestone,
+Enum.Material.Ice,
+Enum.Material.Glacier,
+Enum.Material.CrackedLava,
+Enum.Material.Cardboard,
+Enum.Material.Carpet,
+Enum.Material.CeramicTiles,
+Enum.Material.ClayRoofTiles,
+Enum.Material.Leather,
+Enum.Material.Plaster,
+Enum.Material.RoofShingles,
+Enum.Material.Rubber,
+Enum.Material.Fabric
+}
+
+-- PARTICLES
+local particles = {
+	"Smoke",
+	"Sparkles",
+	"Fire",
+	"PointLight"
+}
+
+local function randomMaterial(part)
+part.Material = materials[math.random(1,#materials)]
+end
+
+local function randomParticle(part)
+
+	if math.random(1,100) > 40 then
+		return nil
+	end
+
+	local particleName = particles[math.random(1,#particles)]
+
+	local particle = Instance.new(particleName)
+	particle.Parent = part
+
+	local size = part.Size.X
+	local scale = math.clamp(size / 5, 0.2, 5)
+
+	local pColor = randomColor()
+
+	if particleName == "Smoke" then
+		particle.RiseVelocity = 5 * scale
+		particle.Size = scale
+		particle.Color = Color3.new(pColor.R, pColor.G, pColor.B)
+
+	elseif particleName == "Fire" then
+		particle.Heat = 5 * scale
+		particle.Size = scale
+		particle.Color = Color3.new(pColor.R, pColor.G, pColor.B)
+		particle.SecondaryColor = randomColor()
+
+	elseif particleName == "Sparkles" then
+	particle.SparkleColor = pColor
+	elseif particleName == "PointLight" then
+
+	particle.Color = pColor
+
+	local brightness = math.clamp(size / 2, 0.2, 10)
+	local range = math.clamp(size * 2, 3, 40)
+
+	particle.Brightness = brightness
+	particle.Range = range
+end
+
+	return particleName
+
+end
+
+updateParticleSize = function(part)
+
+	local size = part.Size.X
+	local scale = math.clamp(size / 5, 0.2, 5)
+
+	local smoke = part:FindFirstChildOfClass("Smoke")
+	if smoke then
+		smoke.Size = scale
+		smoke.RiseVelocity = 5 * scale
+	end
+
+	local fire = part:FindFirstChildOfClass("Fire")
+	if fire then
+		fire.Size = scale
+		fire.Heat = 5 * scale
+	end
+	
+	local light = part:FindFirstChildOfClass("PointLight")
+if light then
+	light.Brightness = math.clamp(size / 2, 0.2, 10)
+	light.Range = math.clamp(size * 2, 3, 40)
+end
+
+end
+
+local function randomFloat(min,max)
+return min + math.random()*(max-min)
+end
+
+-- LIFECYCLE
+lifecycle = function(part)
+
+task.spawn(function()
+
+task.wait(10)
+
+local tween = TweenService:Create(
+part,
+TweenInfo.new(5),
+{Transparency = 1}
+)
+
+tween:Play()
+
+task.wait(5)
+
+if part and part.Parent then
+part:Destroy()
+end
+
+end)
+
+end
+
+-- PART â†’ TOOL
+local function partToTool(part)
+
+	local prompt = part:FindFirstChildOfClass("ProximityPrompt")
+	if prompt then
+		prompt.Enabled = false
+	end
+
+	local tool = Instance.new("Tool")
+	tool.Name = "Part"
+
+	local handle = part:Clone()
+	handle.Name = "Handle"
+
+	-- xoÃ¡ prompt trong tool
+	local p = handle:FindFirstChildOfClass("ProximityPrompt")
+	if p then
+		p:Destroy()
+	end
+
+	handle.Parent = tool
+
+	part:Destroy()
+
+	setupToolAnimation(tool)
+
+	tool.Parent = backpack
+
+end
+
+-- PROMPT
+addPrompt = function(part,hold)
+
+local prompt = Instance.new("ProximityPrompt")
+prompt.Parent = part
+prompt.ActionText = "Pick"
+prompt.Style = Enum.ProximityPromptStyle.Custom
+prompt.ObjectText = "Part"
+prompt.HoldDuration = hold
+
+prompt.Triggered:Connect(function()
+
+partToTool(part)
+
+end)
+
+end
+
+local function makeMutated(part)
+
+	part:SetAttribute("Mutated",true)
+
+	part.Material = Enum.Material.Neon
+
+	local fire = Instance.new("Fire")
+	fire.Parent = part
+
+	local smoke = Instance.new("Smoke")
+	smoke.Parent = part
+
+	local spark = Instance.new("Sparkles")
+	spark.Parent = part
+
+	local light = Instance.new("PointLight")
+	light.Brightness = 5
+	light.Range = 20
+	light.Parent = part
+
+	task.spawn(function()
+
+		while part and part.Parent do
+			task.wait(0.3)
+
+			randomShape(part)
+
+			local color = randomColor()
+
+			for _,v in ipairs(part:GetChildren()) do
+
+				if v:IsA("Fire") then
+					v.Color = color
+					v.SecondaryColor = randomColor()
+
+				elseif v:IsA("Smoke") then
+					v.Color = color
+
+				elseif v:IsA("Sparkles") then
+					v.SparkleColor = color
+
+				elseif v:IsA("PointLight") then
+					v.Color = color
+				end
+
+			end
+
+		end
+
+	end)
+
+end
+
+-- SPAWN PART
+local function spawnPart(offsetY,type)
+
+local part = Instance.new("Part")
+part.Parent = workspace
+
+local x = math.random(-20,20)
+local z = math.random(-20,20)
+
+part.Position = hrp.Position + Vector3.new(x,offsetY,z)
+
+part.Color = randomColor()
+
+randomShape(part)
+randomMaterial(part)
+
+if math.random(1,100) <= 5 then
+	makeMutated(part)
+end
+
+local particleType = randomParticle(part)
+
+if particleType then
+	part:SetAttribute("ParticleType",particleType)
+end
+
+lifecycle(part)
+
+addPrompt(part,0)
+
+return part
+
+end
+
+-- NORMAL
+task.spawn(function()
+
+while true do
+task.wait(1)
+
+spawnPart(10,"normal")
+
+end
+
+end)
+
+-- BIG
+task.spawn(function()
+
+while true do
+task.wait(5)
+
+if math.random(1,100) <= 30 then
+
+local part = spawnPart(10,"big")
+
+local size = randomFloat(1.5,15)
+part.Size = Vector3.new(size,size,size)
+
+updateParticleSize(part)
+
+-- HOLD DURATION Dá»°A VÃ€O SIZE
+local prompt = part:FindFirstChildOfClass("ProximityPrompt")
+if prompt then
+	prompt.HoldDuration = getBigPartHoldDuration(size)
+	prompt.MaxActivationDistance = 20
+end
+
+if size >= 15 then
+BigPartHook(part)
+end
+
+end
+
+end
+
+end)
+
+-- SMALL
+task.spawn(function()
+
+while true do
+task.wait(3)
+
+if math.random(1,100) <= 50 then
+
+local part = spawnPart(10,"small")
+
+local size = randomFloat(0.01,0.99)
+part.Size = Vector3.new(size,size,size)
+
+updateParticleSize(part)
+
+end
+
+end
+
+end)
+
+while true do
+	task.wait(150)
+
+	local GameData = game.ReplicatedStorage:WaitForChild("GameData")
+local latestRoom = GameData:WaitForChild("LatestRoom")
+
+local spawnRoom = latestRoom.Value
+
+-- LOAD MODEL
+	local seller = game:GetObjects("rbxassetid://13537353770")[1]
+	seller.Parent = workspace
+seller.Name = "ShopSeller"
+
+	local model = workspace:WaitForChild("ShopSeller", 5)
+	if not model then return end
+
+	local mainPart = model:FindFirstChildWhichIsA("BasePart")
+	if not mainPart then return end
+
+	-- ===== RANDOM SPAWN IN ROOM =====
+	local room = workspace.CurrentRooms
+		:FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
+
+	if room and room:FindFirstChild("Parts")
+		and room.Parts:FindFirstChild("Floor") then
+
+		local floor = room.Parts.Floor
+		local size = floor.Size
+
+		local offsetX = math.random(-size.X/2 + 2, size.X/2 - 2)
+		local offsetZ = math.random(-size.Z/2 + 2, size.Z/2 - 2)
+
+		mainPart.CFrame =
+			floor.CFrame
+			* CFrame.new(offsetX, 5, offsetZ)
+	end
+
+	-- UNTOUCHABLE
+	for _,v in ipairs(seller:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.Anchored = true
+			v.CanCollide = false
+			v.CanTouch = false
+			v.CanQuery = false
+		end
+	end
+
+
+	-- PROMPT
+	local part = seller.PrimaryPart or seller:FindFirstChildWhichIsA("BasePart")
+	if not part then return end
+
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.Parent = part
+	prompt.Style = Enum.ProximityPromptStyle.Custom
+	prompt.ActionText = "Shop"
+	prompt.ObjectText = "Merchant"
+	prompt.HoldDuration = 0
+
+
+	prompt.Triggered:Connect(function(player)
+
+	prompt.Enabled = false
+
+	local playerGui = player:WaitForChild("PlayerGui")
+
+	-- SCREEN GUI
+	local screen = Instance.new("ScreenGui")
+	screen.Name = "ShopGUI"
+	screen.ResetOnSpawn = false
+	screen.Parent = playerGui
+
+	-- MAIN BACKGROUND
+	local main = Instance.new("Frame")
+	main.Parent = screen
+	main.Size = UDim2.new(0.8,0,0.8,0)
+	main.Position = UDim2.new(0.1,0,0.1,0)
+	main.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	
+	local optionContainer = Instance.new("Frame")
+optionContainer.Parent = main
+optionContainer.Size = UDim2.new(1,-40,1,-120)
+optionContainer.Position = UDim2.new(0,20,0,60)
+optionContainer.BackgroundTransparency = 1
+
+function openConfirm(info)
+
+	local confirm = Instance.new("Frame")
+	confirm.Parent = main
+	confirm.Size = UDim2.new(0,400,0,150)
+	confirm.Position = UDim2.new(0.5,-200,0.5,-75)
+	confirm.BackgroundColor3 = Color3.fromRGB(0,0,0)
+
+	-- TEXT
+	local text = Instance.new("TextLabel")
+	text.Parent = confirm
+	text.Size = UDim2.new(1,0,0,50)
+	text.Position = UDim2.new(0,0,0,10)
+	text.BackgroundTransparency = 1
+	text.Text = "Do you want to buy this item?"
+	text.TextColor3 = Color3.fromRGB(255,255,255)
+	text.TextScaled = true
+
+	-- YES BUTTON
+	local yes = Instance.new("TextButton")
+	yes.Parent = confirm
+	yes.Size = UDim2.new(0.4,0,0,40)
+	yes.Position = UDim2.new(0.1,0,1,-50)
+	yes.Text = "Yes"
+
+	-- NO BUTTON
+	local no = Instance.new("TextButton")
+	no.Parent = confirm
+	no.Size = UDim2.new(0.4,0,0,40)
+	no.Position = UDim2.new(0.5,0,1,-50)
+	no.Text = "No"
+
+	-- YES
+	yes.MouseButton1Click:Connect(function()
+
+		if info.onPurchase then
+			info.onPurchase()
+		end
+
+		confirm:Destroy()
+
+	end)
+
+	-- NO
+	no.MouseButton1Click:Connect(function()
+
+		confirm:Destroy()
+
+	end)
+
+end
+
+local optionCount = 0
+
+function createOption(info)
+
+	optionCount += 1
+
+	local option = Instance.new("Frame")
+	option.Parent = optionContainer
+	option.Size = UDim2.new(0,200,0,80)
+	option.Position = UDim2.new(0,(optionCount-1)*220,0,0)
+	option.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	option.BorderSizePixel = 1
+
+	-- IMAGE BOX
+	local imageBox = Instance.new("ImageLabel")
+	imageBox.Parent = option
+	imageBox.Size = UDim2.new(0,60,0,60)
+	imageBox.Position = UDim2.new(0,10,0.5,-30)
+	imageBox.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	imageBox.Image = info.IDimage or ""
+	
+	-- ITEM NAME
+local nameText = Instance.new("TextLabel")
+nameText.Parent = option
+nameText.Size = UDim2.new(0,120,0,30)
+nameText.Position = UDim2.new(0,80,0,5)
+nameText.BackgroundTransparency = 1
+nameText.Text = info.name or "Item"
+nameText.TextColor3 = Color3.fromRGB(255,255,255)
+nameText.TextScaled = true
+nameText.Font = Enum.Font.SourceSansBold
+nameText.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- PRICE BOX
+	-- PRICE BOX (nm di name)
+local priceBox = Instance.new("TextButton")
+priceBox.Parent = option
+priceBox.Size = UDim2.new(1,-90,0,35)
+priceBox.Position = UDim2.new(0,80,0,40)
+priceBox.BackgroundColor3 = Color3.fromRGB(255,221,0)
+priceBox.Text = "" --  trng vì text nm trong priceText
+priceBox.BorderSizePixel = 0
+priceBox.AutoButtonColor = false
+
+-- PRICE TEXT
+local priceText = Instance.new("TextLabel")
+priceText.Parent = priceBox
+priceText.Size = UDim2.new(1,0,1,0)
+priceText.BackgroundTransparency = 1
+priceText.Text = "$"..tostring(info.value or 0)
+priceText.TextColor3 = Color3.fromRGB(0,0,0)
+priceText.TextScaled = true
+priceText.Font = Enum.Font.SourceSansBold
+
+priceBox.Active = true
+priceBox.MouseButton1Click:Connect(function()
+	openConfirm(info)
+end)
+
+end
+
+local Options = {
+
+	{
+		name = "Flashlight",
+		IDimage = "rbxassetid://123456",
+		value = 1,
+
+		onPurchase = function()
+
+			print("Flashlight purchased")
+
+			print("bla")
+
+		end
+	},
+
+}
+
+for _,data in pairs(Options) do
+	createOption(data)
+end
+
+	-- TITLE BAR
+	local titleBar = Instance.new("Frame")
+	titleBar.Parent = main
+	titleBar.Size = UDim2.new(1,0,0,40)
+	titleBar.BackgroundColor3 = Color3.fromRGB(80,80,80)
+	titleBar.BorderSizePixel = 0
+
+	-- TITLE TEXT
+	local title = Instance.new("TextLabel")
+	title.Parent = titleBar
+	title.Size = UDim2.new(1,-40,1,0)
+	title.Position = UDim2.new(0,10,0,0)
+	title.BackgroundTransparency = 1
+	title.Text = "SHOP"
+	title.TextColor3 = Color3.fromRGB(255,255,255)
+	title.TextScaled = true
+	title.Font = Enum.Font.SourceSansBold
+	title.TextXAlignment = Enum.TextXAlignment.Left
+
+	-- CLOSE BUTTON
+	local close = Instance.new("TextButton")
+	close.Parent = titleBar
+	close.Size = UDim2.new(0,40,1,0)
+	close.Position = UDim2.new(1,-40,0,0)
+	close.Text = "X"
+	close.TextColor3 = Color3.fromRGB(255,255,255)
+	close.BackgroundColor3 = Color3.fromRGB(120,120,120)
+	close.TextScaled = true
+
+	close.MouseButton1Click:Connect(function()
+		screen:Destroy()
+	end)
+
+	-- khi GUI b destroy  bt li prompt
+	screen.Destroying:Connect(function()
+		if prompt then
+			prompt.Enabled = true
+		end
+	end)
+
+end)
+	
+	local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local torso = seller:FindFirstChild("Torso")
+if torso then
+
+	RunService.Heartbeat:Connect(function()
+
+		local closestPlayer
+		local closestDistance = math.huge
+
+		for _,player in ipairs(Players:GetPlayers()) do
+
+			local char = player.Character
+			local hrp = char and char:FindFirstChild("Head")
+
+			if hrp then
+				local dist = (hrp.Position - torso.Position).Magnitude
+
+				if dist < closestDistance then
+					closestDistance = dist
+					closestPlayer = hrp
+				end
+			end
+
+		end
+
+		if closestPlayer then
+
+			local pos = torso.Position
+			local target = closestPlayer.Position
+
+			torso.CFrame = CFrame.lookAt(pos, target)
+
+		end
+
+	end)
+
+end
+
+local baseY = torso.Position.Y
+local floatHeight = 0.7      --  cao dao ng
+local floatSpeed = 2         -- tc 
+
+local t = 0
+
+RunService.Heartbeat:Connect(function(dt)
+
+	t += dt * floatSpeed
+
+	local offset = math.sin(t) * floatHeight
+
+	local pos = torso.Position
+	torso.Position = Vector3.new(pos.X, baseY + offset, pos.Z)
+
+end)
+
+local TweenService = game:GetService("TweenService")
+local torso = seller:FindFirstChild("Torso")
+if not torso then return end
+
+torso.Material = Enum.Material.ForceField
+torso.Size = Vector3.new(6,6,6)
+torso.CanCollide = false
+
+local particle = torso:FindFirstChildOfClass("ParticleEmitter")
+if particle then
+    particle:Destroy()
+end
+
+local fire = Instance.new("Fire")
+fire.Parent = torso
+fire.Color = Color3.fromRGB(82,82,82)
+fire.SecondaryColor = Color3.fromRGB(32,32,32)
+fire.Heat = 5
+fire.Size = 10
+
+local sparkles = Instance.new("Sparkles")
+sparkles.Parent = torso
+sparkles.SparkleColor = Color3.fromRGB(255,255,255)
+
+local light = Instance.new("PointLight")
+light.Parent = torso
+light.Brightness = 5
+light.Range = 8
+
+local info = TweenInfo.new(
+	1.5, -- thi gian tween
+	Enum.EasingStyle.Sine,
+	Enum.EasingDirection.InOut
+)
+
+local tweenDown = TweenService:Create(light, info, {Range = 0})
+local tweenUp = TweenService:Create(light, info, {Range = 8})
+
+task.spawn(function()
+	while true do
+		tweenDown:Play()
+		tweenDown.Completed:Wait()
+
+		tweenUp:Play()
+		tweenUp.Completed:Wait()
+	end
+end)
+
+local connection
+
+connection = latestRoom.Changed:Connect(function()
+
+	if latestRoom.Value >= spawnRoom + 3 then
+
+		if connection then
+			connection:Disconnect()
+		end
+
+		if seller and seller.Parent then
+			seller:Destroy()
+		end
+
+	end
+
+end)
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = seller.Torso
+    sound.Volume = 1
+    sound.PlaybackSpeed = 1
+    sound.Name = "Prunki"
+    sound.Looped = true
+    sound.RollOffMaxDistance = 50
+    sound.RollOffMinDistance = 1
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/raw/refs/heads/main/YTDown.com_YouTube_DOORS-OST-Daily-Run-Death_Media_tWwi29y_wQ_006_144p.mp3?raw=true", 1, " praki")
+end
