@@ -2445,9 +2445,9 @@ end
 
 local TabsConfig = {
 	{
-	Name = "Home",
-	Buttons = {}
-},
+		Name = "Home",
+		Buttons = {}
+	},
 
 	{
 		Name = "Modes",
@@ -2455,212 +2455,276 @@ local TabsConfig = {
 			{
 	Name = "Dreamcore Mode",
 	ImageId = 123961768980557,
-	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 255, 255),
 	Code = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Dreamcore-Mode-Made-by-Guestly-and-Voorpr0", true))()
 	end
 },
-			
 			{
 	Name = "Cataclysm Mode",
 	ImageId = 82766883740850,
-	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 0, 0),
 	Code = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Cataclysm-Mode-made-by-Guestly-and-Vuivuiviu3", true))()
 	end
 },
-
 {
 	Name = "Cataclysmic Mode",
 	ImageId = 132419993309810,
-	HighlightColor = Color3.fromRGB(173, 2, 2), -- màu riêng
+	HighlightColor = Color3.fromRGB(173, 2, 2),
 	Code = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Cataclysmic-Mode-Made-by-Guestly-and-Vuivuiviu4", true))()
 	end
 },
-
 {
 	Name = "Hallucination Mode (Easy)",
 	ImageId = 101502113770190,
-	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 255, 255),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hallucination-Mode-(Easy-Version)-Made-by-Celestian-on-Discord", true))()
 	end
 },
-
 {
 	Name = "Hallucination Mode (Hard)",
 	ImageId = 106197785545507,
-	HighlightColor = Color3.fromRGB(255, 255, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 255, 255),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hallucination-Mode-(Hard-Version)-Made-by-Celestian-on-Discord", true))()
 	end
 },
-
 {
 	Name = "Mayhem Mode",
 	ImageId = 73391519663982,
-	HighlightColor = Color3.fromRGB(3, 175, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(3, 175, 255),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-stuff/refs/heads/main/Mayhem%20mode%20recreate/Code", true))()
 	end
 },
-
 {
 	Name = "Fragmented Mode",
 	ImageId = 127196343489842,
-	HighlightColor = Color3.fromRGB(161, 3, 252), -- màu riêng
+	HighlightColor = Color3.fromRGB(161, 3, 252),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/talales/Nhankg/refs/heads/main/fragmented%20v5", true))()
 	end
 },
-
 {
 	Name = "Hazy Mode (Recreated)",
 	ImageId = 130053850863219,
-	HighlightColor = Color3.fromRGB(244, 3, 252), -- màu riêng
+	HighlightColor = Color3.fromRGB(244, 3, 252),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hazy-Mode-Recreated-made-by-Guestly-(Celestian)-on-Discord", true))()
-
 	end
 },
-
 {
 	Name = "Extreme Mode (Recreated)",
 	ImageId = 86946627133874,
-	HighlightColor = Color3.fromRGB(191, 0, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(191, 0, 0),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Extreme-Mode-Recreated-made-by-Guestly", true))()
 	end
 },
-
 {
 	Name = "Forbidden Mode (Recreated)",
 	ImageId = 99622637705464,
-	HighlightColor = Color3.fromRGB(214, 186, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(214, 186, 0),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Forbidden-Mode-recreated-by-Guestly", true))()
 	end
 },
-
 {
 	Name = "Hardcore Re-remastered Mode",
 	ImageId = 138892776130651,
-	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 0, 0),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/GuestlyTheGreatestGuest/Modes/refs/heads/main/Hardcore-Mode-Re-Remastered-Made-By-Guestly-Vuivuiviu2-Nowhywhat-Voorpr0", true))()
 	end
 },
-
 {
 	Name = "Lunacy Mode",
 	ImageId = 87962511579749,
-	HighlightColor = Color3.fromRGB(187, 0, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(187, 0, 255),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Lunacy-Mode-Made-By-Guestly-Vuivuiviu2-Nowhywhat-And-Voorpr0", true))()
 	end
 },
-
 {
 	Name = "Inferno Mode",
 	ImageId = 136922189656082,
-	HighlightColor = Color3.fromRGB(174, 255, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(174, 255, 0),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Anctarus7105/My-Modes/main/Inferno.lua"))()
 	end
 },
-
 {
 	Name = "Hardcore Mode (Reworked)",
 	ImageId = 87047590074187,
-	HighlightColor = Color3.fromRGB(255, 0, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 0, 0),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/rrealblueyt-oss/Hradcore-by-noonies-remakes/refs/heads/main/Hradcore%20reworker%20by%20RealblueYT%20chubeteliet%20LDLT_legacy", true))()
 	end
 },
-
 {
 	Name = "OVERDOORS Mode",
 	ImageId = 103932237084791,
-	HighlightColor = Color3.fromRGB(36, 178, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(36, 178, 255),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/binhlforsaken156-sys/THE-OVERDOORS-/refs/heads/main/OVERDOORS-2.9.2", true))()
 	end
 },
-
 {
 	Name = "Grace Mode",
 	ImageId = 129149769000371,
-	HighlightColor = Color3.fromRGB(255, 226, 5), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 226, 5),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/IdkMyNameLoll/PublicScripts/refs/heads/main/DoorsXGrace.lua"))()
 	end
 },
-
 {
 	Name = "Water Rises Mode",
 	ImageId = 131118641746405,
-	HighlightColor = Color3.fromRGB(3, 227, 252), -- màu riêng
+	HighlightColor = Color3.fromRGB(3, 227, 252),
 	Code = function()
 loadstring(game:HttpGet("https://pastefy.app/mrM9vA2L/raw"))()
 	end
 },
-
 {
 	Name = "Voidness Mode",
 	ImageId = 124609654890885,
-	HighlightColor = Color3.fromRGB(255, 92, 255), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 92, 255),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Voidness-Mode-Made-By-Guestly-Vuivuiviu2-And-Voorpr0", true))()
 	end
 },
-
 {
 	Name = "Impossible Mode (Re-degenerated)",
 	ImageId = 124040494825301,
-	HighlightColor = Color3.fromRGB(255, 129, 3), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 129, 3),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Impossible-Mode-Re-Degenerate-Made-By-Guestly", true))()
 	end
 },
-
 {
 	Name = "Degenerate Mode",
 	ImageId = 104269136988130,
-	HighlightColor = Color3.fromRGB(0, 255, 0), -- màu riêng
+	HighlightColor = Color3.fromRGB(0, 255, 0),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Degenerate-Mode-Made-By-Guestly", true))()
 	end
 },
-
 {
 	Name = "Suggestions Mode",
 	ImageId = 116850941375368,
-	HighlightColor = Color3.fromRGB(250, 255, 148), -- màu riêng
+	HighlightColor = Color3.fromRGB(250, 255, 148),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Suggestions-Mode", true))()
 	end
 },
-
 {
 	Name = "Immersive Mode",
 	ImageId = 76607882033441,
-	HighlightColor = Color3.fromRGB(255, 218, 148), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 218, 148),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/localplayerr/Doors-stuff/refs/heads/main/Immersive%20mode/Main%20Script"))()
 	end
 },
-
 {
 	Name = "Ringer Mode",
 	ImageId = 88208166452518,
-	HighlightColor = Color3.fromRGB(255, 226, 5), -- màu riêng
+	HighlightColor = Color3.fromRGB(255, 226, 5),
 	Code = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/chubeteliet-cpu/Ringer-doors/refs/heads/main/RINGER-DOORS-NEW!", true))()
 	end
 },
 		}
 	},
+
+	-- 🔥 TAB MỚI
+	{
+		Name = "Entity Spawners",
+		Buttons = {
+			{
+				Name = "Aggressive (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(13,150,255),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/Aggressive"))()
+				end
+			},
+			{
+				Name = "A-85 (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(10,255,190),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A85"))()
+				end
+			},
+			{
+				Name = "Pursure (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(10,226,255),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/Pursure"))()
+				end
+			},
+			{
+				Name = "A-170 (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(255,0,0),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A170"))()
+				end
+			},
+			{
+				Name = "???? (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(148,7,7),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/%3F%3F%3F%3F"))()
+				end
+			},
+			{
+				Name = "A-200 (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(171,175,255),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A-200"))()
+				end
+			},
+			{
+				Name = "A-400 (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(255,119,8),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/stopfuckingSkiddingbitch/My-Scripts/refs/heads/main/A400"))()
+				end
+			},
+			{
+				Name = "Nightmare Silence (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(0,255,255),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Nightmare%20Silence"))()
+				end
+			},
+			{
+				Name = "Darkness (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(122,195,255),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Darkness"))()
+				end
+			},
+			{
+				Name = "One Eye (Suggestions)",
+				ImageId = 0,
+				HighlightColor = Color3.fromRGB(255,255,255),
+				Code = function()
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/OneEye"))()
+				end
+			}
+		}
+	}
 }
 
 for _, tabData in pairs(TabsConfig) do
