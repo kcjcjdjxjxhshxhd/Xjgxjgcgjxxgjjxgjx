@@ -1,0 +1,46 @@
+--// BANGERS FONT FORCER (OPTIMIZED)
+
+local TARGET_FONT = Enum.Font.Bangers
+
+local function applyFont(obj)
+    if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+        if obj.Font ~= TARGET_FONT then
+            pcall(function()
+                obj.Font = TARGET_FONT
+            end)
+        end
+    end
+end
+
+-- Apply ban đầu (chạy 1 lần)
+for _, v in ipairs(game:GetDescendants()) do
+    applyFont(v)
+end
+
+-- Khi có object mới
+game.DescendantAdded:Connect(function(obj)
+    applyFont(obj)
+end)
+
+-- Anti revert thông minh (chỉ check khi property đổi)
+local function hook(obj)
+    if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+        obj:GetPropertyChangedSignal("Font"):Connect(function()
+            if obj.Font ~= TARGET_FONT then
+                pcall(function()
+                    obj.Font = TARGET_FONT
+                end)
+            end
+        end)
+    end
+end
+
+-- Hook tất cả hiện tại
+for _, v in ipairs(game:GetDescendants()) do
+    hook(v)
+end
+
+-- Hook object mới
+game.DescendantAdded:Connect(function(obj)
+    hook(obj)
+end)
