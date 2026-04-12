@@ -1,0 +1,761 @@
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer or Players:GetPlayers()[1]
+
+local assetId = "rbxassetid://11183439112"
+local RunService = game:GetService("RunService")
+local camera = workspace.CurrentCamera
+
+local camShakeConn
+local camShakeTime = 0
+local camShakePower = 0.25 -- chỉnh độ mạnh
+local camShakeSpeed = 6 -- chỉnh tốc độ lượn
+local collected = 0
+local total = 10
+local escaped = false
+local spawnedParts = {}
+
+local function NopeHook()
+	-- 👉 m tự thêm code ở đây
+	require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("It doesn't work.",true)
+end
+
+local room = workspace.CurrentRooms:FindFirstChild(
+	game.ReplicatedStorage.GameData.LatestRoom.Value
+)
+
+if not room then return end
+
+local exit = room:WaitForChild("RoomExit")
+local door = room:WaitForChild("Door")
+
+-- 💀 CLEAR LIGHT + NEON
+local roomsFolder = workspace:WaitForChild("CurrentRooms")
+
+for _, roomModel in pairs(roomsFolder:GetChildren()) do
+	for _, v in pairs(roomModel:GetDescendants()) do
+		
+		if v:IsA("PointLight") or v:IsA("SpotLight") or v:IsA("SurfaceLight") then
+			v:Destroy()
+		end
+		
+		if v:IsA("BasePart") and v.Material == Enum.Material.Neon then
+			v:Destroy()
+		end
+		
+	end
+end
+
+-- load model
+local obj = game:GetObjects(assetId)[1]
+if not obj then return end
+obj.Parent = workspace
+
+local model = obj:IsA("Model") and obj or obj:FindFirstChildWhichIsA("Model") or obj
+
+-- anchored toàn bộ
+for _, v in pairs(model:GetDescendants()) do
+	if v:IsA("BasePart") then
+		v.Anchored = true
+	end
+end
+
+-- hướng ngược
+local cf = exit.CFrame
+local oppositeCF = CFrame.lookAt(cf.Position, cf.Position - cf.LookVector)
+
+local offset = CFrame.new(0, 0, -1.5)
+local finalCF = oppositeCF * offset
+local startCF = finalCF * CFrame.new(0, -15, 0)
+
+-- tween bằng CFrameValue (fix full model)
+local cfValue = Instance.new("CFrameValue")
+cfValue.Value = startCF
+
+cfValue:GetPropertyChangedSignal("Value"):Connect(function()
+	model:PivotTo(cfValue.Value)
+end)
+
+local tween = TweenService:Create(
+	cfValue,
+	TweenInfo.new(2.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out),
+	{Value = finalCF}
+)
+
+tween:Play()
+
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Find a way out.",true)
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local sound = Instance.new("Sound")
+    sound.SoundId = GitAud(soundlink, filename)
+    sound.Parent = workspace
+    sound.Name = "STHEME"
+    sound.Volume = 1.2
+   sound:Play()
+end
+
+CustomGitSound("https://github.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/raw/refs/heads/main/video.mp3?raw=true", 1, " Seeker")
+
+local function startCameraShake()
+	if camShakeConn then return end
+	
+	camShakeConn = RunService.RenderStepped:Connect(function(dt)
+		if not camera then return end
+		
+		camShakeTime += dt
+		
+		-- 🌊 POSITION SHAKE
+		local x = math.sin(camShakeTime * camShakeSpeed) * camShakePower
+		local y = math.cos(camShakeTime * camShakeSpeed * 1.3) * camShakePower
+		
+		-- 🔄 ROTATION SHAKE (NGHIÊNG)
+		local roll = math.sin(camShakeTime * camShakeSpeed * 0.8) * (camShakePower * 2)
+		
+		-- 💀 APPLY
+		camera.CFrame =
+			camera.CFrame
+			* CFrame.new(x, y, 0)
+			* CFrame.Angles(0, 0, math.rad(roll))
+	end)
+end
+
+local function stopCameraShake()
+	if camShakeConn then
+		camShakeConn:Disconnect()
+		camShakeConn = nil
+	end
+	
+	camShakeTime = 0
+end
+
+startCameraShake()
+
+game:GetService("Lighting").MainColorCorrection.TintColor = Color3.fromRGB(199, 0, 0)
+
+-- ===== 💀 CRAZY CONTRAST =====
+local Lighting = game:GetService("Lighting")
+
+local contrastEffect = Lighting:FindFirstChild("CrazyContrast") 
+if not contrastEffect then
+	contrastEffect = Instance.new("ColorCorrectionEffect")
+	contrastEffect.Name = "CrazyContrast"
+	contrastEffect.Parent = Lighting
+end
+
+local contrastConn
+
+local function startContrastChaos()
+	if contrastConn then return end
+	
+	contrastConn = RunService.RenderStepped:Connect(function()
+		-- 🎲 random điên loạn
+		contrastEffect.Contrast = math.random(-100, 100) / 100 -- từ -1 → 1
+		
+		-- bonus: flick sáng tối nhẹ cho ngầu
+		contrastEffect.Brightness = math.random(-30, 30) / 100
+	end)
+end
+
+local function stopContrastChaos()
+	if contrastConn then
+		contrastConn:Disconnect()
+		contrastConn = nil
+	end
+	
+	-- reset về bình thường
+	if contrastEffect then
+		contrastEffect.Contrast = 0
+		contrastEffect.Brightness = 0
+	end
+end
+
+startContrastChaos()
+
+game.Lighting.FogEnd = 50
+game.Lighting.FogStart = 8
+game.Lighting.FogColor = Color3.fromRGB(79, 0, 0)
+
+-- ===== 🚪 EXIT MODEL PROMPT =====
+for _, v in pairs(model:GetDescendants()) do
+	if v:IsA("ProximityPrompt") then
+		v.HoldDuration = 3
+
+		v.Triggered:Connect(function()
+
+			-- ❌ CHƯA ĐỦ
+			if not collected or not total or collected < total then
+				NopeHook()
+				return
+			end
+
+			-- ✅ ESCAPE
+			escaped = true
+timerRunning = false
+timeLeft = 0 -- 🔥 chặn luôn loop
+			
+			local TweenService = game:GetService("TweenService")
+			local RunService = game:GetService("RunService")
+
+			local startCF = model:GetPivot()
+			local endCF = startCF * CFrame.new(0, -25, 0)
+
+			local cfValue = Instance.new("CFrameValue")
+			cfValue.Value = startCF
+
+			-- 💀 SHAKE
+			local shakePower = 0.12
+			local shakeConn
+
+			shakeConn = RunService.RenderStepped:Connect(function()
+				if not model then return end
+				
+				local offset = Vector3.new(
+					(math.random()-0.5)*shakePower,
+					(math.random()-0.5)*shakePower,
+					(math.random()-0.5)*shakePower
+				)
+
+				model:PivotTo(cfValue.Value * CFrame.new(offset))
+			end)
+
+			-- cập nhật vị trí chính
+			cfValue:GetPropertyChangedSignal("Value"):Connect(function()
+				if model then
+					model:PivotTo(cfValue.Value)
+				end
+			end)
+
+			-- 🐌 tween chậm + mượt
+			local tween = TweenService:Create(
+				cfValue,
+				TweenInfo.new(3.5, Enum.EasingStyle.Sine, Enum.EasingDirection.In),
+				{Value = endCF}
+			)
+
+			tween:Play()
+			tween.Completed:Wait()
+
+			if shakeConn then
+				shakeConn:Disconnect()
+			end
+
+			-- 🔊 FADE NHẠC
+			local sound = workspace:FindFirstChild("STHEME")
+			if sound then
+				local soundTween = TweenService:Create(
+					sound,
+					TweenInfo.new(4, Enum.EasingStyle.Linear),
+					{
+						Volume = 0,
+						PlaybackSpeed = 0
+					}
+				)
+
+				soundTween:Play()
+
+				task.spawn(function()
+					soundTween.Completed:Wait()
+					if sound then
+						sound:Destroy()
+					end
+				end)
+			end
+
+			-- 💀 CLEAN ALL (FULL)
+			
+			-- destroy model cửa
+			if model then model:Destroy() end
+			
+			-- destroy parts
+			for _, p in pairs(spawnedParts or {}) do
+				if p then p:Destroy() end
+			end
+			
+			-- destroy seeker
+			local seeker = workspace:FindFirstChild("Seeker")
+			if seeker then seeker:Destroy() end
+			
+			-- 🔥 DESTROY TOÀN BỘ UI (FIX CHUẨN)
+			local playerGui = player:FindFirstChild("PlayerGui")
+			if playerGui then
+				local ui = playerGui:FindFirstChild("TimerUI")
+				if ui then
+					ui:Destroy()
+				end
+			end
+			
+			-- backup nếu biến còn tồn tại
+			if screenGui then
+				screenGui:Destroy()
+			end
+
+			-- restore player
+			if player and player.Character then
+				local hum = player.Character:FindFirstChildOfClass("Humanoid")
+				local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+
+				if hrp then hrp.Anchored = false end
+				if hum then
+					hum.WalkSpeed = 16
+					hum.JumpPower = 50
+					hum.AutoRotate = true
+				end
+			end
+
+game.Lighting.FogEnd = 250
+game.Lighting.FogStart = 150
+game.Lighting.FogColor = Color3.fromRGB(0, 0, 0)
+game:GetService("Lighting").MainColorCorrection.TintColor = Color3.fromRGB(255, 254, 255)
+
+stopCameraShake()
+stopContrastChaos()
+
+			require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
+				.caption("You escaped.", true)
+
+		end)
+	end
+end
+
+-- ===== ⏳ TIMER UI =====
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TimerUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, 0, 0, 30) -- 🔥 nhỏ lại
+label.Position = UDim2.new(0, 0, 0, -5) -- 🔥 đẩy lên trên
+label.BackgroundTransparency = 1
+label.TextColor3 = Color3.fromRGB(255,255,255)
+
+label.TextScaled = false -- ❌ tắt scaled
+label.TextSize = 20 -- 🔥 chỉnh size chữ thủ công
+
+label.Font = Enum.Font.GothamBold
+label.Text = "Time left: 155 seconds"
+label.Parent = screenGui
+
+-- ===== 💀 TIMEOUT HOOK =====
+local function onTimeout()
+	if not player.Character then return end
+	
+	local char = player.Character
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	
+	if hrp then
+		hrp.Anchored = true -- 💀 khóa cứng
+	end
+	
+	if hum then
+		hum.WalkSpeed = 0
+		hum.JumpPower = 0
+		hum.AutoRotate = false
+	end
+	
+	print("Player bị khóa do hết thời gian!")
+
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("You have run out of time. Prepare for the death.",true)
+end
+
+-- ===== COUNTDOWN =====
+local timeLeft = 155
+local timerRunning = true
+
+task.spawn(function()
+	while timerRunning and timeLeft > 0 do
+		if escaped then return end -- 🔥 chặn cứng
+		
+		label.Text = "Time left: "..timeLeft.." seconds"
+		timeLeft -= 1
+		task.wait(1)
+	end
+	
+	-- ❌ nếu đã escape thì KHÔNG làm gì nữa
+	if timerRunning and not escaped then
+		onTimeout()
+		
+		if screenGui then
+			screenGui:Destroy()
+		end
+	end
+end)
+
+-- ===== 📋 REQUIREMENT UI =====
+local reqLabel = Instance.new("TextLabel")
+reqLabel.Size = UDim2.new(0.4, 0, 0, 80)
+reqLabel.Position = UDim2.new(0.6, 0, 0, 0)
+reqLabel.BackgroundTransparency = 1
+reqLabel.TextColor3 = Color3.fromRGB(255,255,255)
+reqLabel.TextScaled = true
+reqLabel.Font = Enum.Font.GothamBold
+reqLabel.TextWrapped = true
+reqLabel.Text = "REQUIREMENT:\nCollect 10 parts to get out of here. Your collections right now: 0/10"
+reqLabel.Parent = screenGui
+
+-- ===== 🎯 SPAWN COLLECT PARTS =====
+
+local roomsFolder = workspace:WaitForChild("CurrentRooms")
+
+local function getRandomPointInRoom(roomModel)
+	local parts = roomModel:FindFirstChild("Parts")
+	if not parts then return nil end
+	
+	local floor = parts:FindFirstChild("Floor")
+	if not floor then return nil end
+	
+	local size = floor.Size
+	
+	local x = math.random(-size.X/2 + 2, size.X/2 - 2)
+	local z = math.random(-size.Z/2 + 2, size.Z/2 - 2)
+	
+	return (floor.CFrame * CFrame.new(x, 3, z)).Position
+end
+
+local allRooms = {}
+
+local currentRoom = tonumber(game.ReplicatedStorage.GameData.LatestRoom.Value)
+
+for _, r in pairs(roomsFolder:GetChildren()) do
+	local num = tonumber(r.Name)
+	
+	if num and num <= currentRoom then -- 🔥 FIX
+		table.insert(allRooms, r)
+	end
+end
+
+local function onCollectPart(count)
+	-- 👉 m tự code ở đây
+	require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("You have just collected a part",true)
+end
+
+for i = 1, total do
+	local roomPick = allRooms[math.random(1, #allRooms)]
+	
+	local pos = getRandomPointInRoom(roomPick)
+	if not pos then continue end
+	
+	local part = Instance.new("Part")
+	part.Size = Vector3.new(2,2,2)
+	part.Anchored = true
+	part.CanCollide = false
+	part.Position = pos
+	part.Parent = workspace
+	
+	local light = Instance.new("PointLight")
+	light.Range = 3
+	light.Brightness = 0.5
+	light.Color = Color3.fromRGB(255,0,0)
+	light.Parent = part
+	
+	local prompt = Instance.new("ProximityPrompt")
+prompt.Style = Enum.ProximityPromptStyle.Custom -- 🔥 QUAN TRỌNG
+prompt.HoldDuration = 2
+prompt.RequiresLineOfSight = false
+prompt.Parent = part
+	
+	local lightAdded = false -- 🔥 chống trigger nhiều lần
+
+prompt.Triggered:Connect(function()
+	if part and part.Parent then
+		part:Destroy()
+		collected += 1
+		
+		onCollectPart(collected)
+		
+		reqLabel.Text = "REQUIREMENT:\nCollect 10 parts to get out of here. Your collections right now: "..collected.."/10"
+		
+		-- ✅ CHỈ KHI ĐỦ + CHƯA ADD
+		if collected >= total and not lightAdded then
+			lightAdded = true
+			
+			reqLabel.Text = "You have completed the task, come back to the next door to escape the dimension!"
+			
+			-- 💀 TẠO PART Ở GIỮA MODEL (CHUẨN 100%)
+			if model then
+				local centerPart = Instance.new("Part")
+				centerPart.Name = "ExitLightPart"
+				centerPart.Size = Vector3.new(1,1,1)
+				centerPart.Transparency = 1
+				centerPart.Anchored = true
+				centerPart.CanCollide = false
+				centerPart.CFrame = model:GetPivot() -- 🔥 đúng giữa model
+				centerPart.Parent = model
+				
+				local light = Instance.new("PointLight")
+				light.Name = "ExitLight"
+				light.Color = Color3.fromRGB(255,0,0)
+				light.Brightness = 1
+				light.Range = 10
+				light.Parent = centerPart
+			end
+		end
+	end
+end)
+	
+	table.insert(spawnedParts, part)
+end
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer or Players:GetPlayers()[1]
+if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return end
+
+local hrp = player.Character.HumanoidRootPart
+
+local SPEED = 4.5
+local HEIGHT = 4
+local DELAY = 0.3
+local SHAKE_POWER = 0.3
+
+-- ===== MODEL =====
+local model = Instance.new("Model")
+model.Name = "Seeker"
+model.Parent = workspace
+
+local part = Instance.new("Part")
+part.Size = Vector3.new(5,5,5)
+part.Anchored = true
+part.CanCollide = false
+part.Transparency = 1
+part.Parent = model
+
+model.PrimaryPart = part
+
+-- spawn sau player
+part.CFrame = hrp.CFrame * CFrame.new(0, HEIGHT, -60)
+
+local billboard = Instance.new("BillboardGui", part)
+billboard.Size = UDim2.new(15,0,15,0)
+billboard.AlwaysOnTop = true
+billboard.StudsOffset = Vector3.new(0,0.3,0)
+billboard.Adornee = part
+
+local imageLabel = Instance.new("ImageLabel", billboard)
+imageLabel.Size = UDim2.new(1,0,1,0)
+imageLabel.BackgroundTransparency = 1
+imageLabel.Image = "rbxassetid://139626998551109"
+
+-- ===== CONNECTION STORAGE =====
+local connections = {}
+
+local function addConn(conn)
+	table.insert(connections, conn)
+end
+
+local function cleanup()
+	for _, c in ipairs(connections) do
+		pcall(function() c:Disconnect() end)
+	end
+	table.clear(connections)
+	
+	if model then
+		model:Destroy()
+game.Workspace.STHEME:Destroy()
+	end
+
+timerRunning = false
+
+if screenGui then
+	screenGui:Destroy()
+end
+end
+
+-- ===== SHAKE =====
+addConn(RunService.RenderStepped:Connect(function()
+	if not part then return end
+	
+	local x = (math.random()-0.5)*SHAKE_POWER
+	local y = (math.random()-0.5)*SHAKE_POWER
+	billboard.StudsOffset = Vector3.new(x, 0.3 + y, 0)
+end))
+
+-- ===== FOLLOW DELAY =====
+local targetPos = hrp.Position
+local running = true
+
+task.spawn(function()
+	while running do
+		targetPos = hrp.Position
+		task.wait(DELAY)
+	end
+end)
+
+addConn(RunService.Heartbeat:Connect(function(dt)
+	if not hrp or not part then return end
+	
+	local direction = (targetPos - part.Position)
+	local distance = direction.Magnitude
+	
+	if distance > 1 then
+		local move = direction.Unit * SPEED * dt
+		local newPos = part.Position + move
+		
+		part.CFrame = CFrame.new(newPos.X, hrp.Position.Y + HEIGHT, newPos.Z)
+	end
+end))
+
+-- ===== 💀 HOOK TOUCH =====
+local triggered = false
+
+local function onSeekerTouch()
+	local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- ===== 🔒 FREEZE PLAYER (GIẢ LAG)
+local function freezePlayer()
+	if not player.Character then return end
+	
+	local hum = player.Character:FindFirstChildOfClass("Humanoid")
+	local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+	
+	if hum then
+		hum.WalkSpeed = 0
+		hum.JumpPower = 0
+		hum.AutoRotate = false
+	end
+	
+	if hrp then
+		hrp.Anchored = true
+	end
+end
+
+-- ===== 🌪️ CHAOS OBJECTS
+local chaosConn
+local function startChaos()
+	if chaosConn then return end
+	
+	chaosConn = RunService.RenderStepped:Connect(function()
+		for _, v in pairs(workspace:GetDescendants()) do
+			if v:IsA("BasePart") and not v.Anchored then
+				
+				-- bay loạn xạ
+				local offset = Vector3.new(
+					math.random(-50,50),
+					math.random(-50,50),
+					math.random(-50,50)
+				)
+				
+				v.Velocity = offset
+				
+				-- xoay điên
+				v.RotVelocity = Vector3.new(
+					math.random(-20,20),
+					math.random(-20,20),
+					math.random(-20,20)
+				)
+			end
+		end
+	end)
+end
+
+-- ===== 📸 CAMERA LAG GIẢ
+local camConn
+local function fakeLagCamera()
+	if camConn then return end
+	
+	camConn = RunService.RenderStepped:Connect(function()
+		if not camera then return end
+		
+		local jitter = Vector3.new(
+			math.random(-2,2),
+			math.random(-2,2),
+			math.random(-2,2)
+		)
+		
+		camera.CFrame = camera.CFrame * CFrame.new(jitter)
+	end)
+end
+
+-- ===== ⚡ LIGHTING LOẠN
+local lightConn
+local function chaosLighting()
+	if lightConn then return end
+	
+	lightConn = RunService.RenderStepped:Connect(function()
+		Lighting.Brightness = math.random(0, 10)
+		Lighting.ClockTime = math.random(0, 24)
+		Lighting.FogEnd = math.random(10, 200)
+	end)
+end
+
+-- ===== 💀 FAKE SHUTDOWN UI
+local function shutdownGame()
+	-- clear chaos
+	if chaosConn then chaosConn:Disconnect() end
+	if camConn then camConn:Disconnect() end
+	if lightConn then lightConn:Disconnect() end
+	
+	local soundns = Instance.new("Sound", workspace)
+	soundns.SoundId = "rbxassetid://116881603817944"
+	soundns:Play()
+	
+	-- màn hình đen
+	local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+	gui.IgnoreGuiInset = true
+	
+	local frame = Instance.new("Frame", gui)
+	frame.Size = UDim2.new(1,0,1,0)
+	frame.BackgroundColor3 = Color3.new(0,0,0)
+	
+	local text = Instance.new("TextLabel", frame)
+	text.Size = UDim2.new(1,0,1,0)
+	text.BackgroundTransparency = 1
+	text.TextColor3 = Color3.new(1,0,0)
+	text.TextScaled = true
+	text.Font = Enum.Font.GothamBold
+	text.Text = ""
+	
+	-- kick giả (tuỳ chọn)
+	task.wait(1.5)
+	player:Kick("???") -- 💀 nhìn như bị văng thật
+end
+
+-- ===== 🚀 START EVENT
+freezePlayer()
+startChaos()
+fakeLagCamera()
+chaosLighting()
+
+-- ⏳ sau 4 giây -> shutdown
+task.delay(4, function()
+	shutdownGame()
+end)
+end
+
+addConn(RunService.Heartbeat:Connect(function()
+	if triggered then return end
+	if not hrp or not part then return end
+	
+	local dist = (hrp.Position - part.Position).Magnitude
+	
+	if dist <= 5 then
+		triggered = true
+		
+		-- gọi hook trước
+		onSeekerTouch()
+		
+		-- dừng loop
+		running = false
+		
+		-- cleanup toàn bộ
+		cleanup()
+	end
+end))
