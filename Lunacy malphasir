@@ -529,6 +529,15 @@ local function getRandomPointInRoom(roomModel)
 	return (floor.CFrame * CFrame.new(x, 3, z)).Position
 end
 
+local minRoom = math.huge
+
+for _, r in pairs(roomsFolder:GetChildren()) do
+	local num = tonumber(r.Name)
+	if num and num < minRoom then
+		minRoom = num
+	end
+end
+
 local allRooms = {}
 
 local currentRoom = tonumber(game.ReplicatedStorage.GameData.LatestRoom.Value)
@@ -536,7 +545,7 @@ local currentRoom = tonumber(game.ReplicatedStorage.GameData.LatestRoom.Value)
 for _, r in pairs(roomsFolder:GetChildren()) do
 	local num = tonumber(r.Name)
 	
-	if num and num <= currentRoom then -- 🔥 FIX
+	if num and num <= currentRoom and num ~= minRoom then -- 🔥 loại room nhỏ nhất
 		table.insert(allRooms, r)
 	end
 end
