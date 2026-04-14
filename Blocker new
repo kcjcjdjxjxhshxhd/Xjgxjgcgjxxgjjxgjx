@@ -1,0 +1,223 @@
+--// SETTINGS
+local MODEL_ID = "rbxassetid://124072039983366"
+local TWEEN_TIME_UP = 2
+local TWEEN_TIME_DOWN = 2
+local DEPTH = 20
+
+local COUNTDOWN_TIME = 10
+local TICK_SOUND_ID = "rbxassetid://138365271911299"
+
+-- kích thước tường
+local BLOCK_SIZE = Vector3.new(5, 5, 5)
+
+--// SERVICES
+local TweenService = game:GetService("TweenService")
+local Rooms = workspace:WaitForChild("CurrentRooms")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+--// FOLDER
+local folder = workspace:FindFirstChild("CustomEntities")
+if not folder then
+    folder = Instance.new("Folder")
+    folder.Name = "CustomEntities"
+    folder.Parent = workspace
+end
+
+--// GET ROOM
+local function getCurrentRoom()
+    local max = -math.huge
+    for _, room in pairs(Rooms:GetChildren()) do
+        local num = tonumber(room.Name)
+        if num and num > max then
+            max = num
+        end
+    end
+    return Rooms:FindFirstChild(tostring(max - 1))
+end
+
+--// FLOATING
+local function startFloating(text)
+    task.spawn(function()
+        while text and text.Parent do
+            local up = TweenService:Create(text,
+                TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {Position = UDim2.new(0,0,0,15)}
+            )
+            local down = TweenService:Create(text,
+                TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {Position = UDim2.new(0,0,0,5)}
+            )
+            up:Play(); up.Completed:Wait()
+            down:Play(); down.Completed:Wait()
+        end
+    end)
+end
+
+--// FLING
+local function flingNumber(gui, textObj, oldNumber)
+    local clone = Instance.new("TextLabel")
+    clone.Size = textObj.Size
+    clone.Position = textObj.Position
+    clone.BackgroundTransparency = 1
+    clone.TextScaled = false
+    clone.TextSize = textObj.TextSize
+    clone.Font = textObj.Font
+    clone.TextColor3 = textObj.TextColor3
+    clone.Text = tostring(oldNumber)
+    clone.Parent = gui
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 2
+    stroke.Color = Color3.new(0,0,0)
+    stroke.Parent = clone
+
+    local randX = math.random(-400, 400)
+    local randY = math.random(-300, 200)
+    local targetPos = clone.Position + UDim2.new(0, randX, 0, randY)
+
+    local time = math.random(4,10) / 10
+
+    local tween = TweenService:Create(
+        clone,
+        TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {
+            Position = targetPos,
+            TextTransparency = 1,
+            Rotation = math.random(-180,180),
+            TextSize = math.random(10,50)
+        }
+    )
+
+    tween:Play()
+    tween.Completed:Connect(function()
+        clone:Destroy()
+    end)
+end
+
+--// UI
+local function createCountdownUI()
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "CountdownUI"
+    gui.Parent = PlayerGui
+
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1,0,0,60)
+    text.Position = UDim2.new(0,0,0,5)
+    text.BackgroundTransparency = 1
+    text.TextScaled = false
+    text.TextSize = 32
+    text.Font = Enum.Font.Creepster
+    text.TextColor3 = Color3.fromRGB(170, 0, 255)
+    text.TextTransparency = 1
+    text.Parent = gui
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 2
+    stroke.Color = Color3.new(0,0,0)
+    stroke.Parent = text
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = TICK_SOUND_ID
+    sound.Volume = 1
+    sound.Parent = text
+
+    return gui, text, sound
+end
+
+--// MAIN
+local function spawnModel()
+    local room = getCurrentRoom()
+    if not room then return end
+
+    local exit = room:FindFirstChild("RoomExit", true)
+    if not exit then return end
+
+    -- 🔥 BLOCKER CHẶN CỬA
+    local blocker = Instance.new("Part")
+    blocker.Size = BLOCK_SIZE
+    blocker.Anchored = true
+    blocker.CanCollide = true
+    blocker.Transparency = 1
+
+    local offset = exit.CFrame.LookVector * -5
+    blocker.CFrame = CFrame.new(exit.Position + offset)
+
+    blocker.Parent = folder
+
+    -- MODEL
+    local model = game:GetObjects(MODEL_ID)[1]
+    model.Parent = folder
+
+    if not model.PrimaryPart then
+        local part = model:FindFirstChildWhichIsA("BasePart")
+        if not part then return end
+        model.PrimaryPart = part
+    end
+
+    for _, v in pairs(model:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Anchored = true
+            v.CanCollide = false
+        end
+    end
+
+    local exitPos = exit.Position
+    model:PivotTo(CFrame.new(exitPos - Vector3.new(0, DEPTH, 0)))
+
+    local upTween = TweenService:Create(
+        model.PrimaryPart,
+        TweenInfo.new(TWEEN_TIME_UP, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {CFrame = exit.CFrame}
+    )
+
+    upTween:Play()
+    upTween.Completed:Wait()
+
+    local gui, text, sound = createCountdownUI()
+
+    TweenService:Create(text, TweenInfo.new(1), {TextTransparency = 0}):Play()
+    startFloating(text)
+
+    local lastNumber = nil
+
+    for i = COUNTDOWN_TIME, 0, -1 do
+        if lastNumber ~= nil then
+            flingNumber(gui, text, lastNumber)
+        end
+
+        text.Text = "Time left: " .. i .. " seconds"
+        lastNumber = i
+
+        sound:Play()
+
+        text.TextSize = 36
+        TweenService:Create(text, TweenInfo.new(0.2), {TextSize = 32}):Play()
+
+        text.Rotation = math.random(-2,2)
+
+        task.wait(1)
+    end
+
+    -- fade out
+    local fadeOut = TweenService:Create(text, TweenInfo.new(3), {TextTransparency = 1})
+    fadeOut:Play()
+
+    -- model chui xuống
+    local downTween = TweenService:Create(
+        model.PrimaryPart,
+        TweenInfo.new(TWEEN_TIME_DOWN, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {CFrame = CFrame.new(exitPos - Vector3.new(0, DEPTH, 0))}
+    )
+    downTween:Play()
+
+    fadeOut.Completed:Wait()
+
+    gui:Destroy()
+    model:Destroy()
+    blocker:Destroy() -- 👈 mở cửa lại
+end
+
+spawnModel()
