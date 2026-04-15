@@ -340,8 +340,8 @@ timeLeft = 0 -- 🔥 chặn luôn loop
 				end
 			end
 
-game.Lighting.FogEnd = 250
-game.Lighting.FogStart = 150
+game.Lighting.FogEnd = 50
+game.Lighting.FogStart = 5
 game.Lighting.FogColor = Color3.fromRGB(0, 0, 0)
 game:GetService("Lighting").MainColorCorrection.TintColor = Color3.fromRGB(255, 254, 255)
 game.Players.LocalPlayer.PlayerGui.CustomImageGUI:Destroy()
