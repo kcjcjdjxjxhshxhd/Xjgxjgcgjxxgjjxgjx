@@ -1,0 +1,290 @@
+--// SERVICES
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local GameData = game.ReplicatedStorage:WaitForChild("GameData")
+
+--// SETTINGS
+local SPEED = 20
+local WAIT_BEFORE_MOVE = 2
+local PLAYER_HITBOX = 8
+
+--// STATE
+local alive = true
+local heartbeatConn = nil
+
+--// CLEANUP
+local function cleanup(model)
+    if not alive then return end
+    alive = false
+
+    if heartbeatConn then
+        heartbeatConn:Disconnect()
+        heartbeatConn = nil
+    end
+
+    if model and model.Parent then
+        model:Destroy()
+    end
+end
+
+--// HOOK FUNCTION
+local function onPlayerHit(player)
+    print("Medic cháº¡m:", player.Name)
+    require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game)
+        .caption("You gained 1 HP from Medic.", true)
+end
+
+--// GET CURRENT ROOM
+local function getCurrentRoom()
+    local rooms = workspace:WaitForChild("CurrentRooms")
+
+    local highest = -math.huge  
+
+    for _, room in pairs(rooms:GetChildren()) do  
+        local num = tonumber(room.Name)  
+        if num and num > highest then  
+            highest = num  
+        end  
+    end  
+
+    local target = highest - 1  
+
+    if not rooms:FindFirstChild(tostring(target)) then  
+        return rooms:FindFirstChild(tostring(highest))  
+    end  
+
+    return rooms:FindFirstChild(tostring(target))
+end
+
+--// CREATE MEDIC
+local function createMedic()
+    local model = Instance.new("Model")
+    model.Name = "Medic"
+    model.Parent = workspace
+
+    local part = Instance.new("Part")  
+    part.Size = Vector3.new(5,5,5)  
+    part.Anchored = true  
+    part.CanCollide = false  
+    part.Transparency = 1  
+    part.Name = "Core"  
+    part.Parent = model  
+
+    local billboard = Instance.new("BillboardGui")  
+    billboard.Size = UDim2.new(10,0,10,0)  
+    billboard.AlwaysOnTop = false  
+    billboard.Parent = part  
+
+    local img = Instance.new("ImageLabel")  
+    img.Size = UDim2.new(1,0,1,0)  
+    img.BackgroundTransparency = 1  
+    img.Image = "rbxassetid://109088997113863"  
+    img.Parent = billboard  
+
+    local originalImage = img.Image  
+    local hitImage = "rbxassetid://128763490502733"  
+    local changing = false  
+
+    local function shakeImage()  
+        local originalPos = img.Position  
+
+        for i = 1, 6 do  
+            if not alive then return end
+            img.Position = originalPos + UDim2.new(0, math.random(-4,4), 0, math.random(-4,4))  
+            task.wait(0.03)
+        end  
+
+        img.Position = originalPos  
+    end  
+
+    local function triggerImage()  
+        if changing or not alive then return end  
+        changing = true  
+
+        img.Image = hitImage  
+        task.spawn(shakeImage)  
+
+        task.delay(0.4, function()  
+            if not alive then return end
+            img.Image = originalImage  
+            changing = false  
+        end)  
+    end  
+
+    local light = Instance.new("PointLight")  
+    light.Color = Color3.fromRGB(255,0,255)  
+    light.Range = 10  
+    light.Brightness = 3  
+    light.Parent = part  
+
+    local bounceSound = Instance.new("Sound")  
+    bounceSound.Volume = 1  
+    bounceSound.RollOffMaxDistance = 50  
+    bounceSound.RollOffMode = Enum.RollOffMode.Inverse  
+    bounceSound.SoundId = "rbxassetid://139760965140280"  
+    bounceSound.Parent = part  
+
+    local playerSound = Instance.new("Sound")  
+    playerSound.Volume = 2  
+    playerSound.RollOffMaxDistance = 50  
+    playerSound.RollOffMode = Enum.RollOffMode.Inverse  
+    playerSound.SoundId = "rbxassetid://135468135163946"  
+    playerSound.Parent = part  
+
+    local canPlay = true  
+
+    local function playSound(isPlayer)  
+        if not canPlay or not alive then return end  
+        canPlay = false  
+
+        if isPlayer then  
+            playerSound:Play()  
+        else  
+            bounceSound:Play()  
+        end  
+
+        task.delay(0.1, function()  
+            if not alive then return end
+            canPlay = true  
+        end)  
+    end  
+
+    return model, part, triggerImage, playSound
+end
+
+--// RANDOM DIR
+local function randomDirection()
+    local dir = Vector3.new(
+        math.random(-100,100)/100,
+        0,
+        math.random(-100,100)/100
+    )
+    return dir.Unit
+end
+
+--// SAFE SPAWN
+local function getCenter(room)
+    local model = workspace:WaitForChild("Medic", 5)
+    if not model then return nil end
+
+    local mainPart = model:FindFirstChildWhichIsA("BasePart")
+    if not mainPart then return nil end
+
+    local room = workspace.CurrentRooms
+        :FindFirstChild(game.ReplicatedStorage.GameData.LatestRoom.Value)
+
+    if room and room:FindFirstChild("Parts")
+        and room.Parts:FindFirstChild("Floor") then
+
+        local floor = room.Parts.Floor
+        local size = floor.Size
+
+        local offsetX = math.random(-size.X/2 + 2, size.X/2 - 2)
+        local offsetZ = math.random(-size.Z/2 + 2, size.Z/2 - 2)
+
+        mainPart.CFrame =
+            floor.CFrame
+            * CFrame.new(offsetX, 5, offsetZ)
+
+        return mainPart.Position -- 🔥 QUAN TRỌNG
+    end
+
+    return nil
+end
+
+--// MAIN
+local room = getCurrentRoom()
+if not room then return end
+
+local model, part, triggerImage, playSound = createMedic()
+
+local spawnPos = getCenter(room, model)
+
+part.Position = spawnPos
+local fixedY = spawnPos.Y
+
+local currentDir = randomDirection()
+
+-- ðŸ”¥ Láº¤Y ROOM ID BAN Äáº¦U
+local lastRoomValue = GameData:WaitForChild("LatestRoom")
+local startRoomId = lastRoomValue.Value
+
+task.wait(WAIT_BEFORE_MOVE)
+
+local playerHitCooldown = false
+
+-- ðŸ”¥ DETECT ROOM CHANGE (FIX CHUáº¨N)
+task.spawn(function()
+    while alive do
+        lastRoomValue.Changed:Wait()
+
+        if not alive then break end
+
+        if lastRoomValue.Value ~= startRoomId then
+            cleanup(model)
+            break
+        end
+    end
+end)
+
+--// MOVE LOOP
+heartbeatConn = RunService.Heartbeat:Connect(function(dt)
+    if not alive or not currentDir then return end
+
+    local moveVec = currentDir * SPEED * dt  
+
+    local params = RaycastParams.new()  
+    params.FilterDescendantsInstances = {model}  
+    params.FilterType = Enum.RaycastFilterType.Blacklist  
+    params.IgnoreWater = true  
+
+    local result = workspace:Raycast(part.Position, moveVec + currentDir * 3, params)  
+
+    for _, plr in pairs(Players:GetPlayers()) do  
+        local char = plr.Character  
+        if char and char:FindFirstChild("HumanoidRootPart") then  
+            local hrp = char.HumanoidRootPart  
+            local dist = (hrp.Position - part.Position).Magnitude  
+
+            if dist <= PLAYER_HITBOX and not playerHitCooldown then  
+                playerHitCooldown = true  
+
+                local normal = (part.Position - hrp.Position).Unit  
+
+                triggerImage()  
+                playSound(true)  
+
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum and hum.Health > 0 then
+                    hum:TakeDamage(-1)
+                end
+
+                onPlayerHit(plr)
+
+                currentDir = (currentDir - 2 * currentDir:Dot(normal) * normal).Unit  
+                part.Position = part.Position + normal * 3  
+
+                task.delay(0.15, function()  
+                    if not alive then return end
+                    playerHitCooldown = false  
+                end)  
+
+                return  
+            end  
+        end  
+    end  
+
+    if result then  
+        local normal = result.Normal  
+
+        triggerImage()  
+        playSound(false)  
+
+        currentDir = (currentDir - 2 * currentDir:Dot(normal) * normal).Unit  
+        return  
+    end  
+
+    local newPos = part.Position + moveVec  
+    newPos = Vector3.new(newPos.X, fixedY, newPos.Z)  
+    part.Position = newPos
+end)
