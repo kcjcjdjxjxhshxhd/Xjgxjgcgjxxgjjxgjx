@@ -1,0 +1,44 @@
+local Character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local RootPart = Character:WaitForChild("HumanoidRootPart")
+local Camera = workspace.CurrentCamera
+local Collision
+
+Collision = Character:FindFirstChild("CollisionPart")
+    if not Collision then
+        for _, part in pairs(Character:GetChildren()) do
+            if part:IsA("BasePart") and part.Name:lower():find("collision") then
+                Collision = part
+                break
+            end
+        end
+    end
+    
+    if not Collision then
+        Collision = RootPart
+    end
+    
+    local CollisionClone = Collision:Clone()
+    CollisionClone.CanCollide = false
+    CollisionClone.Massless = true
+    CollisionClone.CanQuery = false
+    CollisionClone.Name = "CollisionClone"
+    
+    if CollisionClone:FindFirstChild("CollisionCrouch") then
+        CollisionClone.CollisionCrouch:Destroy()
+    end
+    
+    CollisionClone.Parent = Character
+    
+    task.spawn(function()
+        while Character.Parent do
+            if RootPart.Anchored then
+                CollisionClone.Massless = true
+                repeat task.wait() until not RootPart.Anchored
+                task.wait(0.15)
+            else
+                CollisionClone.Massless = not CollisionClone.Massless
+            end
+            task.wait(0.24)
+        end
+    end)
