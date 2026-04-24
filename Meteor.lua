@@ -43,7 +43,7 @@ local toxicActive = false
 
 task.spawn(function()
 	while true do
-		toxicActive = math.random() < 0.12 -- 12% spawn
+		toxicActive = math.random() < 0.12-- 12% spawn
 		task.wait(1)
 	end
 end)
@@ -821,34 +821,6 @@ for i = 1, count do
 			playImpactSound(explodePos, scale)
 			spawnMeteorDebris(explodePos, scale)
 
-			-- â˜£ï¸ DAMAGE OVER TIME (CHá»ˆ Xáº¢Y RA LÃšC Ná»”)
-			task.spawn(function()
-
-				local tickRate = 0.3
-				local maxDamage = scale * 3
-				local dealt = 0
-
-				while dealt < maxDamage do
-
-					local char = player.Character
-					local hum = char and char:FindFirstChildOfClass("Humanoid")
-					local rootPart = char and char:FindFirstChild("HumanoidRootPart")
-
-					if hum and rootPart then
-						local dist = (rootPart.Position - explodePos).Magnitude
-
-						if dist <= scale * 2 then
-							local dmg = scale * 0.5
-							hum:TakeDamage(dmg)
-							dealt += dmg
-						end
-					end
-
-					task.wait(tickRate)
-				end
-
-			end)
-
 			-- ðŸ§¹ cleanup
 			slime:Destroy()
 
@@ -868,34 +840,6 @@ for i = 1, count do
 				-- ðŸ”Š sound + debris
 				playImpactSound(explodePos, scale)
 				spawnMeteorDebris(explodePos, scale)
-
-				-- â˜£ï¸ DAMAGE OVER TIME
-				task.spawn(function()
-
-					local tickRate = 0.3
-					local maxDamage = scale * 3
-					local dealt = 0
-
-					while dealt < maxDamage do
-
-						local char = player.Character
-						local hum = char and char:FindFirstChildOfClass("Humanoid")
-						local rootPart = char and char:FindFirstChild("HumanoidRootPart")
-
-						if hum and rootPart then
-							local dist = (rootPart.Position - explodePos).Magnitude
-
-							if dist <= scale * 2 then
-								local dmg = scale * 0.5
-								hum:TakeDamage(dmg)
-								dealt += dmg
-							end
-						end
-
-						task.wait(tickRate)
-					end
-
-				end)
 
 				slime:Destroy()
 			end
