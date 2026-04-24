@@ -43,7 +43,7 @@ local toxicActive = false
 
 task.spawn(function()
 	while true do
-		toxicActive = math.random() < 1 -- 12% spawn
+		toxicActive = math.random() < 0.12 -- 12% spawn
 		task.wait(1)
 	end
 end)
