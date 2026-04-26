@@ -1,0 +1,1065 @@
+--// Guestial Hub | TSB (ULTIMATE FINAL FULL - NO FUNCTION REMOVED)
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+local targetType = "Orbit"
+local example = " (Click to switch the type)"
+local lockTarget = false
+local noFriends = false
+
+local posNoList = {
+	start = 180,
+	auto = 260,
+	stop = 220,
+	type = 300
+}
+
+local posWithList = {
+	start = 260,
+	auto = 340,
+	stop = 300,
+	type = 380
+}
+
+getgenv().HopLow = function()
+    --// SERVER HOP (<=1 PLAYER, PRIORITY EMPTY)
+
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+local placeId = game.PlaceId
+local player = Players.LocalPlayer
+
+local emptyServers = {}
+local onePlayerServers = {}
+
+local cursor = ""
+
+local function getServers()
+    local url = "https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Asc&limit=100"
+
+    if cursor ~= "" then
+        url = url .. "&cursor=" .. cursor
+    end
+
+    local response = game:HttpGet(url)
+    local data = HttpService:JSONDecode(response)
+
+    for _, server in pairs(data.data) do
+        -- chá»‰ láº¥y server chÆ°a full
+        if server.playing < server.maxPlayers then
+            if server.playing == 0 then
+                table.insert(emptyServers, server.id)
+            elseif server.playing == 1 then
+                table.insert(onePlayerServers, server.id)
+            end
+        end
+    end
+
+    cursor = data.nextPageCursor
+end
+
+-- load nhiá»u page Ä‘á»ƒ tÄƒng tá»‰ lá»‡ tÃ¬m server trá»‘ng
+for i = 1, 5 do
+    getServers()
+    if not cursor then break end
+    task.wait(0.2)
+end
+
+-- Æ°u tiÃªn server 0 ngÆ°á»i
+if #emptyServers > 0 then
+    local target = emptyServers[math.random(1, #emptyServers)]
+    TeleportService:TeleportToPlaceInstance(placeId, target, player)
+
+-- náº¿u ko cÃ³ thÃ¬ láº¥y server 1 ngÆ°á»i
+elseif #onePlayerServers > 0 then
+    local target = onePlayerServers[math.random(1, #onePlayerServers)]
+    TeleportService:TeleportToPlaceInstance(placeId, target, player)
+
+else
+    warn("KhÃ´ng tÃ¬m tháº¥y server <=1 ngÆ°á»i!")
+end
+end
+
+getgenv().HopNormal = function()
+    --// SERVER HOP (SKIP FULL SERVER)
+
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+local placeId = game.PlaceId
+local player = Players.LocalPlayer
+
+local servers = {}
+local cursor = ""
+
+local function getServers()
+    local url = "https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Asc&limit=100"
+
+    if cursor ~= "" then
+        url = url .. "&cursor=" .. cursor
+    end
+
+    local response = game:HttpGet(url)
+    local data = HttpService:JSONDecode(response)
+
+    for _, server in pairs(data.data) do
+        -- lá»c server chÆ°a full
+        if server.playing < server.maxPlayers then
+            table.insert(servers, server.id)
+        end
+    end
+
+    cursor = data.nextPageCursor
+end
+
+-- láº¥y server
+getServers()
+
+-- náº¿u chÆ°a Ä‘á»§ thÃ¬ load thÃªm page
+if #servers == 0 and cursor then
+    getServers()
+end
+
+-- teleport random server
+if #servers > 0 then
+    local randomServer = servers[math.random(1, #servers)]
+    TeleportService:TeleportToPlaceInstance(placeId, randomServer, player)
+else
+    warn("KhÃ´ng tÃ¬m tháº¥y server phÃ¹ há»£p!")
+end
+end
+
+task.spawn(function() 
+game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Welcome to my hub script!",
+			Duration = 3
+		})
+wait(3)
+game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Credit to Guestial",
+			Duration = 3
+		})
+end) 
+
+-- GUI
+local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999999
+gui.IgnoreGuiInset = true
+
+-- TOGGLE
+local toggle = Instance.new("TextButton", gui)
+toggle.Size = UDim2.new(0,60,0,60)
+toggle.Position = UDim2.new(0.05,0,0.05,0)
+toggle.Text = "â˜°"
+toggle.BackgroundColor3 = Color3.fromRGB(40,40,50)
+toggle.TextColor3 = Color3.new(1,1,1)
+toggle.Font = Enum.Font.GothamBold
+toggle.TextSize = 24
+toggle.ClipsDescendants = true
+toggle.Active = true
+Instance.new("UICorner", toggle)
+Instance.new("UIStroke", toggle)
+
+local icon = Instance.new("ImageLabel", toggle)
+icon.Size = UDim2.new(1,0,1,0)
+icon.Position = UDim2.new(0,0,0,0)
+icon.BackgroundTransparency = 1
+icon.Active = false
+icon.Image = "rbxassetid://77734399658930" -- m tá»± thay id
+
+-- optional cho Ä‘áº¹p hÆ¡n
+icon.ScaleType = Enum.ScaleType.Fit
+
+local iconCorner = Instance.new("UICorner", icon)
+iconCorner.CornerRadius = UDim.new(0, 12) -- m chá»‰nh tÃ¹y thÃ­ch
+
+-- HUB
+local hub = Instance.new("ScrollingFrame", gui)
+hub.Size = UDim2.new(0,420,0,340)
+hub.AnchorPoint = Vector2.new(0.5, 0.5)
+hub.Position = UDim2.new(0.5, 0, 0.5, 0)
+hub.BackgroundColor3 = Color3.fromRGB(20,20,25)
+hub.ScrollBarThickness = 4
+hub.CanvasSize = UDim2.new(0,0,0,650)
+hub.Visible = true
+hub.ScrollingEnabled = true
+hub.Active = true
+hub.ClipsDescendants = true
+Instance.new("UICorner", hub)
+local hubStroke = Instance.new("UIStroke", hub)
+hubStroke.Color = Color3.fromRGB(255,0,0) -- tráº¯ng
+hubStroke.Thickness = 2
+
+local UIS = game:GetService("UserInputService")
+
+local function makeDraggable(frame)
+	local dragging = false
+	local dragStart
+	local startPos
+
+	UIS.InputBegan:Connect(function(input, gp)
+		if gp then return end
+		
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			-- check náº¿u click náº±m trong frame
+			local mousePos = UIS:GetMouseLocation()
+			local absPos = frame.AbsolutePosition
+			local absSize = frame.AbsoluteSize
+
+			if mousePos.X >= absPos.X and mousePos.X <= absPos.X + absSize.X
+			and mousePos.Y >= absPos.Y and mousePos.Y <= absPos.Y + absSize.Y then
+				
+				dragging = true
+				dragStart = input.Position
+				startPos = frame.Position
+			end
+		end
+	end)
+
+	UIS.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - dragStart
+
+			frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+end
+
+makeDraggable(hub)
+makeDraggable(toggle)
+
+-- TITLE
+local title = Instance.new("TextLabel", hub)
+title.Size = UDim2.new(1,0,0,35)
+title.Text = "Guestial Hub | TSB"
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+
+-- INPUT
+local targetBox = Instance.new("TextBox", hub)
+targetBox.Size = UDim2.new(0.8,0,0,30)
+targetBox.Position = UDim2.new(0.1,0,0,50)
+
+targetBox.Text = "" -- quan trá»ng: Ä‘á»ƒ trá»‘ng
+targetBox.PlaceholderText = "Target Name" -- cÃ¡i nÃ y sáº½ hiá»‡n má» khi chÆ°a nháº­p
+
+targetBox.BackgroundColor3 = Color3.fromRGB(40,40,50)
+targetBox.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner", targetBox)
+Instance.new("UIStroke", targetBox)
+
+local distBox = Instance.new("TextBox", hub)
+distBox.Size = UDim2.new(0.8,0,0,30)
+distBox.Position = UDim2.new(0.1,0,0,90)
+distBox.PlaceholderText = "Target Distance (Default: 5)\nExample: 7"
+distBox.Text = ""
+
+-- FIX MÃ€U
+distBox.BackgroundColor3 = Color3.fromRGB(40,40,50)
+distBox.TextColor3 = Color3.new(1,1,1)
+
+Instance.new("UICorner", distBox)
+Instance.new("UIStroke", distBox)
+
+distBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local txt = distBox.Text
+	
+	-- giá»¯ láº¡i chá»‰ sá»‘ (0-9)
+	local filtered = txt:gsub("%D", "")
+	
+	-- náº¿u bá»‹ thay Ä‘á»•i thÃ¬ set láº¡i
+	if txt ~= filtered then
+		distBox.Text = filtered
+	end
+end)
+
+-- LIST TOGGLE
+local listToggle = Instance.new("TextButton", hub)
+listToggle.Size = UDim2.new(0.8,0,0,26)
+listToggle.Position = UDim2.new(0.1,0,0,125)
+listToggle.Text = "Players List"
+listToggle.BackgroundColor3 = Color3.fromRGB(60,60,70)
+listToggle.TextColor3 = Color3.new(1,1,1)
+listToggle.Font = Enum.Font.GothamBold
+Instance.new("UICorner", listToggle)
+Instance.new("UIStroke", listToggle)
+
+-- LIST
+local listFrame = Instance.new("ScrollingFrame", hub)
+listFrame.Size = UDim2.new(0.8,0,0,0)
+listFrame.Position = UDim2.new(0.1,0,0,160)
+listFrame.BackgroundColor3 = Color3.fromRGB(35,35,45)
+listFrame.ScrollBarThickness = 4
+listFrame.Visible = false
+Instance.new("UICorner", listFrame)
+Instance.new("UIStroke", listFrame)
+
+local layout = Instance.new("UIListLayout", listFrame)
+layout.Padding = UDim.new(0,4)
+
+-- LIST SYSTEM
+local function clearList()
+	for _,v in ipairs(listFrame:GetChildren()) do
+		if v:IsA("TextButton") then v:Destroy() end
+	end
+end
+
+local function addPlayer(plr)
+	if plr == LocalPlayer then return end
+
+	local btn = Instance.new("TextButton", listFrame)
+	btn.Size = UDim2.new(1,-6,0,24)
+	btn.Text = plr.Name
+	btn.BackgroundColor3 = Color3.fromRGB(50,50,60)
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 13
+	Instance.new("UICorner", btn)
+	Instance.new("UIStroke", btn)
+
+	-- hover
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn,TweenInfo.new(0.15),{
+			BackgroundColor3 = Color3.fromRGB(255,80,80)
+		}):Play()
+	end)
+
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn,TweenInfo.new(0.15),{
+			BackgroundColor3 = Color3.fromRGB(50,50,60)
+		}):Play()
+	end)
+
+	btn.MouseButton1Click:Connect(function()
+		targetBox.Text = plr.Name
+	end)
+end
+
+local function updateList()
+	clearList()
+	for _,plr in ipairs(Players:GetPlayers()) do
+		addPlayer(plr)
+	end
+	RunService.Heartbeat:Wait()
+	listFrame.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 5)
+end
+
+updateList()
+Players.PlayerAdded:Connect(function() task.wait(0.2) updateList() end)
+Players.PlayerRemoving:Connect(function() task.wait(0.2) updateList() end)
+
+-- BUTTON CREATOR
+local function makeBtn(text,posY)
+	local b = Instance.new("TextButton", hub)
+	b.Size = UDim2.new(0.8,0,0,32)
+	b.Position = UDim2.new(0.1,0,0,posY)
+	b.Text = text
+	b.BackgroundColor3 = Color3.fromRGB(50,50,60)
+	b.TextColor3 = Color3.new(1,1,1)
+	b.Font = Enum.Font.GothamBold
+	Instance.new("UICorner", b)
+	Instance.new("UIStroke", b)
+
+	b.MouseEnter:Connect(function()
+		TweenService:Create(b,TweenInfo.new(0.15),{
+			BackgroundColor3 = Color3.fromRGB(255,80,80)
+		}):Play()
+	end)
+
+	b.MouseLeave:Connect(function()
+		TweenService:Create(b,TweenInfo.new(0.15),{
+			BackgroundColor3 = Color3.fromRGB(50,50,60)
+		}):Play()
+	end)
+
+	-- click anim
+	b.MouseButton1Down:Connect(function()
+		TweenService:Create(b,TweenInfo.new(0.08),{
+			Size = UDim2.new(0.78,0,0,30)
+		}):Play()
+	end)
+
+	b.MouseButton1Up:Connect(function()
+		TweenService:Create(b,TweenInfo.new(0.08),{
+			Size = UDim2.new(0.8,0,0,32)
+		}):Play()
+	end)
+
+	return b
+end
+
+local startBtn = makeBtn("Start Target",180)
+local autoBtn  = makeBtn("Auto Target Low HPs",260) -- Ä‘á»•i xuá»‘ng
+local stopBtn  = makeBtn("Stop Target",220)       -- Ä‘á»•i lÃªn
+
+-- TYPE BOX
+local typeBox = Instance.new("TextButton", hub)
+typeBox.Size = UDim2.new(0.8,0,0,28)
+typeBox.Position = UDim2.new(0.1,0,0,posNoList.type)
+typeBox.BackgroundColor3 = Color3.fromRGB(60,60,70)
+typeBox.TextColor3 = Color3.new(1,1,1)
+typeBox.Font = Enum.Font.GothamBold
+Instance.new("UICorner", typeBox)
+Instance.new("UIStroke", typeBox)
+
+local function updateTypeUI()
+	typeBox.Text = "Targetting Type: "..targetType ..example
+end
+
+updateTypeUI()
+
+typeBox.MouseButton1Click:Connect(function()
+	if targetType == "Orbit" then
+		targetType = "Behind"
+		
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Changed Targetting Type To 'Behind' ",
+			Duration = 3
+		})
+	else
+		targetType = "Orbit"
+		
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Changed Targetting Type To 'Orbit' ",
+			Duration = 3
+		})
+	end
+
+	updateTypeUI()
+end)
+
+-- AUTO CHANGE LOWEST SWITCH
+local autoSwitch = Instance.new("TextButton", hub)
+autoSwitch.Size = UDim2.new(0.8,0,0,40)
+autoSwitch.Position = UDim2.new(0.1,0,0,posNoList.type + 40)
+autoSwitch.BackgroundColor3 = Color3.fromRGB(60,60,70)
+autoSwitch.TextColor3 = Color3.new(1,1,1)
+autoSwitch.Font = Enum.Font.GothamBold
+autoSwitch.TextSize = 13
+autoSwitch.TextWrapped = true
+
+Instance.new("UICorner", autoSwitch)
+Instance.new("UIStroke", autoSwitch)
+
+local lockTarget = false
+
+local function updateAutoSwitchUI()
+	if lockTarget then
+		autoSwitch.Text = "Auto Change To The Lowest Target: OFF\n(Click to switch to ON)"
+	else
+		autoSwitch.Text = "Auto Change To The Lowest Target: ON\n(Click to switch to OFF)"
+	end
+end
+
+updateAutoSwitchUI()
+
+autoSwitch.MouseButton1Click:Connect(function()
+	lockTarget = not lockTarget
+
+	if lockTarget then
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Changed Auto Change To The Lowest Target: OFF",
+			Duration = 3
+		})
+	else
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Changed Auto Change To The Lowest Target: ON",
+			Duration = 3
+		})
+	end
+
+	updateAutoSwitchUI()
+end)
+
+-- NO FRIENDS TARGETTING SWITCH
+local noFriendBtn = Instance.new("TextButton", hub)
+noFriendBtn.Size = UDim2.new(0.8,0,0,32)
+noFriendBtn.Position = UDim2.new(0.1,0,0,posNoList.type + 85)
+noFriendBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+noFriendBtn.TextColor3 = Color3.new(1,1,1)
+noFriendBtn.Font = Enum.Font.GothamBold
+noFriendBtn.TextSize = 13
+noFriendBtn.TextWrapped = true
+
+Instance.new("UICorner", noFriendBtn)
+Instance.new("UIStroke", noFriendBtn)
+
+local function updateNoFriendUI()
+	if noFriends then
+		noFriendBtn.Text = "No Friends Targetting: ON"
+	else
+		noFriendBtn.Text = "No Friends Targetting: OFF"
+	end
+end
+
+updateNoFriendUI()
+
+noFriendBtn.MouseButton1Click:Connect(function()
+	noFriends = not noFriends
+
+	if noFriends then
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "No Friends Targetting: ON",
+			Duration = 3
+		})
+	else
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "No Friends Targetting: OFF",
+			Duration = 3
+		})
+	end
+
+	updateNoFriendUI()
+end)
+
+noFriendBtn.MouseEnter:Connect(function()
+	TweenService:Create(noFriendBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(255,80,80)
+	}):Play()
+end)
+
+noFriendBtn.MouseLeave:Connect(function()
+	TweenService:Create(noFriendBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(60,60,70)
+	}):Play()
+end)
+
+-- HOP SERVER BUTTON
+local hopBtn = Instance.new("TextButton", hub)
+hopBtn.Size = UDim2.new(0.8,0,0,32)
+hopBtn.Position = UDim2.new(0.1,0,0,posNoList.type + 120) -- náº±m dÆ°á»›i cÃ¹ng
+hopBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+hopBtn.TextColor3 = Color3.new(1,1,1)
+hopBtn.Font = Enum.Font.GothamBold
+hopBtn.Text = "Hop Server"
+
+Instance.new("UICorner", hopBtn)
+Instance.new("UIStroke", hopBtn)
+
+-- HOP MENU FRAME
+local hopFrame = Instance.new("Frame", gui)
+hopFrame.Size = UDim2.new(0,0,0,0)
+hopFrame.Position = UDim2.new(0.5,0,0.5,0)
+hopFrame.AnchorPoint = Vector2.new(0.5,0.5)
+hopFrame.BackgroundColor3 = Color3.fromRGB(25,25,30)
+hopFrame.Visible = false
+hopFrame.ClipsDescendants = true
+
+Instance.new("UICorner", hopFrame)
+local hopStroke = Instance.new("UIStroke", hopFrame)
+hopStroke.Color = Color3.fromRGB(255,0,0)
+hopStroke.Thickness = 2
+
+-- TITLE
+local hopTitle = Instance.new("TextLabel", hopFrame)
+hopTitle.Size = UDim2.new(1,0,0,30)
+hopTitle.BackgroundTransparency = 1
+hopTitle.Text = "Select Server Hop Mode"
+hopTitle.TextColor3 = Color3.new(1,1,1)
+hopTitle.Font = Enum.Font.GothamBold
+hopTitle.TextSize = 14
+
+-- CLOSE BUTTON (X)
+local closeBtn = Instance.new("TextButton", hopFrame)
+closeBtn.Size = UDim2.new(0,30,0,30)
+closeBtn.Position = UDim2.new(1,-35,0,0)
+closeBtn.Text = "X"
+closeBtn.BackgroundColor3 = Color3.fromRGB(80,30,30)
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 14
+
+Instance.new("UICorner", closeBtn)
+Instance.new("UIStroke", closeBtn)
+
+closeBtn.MouseEnter:Connect(function()
+	TweenService:Create(closeBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(255,60,60)
+	}):Play()
+end)
+
+closeBtn.MouseLeave:Connect(function()
+	TweenService:Create(closeBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(80,30,30)
+	}):Play()
+end)
+
+closeBtn.MouseButton1Down:Connect(function()
+	TweenService:Create(closeBtn,TweenInfo.new(0.08),{
+		Size = UDim2.new(0,26,0,26)
+	}):Play()
+end)
+
+closeBtn.MouseButton1Up:Connect(function()
+	TweenService:Create(closeBtn,TweenInfo.new(0.08),{
+		Size = UDim2.new(0,30,0,30)
+	}):Play()
+end)
+
+-- OPTION 1
+local lowBtn = Instance.new("TextButton", hopFrame)
+lowBtn.Size = UDim2.new(0.8,0,0,30)
+lowBtn.Position = UDim2.new(0.1,0,0,40)
+lowBtn.Text = "Hop in low servers"
+lowBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+lowBtn.TextColor3 = Color3.new(1,1,1)
+lowBtn.Font = Enum.Font.GothamBold
+
+Instance.new("UICorner", lowBtn)
+Instance.new("UIStroke", lowBtn)
+
+-- OPTION 2
+local normalBtn = Instance.new("TextButton", hopFrame)
+normalBtn.Size = UDim2.new(0.8,0,0,30)
+normalBtn.Position = UDim2.new(0.1,0,0,80)
+normalBtn.Text = "Hop in normal servers"
+normalBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+normalBtn.TextColor3 = Color3.new(1,1,1)
+normalBtn.Font = Enum.Font.GothamBold
+
+Instance.new("UICorner", normalBtn)
+Instance.new("UIStroke", normalBtn)
+
+local function openHopMenu()
+	hopFrame.Visible = true
+	TweenService:Create(hopFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
+		Size = UDim2.new(0,260,0,140)
+	}):Play()
+end
+
+local function closeHopMenu()
+	local tween = TweenService:Create(hopFrame, TweenInfo.new(0.2), {
+		Size = UDim2.new(0,0,0,0)
+	})
+	tween:Play()
+	tween.Completed:Wait()
+	hopFrame.Visible = false
+end
+
+closeBtn.MouseButton1Click:Connect(function()
+	closeHopMenu()
+end)
+
+-- hover
+hopBtn.MouseEnter:Connect(function()
+	TweenService:Create(hopBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(255,80,80)
+	}):Play()
+end)
+
+hopBtn.MouseLeave:Connect(function()
+	TweenService:Create(hopBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(60,60,70)
+	}):Play()
+end)
+
+-- HOP LOGIC
+hopBtn.MouseButton1Click:Connect(function()
+	openHopMenu()
+end)
+
+-- LIST ANIMATION (FIXED)
+local listVisible = false
+
+listToggle.MouseButton1Click:Connect(function()
+	listVisible = not listVisible
+
+	if listVisible then
+		listFrame.Visible = true
+
+		TweenService:Create(listFrame,TweenInfo.new(0.25),{
+			Size = UDim2.new(0.8,0,0,90)
+		}):Play()
+
+		-- BUTTON ÄI XUá»NG
+		TweenService:Create(startBtn,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posWithList.start)
+		}):Play()
+
+		TweenService:Create(autoBtn,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posWithList.auto)
+		}):Play()
+
+		TweenService:Create(stopBtn,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posWithList.stop)
+		}):Play()
+
+		TweenService:Create(typeBox,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posWithList.type)
+		}):Play()
+
+	else
+		TweenService:Create(listFrame,TweenInfo.new(0.25),{
+			Size = UDim2.new(0.8,0,0,0)
+		}):Play()
+
+		-- BUTTON ÄI LÃŠN
+		TweenService:Create(startBtn,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posNoList.start)
+		}):Play()
+
+		TweenService:Create(autoBtn,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posNoList.auto)
+		}):Play()
+
+		TweenService:Create(stopBtn,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posNoList.stop)
+		}):Play()
+
+		TweenService:Create(typeBox,TweenInfo.new(0.25),{
+			Position = UDim2.new(0.1,0,0,posNoList.type)
+		}):Play()
+
+		task.wait(0.25)
+		listFrame.Visible = false
+	end
+end)
+
+-- HUB TOGGLE ANIM
+toggle.MouseButton1Click:Connect(function()
+	if hub.Visible then
+		TweenService:Create(hub,TweenInfo.new(0.25),{
+			Size = UDim2.new(0,0,0,0)
+		}):Play()
+		task.wait(0.25)
+		hub.Visible = false
+	else
+		hub.Visible = true
+		hub.Size = UDim2.new(0,0,0,0)
+		TweenService:Create(hub,TweenInfo.new(0.25),{
+			Size = UDim2.new(0,420,0,340)
+		}):Play()
+	end
+end)
+
+-- =====================
+-- ðŸ”» LOGIC GIá»® NGUYÃŠN ðŸ”»
+-- =====================
+
+local victim=nil
+local enabled=false
+local auto=false
+local dist=5
+
+-- TARGET VISUAL
+local currentHighlight = nil
+local currentBillboard = nil
+
+local function clearVisual()
+	if currentHighlight then
+		currentHighlight:Destroy()
+		currentHighlight = nil
+	end
+	
+	if currentBillboard then
+		currentBillboard:Destroy()
+		currentBillboard = nil
+	end
+end
+
+local function applyVisual(plr)
+	clearVisual()
+	
+	if not plr or not plr.Character then return end
+	
+	local char = plr.Character
+	local head = char:FindFirstChild("Head")
+	
+	-- ðŸ”» HIGHLIGHT
+	local hl = Instance.new("Highlight")
+	hl.FillColor = Color3.fromRGB(255,0,0)
+	hl.OutlineColor = Color3.fromRGB(255,255,255)
+	hl.FillTransparency = 0.3
+	hl.OutlineTransparency = 0
+	hl.Parent = char
+	
+	currentHighlight = hl
+	
+	-- ðŸ”» BILLBOARD
+	if head then
+		local bill = Instance.new("BillboardGui")
+		bill.Size = UDim2.new(0,100,0,40)
+		bill.StudsOffset = Vector3.new(0,2.5,0)
+		bill.AlwaysOnTop = true
+		bill.Parent = head
+		
+		local txt = Instance.new("TextLabel", bill)
+		txt.Size = UDim2.new(1,0,1,0)
+		txt.BackgroundTransparency = 1
+		txt.Text = "TARGET"
+		txt.TextColor3 = Color3.fromRGB(255,0,0)
+		txt.Font = Enum.Font.GothamBold
+		txt.TextScaled = true
+		
+		currentBillboard = bill
+	end
+end
+
+local function getLowest()
+	local low=nil
+	local hp=math.huge
+
+	for _,p in pairs(Players:GetPlayers()) do
+		if p ~= LocalPlayer and p.Character then
+			
+			-- ðŸ”» lá»c friend náº¿u báº­t
+			if noFriends and LocalPlayer:IsFriendsWith(p.UserId) then
+				continue
+			end
+
+			local h = p.Character:FindFirstChildOfClass("Humanoid")
+			if h and h.Health > 0 and h.Health < hp then
+				hp = h.Health
+				low = p
+			end
+		end
+	end
+
+	return low
+end
+
+startBtn.MouseButton1Click:Connect(function()
+	local found = false
+
+	for _,p in pairs(Players:GetPlayers()) do
+		if p.Name:lower() == targetBox.Text:lower() then
+			victim = p
+enabled = true
+applyVisual(victim)
+			found = true
+			break
+		end
+	end
+
+local input = distBox.Text
+
+-- náº¿u rá»—ng hoáº·c toÃ n space â†’ default = 5
+if input == "" or input:match("^%s*$") then
+	dist = 5
+else
+	dist = tonumber(input) or 5
+end
+
+	if found then
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Started targeting: "..victim.Name,
+			Duration = 3
+		})
+	else
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Player not found",
+			Duration = 3
+		})
+	end
+end)
+
+autoBtn.MouseButton1Click:Connect(function()
+	auto = not auto
+
+	if auto then
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Auto Low HP: ON",
+			Duration = 2
+		})
+	else
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Auto Low HP: OFF",
+			Duration = 2
+		})
+	end
+end)
+
+stopBtn.MouseButton1Click:Connect(function()
+	enabled = false
+	auto = false
+	victim = nil
+	clearVisual()
+
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Guestial Hub",
+		Text = "Stopped Targeting",
+		Duration = 2
+	})
+end)
+
+task.spawn(function()
+	while true do
+		task.wait(0.5)
+		if auto then
+	if not lockTarget then
+		-- bÃ¬nh thÆ°á»ng: luÃ´n láº¥y tháº±ng mÃ¡u tháº¥p nháº¥t
+		victim = getLowest()
+enabled = true
+applyVisual(victim)
+	else
+		-- lock mode: chá»‰ Ä‘á»•i náº¿u target cháº¿t hoáº·c máº¥t
+		if not victim 
+		or not victim.Character 
+		or not victim.Character:FindFirstChildOfClass("Humanoid") 
+		or victim.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
+			
+			victim = getLowest()
+			enabled = true
+			applyVisual(victim)
+		end
+	end
+end
+	end
+end)
+
+autoSwitch.MouseEnter:Connect(function()
+	TweenService:Create(autoSwitch,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(255,80,80)
+	}):Play()
+end)
+
+autoSwitch.MouseLeave:Connect(function()
+	TweenService:Create(autoSwitch,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(60,60,70)
+	}):Play()
+end)
+
+RunService.Heartbeat:Connect(function()
+	if enabled and victim and victim.Character then
+		local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+		local tRoot = victim.Character:FindFirstChild("HumanoidRootPart")
+
+		if root and tRoot then
+			local pos = tRoot.Position
+			local look = tRoot.CFrame.LookVector
+			local cf
+
+			-- ðŸ”» PREDICT (giá»¯ láº¡i tá»« báº£n m thÃ­ch)
+			local predicted = pos + (tRoot.Velocity * 0.15)
+
+			if targetType == "Behind" then
+				cf = CFrame.new(predicted - look * dist, predicted)
+
+			elseif targetType == "Orbit" then
+				local t = tick() * 20
+
+				local offset = Vector3.new(
+					math.cos(t) * dist,
+					0,
+					math.sin(t) * dist
+				)
+
+				-- ðŸ”» Ã©p ngang Y Ä‘á»ƒ "dÃ¬m xuá»‘ng"
+				local orbitPos = Vector3.new(
+					predicted.X + offset.X,
+					predicted.Y,
+					predicted.Z + offset.Z
+				)
+
+				cf = CFrame.new(orbitPos, predicted)
+			end
+
+			-- ðŸ”» chá»‰ set 1 láº§n duy nháº¥t (fix bug rung + conflict)
+			if cf then
+				root.CFrame = root.CFrame:Lerp(cf, 0.3)
+			end
+			
+			if victim and (not victim.Character or not victim.Character:FindFirstChild("Head")) then
+	clearVisual()
+end
+		end
+	end
+end)
+
+local UserInputService = game:GetService("UserInputService")
+
+UserInputService.InputBegan:Connect(function(input, gp)
+	if gp then return end
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		local mouse = LocalPlayer:GetMouse()
+		local target = mouse.Target
+
+		-- náº¿u click vÃ o UI cá»§a typeBox thÃ¬ bá» qua
+		if target and target:IsDescendantOf(typeBox) then
+			return
+		end
+
+		-- (optional) náº¿u m muá»‘n click ngoÃ i UI thÃ¬ reset focus textbox
+		if targetBox:IsFocused() then
+			targetBox:ReleaseFocus()
+		end
+
+		if distBox:IsFocused() then
+			distBox:ReleaseFocus()
+		end
+	end
+end)
+
+-- OPTION 1: LOW SERVER
+lowBtn.MouseButton1Click:Connect(function()
+
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Guestial Hub",
+		Text = "Hopping in low Servers",
+		Duration = 2
+	})
+
+	closeHopMenu()
+
+	if getgenv().HopLow then
+		pcall(function()
+			getgenv().HopLow()
+		end)
+	else
+		warn("No HopLow hook")
+	end
+end)
+
+-- OPTION 2: NORMAL SERVER
+normalBtn.MouseButton1Click:Connect(function()
+
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Guestial Hub",
+		Text = "Hopping in normal Servers",
+		Duration = 2
+	})
+
+	closeHopMenu()
+
+	if getgenv().HopNormal then
+		pcall(function()
+			getgenv().HopNormal()
+		end)
+	else
+		warn("No HopNormal hook")
+	end
+end)
