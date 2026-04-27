@@ -9,6 +9,9 @@ local targetType = "Orbit"
 local example = " (Click to switch the type)"
 local lockTarget = false
 local noFriends = false
+local showInfo = false
+local orbitSpeed = 20
+local sliderVisible = false
 
 local posNoList = {
 	start = 180,
@@ -155,6 +158,73 @@ gui.ResetOnSpawn = false
 gui.DisplayOrder = 999999
 gui.IgnoreGuiInset = true
 
+-- =====================
+-- ðŸ”» TARGET INFO UI ðŸ”»
+-- =====================
+
+local infoFrame = Instance.new("Frame", gui)
+infoFrame.Size = UDim2.new(0, 260, 0, 90)
+infoFrame.Position = UDim2.new(0, 0, 0.5, 0) -- sÃ¡t trÃ¡i, giá»¯a mÃ n
+infoFrame.AnchorPoint = Vector2.new(0, 0.5)
+infoFrame.BackgroundTransparency = 1
+
+local padding = Instance.new("UIPadding", infoFrame)
+padding.PaddingLeft = UDim.new(0, 6)
+
+local nameTxt = Instance.new("TextLabel", infoFrame)
+nameTxt.Size = UDim2.new(1,0,0,30)
+nameTxt.BackgroundTransparency = 1
+nameTxt.Font = Enum.Font.GothamBlack
+nameTxt.TextColor3 = Color3.fromRGB(0,170,255) -- xanh biá»ƒn
+nameTxt.Text = "Target Name: None"
+nameTxt.TextScaled = false
+nameTxt.TextSize = 16
+nameTxt.TextXAlignment = Enum.TextXAlignment.Left
+
+local stroke1 = Instance.new("UIStroke", nameTxt)
+stroke1.Color = Color3.fromRGB(0,0,0)
+stroke1.Thickness = 2
+stroke1.Transparency = 0
+stroke1.LineJoinMode = Enum.LineJoinMode.Round
+
+local hpTxt = Instance.new("TextLabel", infoFrame)
+hpTxt.Size = UDim2.new(1,0,0,30)
+hpTxt.Position = UDim2.new(0,0,0,30)
+hpTxt.BackgroundTransparency = 1
+hpTxt.Font = Enum.Font.GothamBlack
+hpTxt.TextColor3 = Color3.fromRGB(0,255,0)
+hpTxt.Text = "Target HP: 0"
+hpTxt.TextScaled = false
+hpTxt.TextSize = 15
+hpTxt.TextXAlignment = Enum.TextXAlignment.Left
+
+local stroke2 = Instance.new("UIStroke", hpTxt)
+stroke2.Color = Color3.fromRGB(0,0,0)
+stroke2.Thickness = 2
+stroke2.Transparency = 0
+stroke2.LineJoinMode = Enum.LineJoinMode.Round
+
+local statusTxt = Instance.new("TextLabel", infoFrame)
+statusTxt.Size = UDim2.new(1,0,0,30)
+statusTxt.Position = UDim2.new(0,0,0,60)
+statusTxt.BackgroundTransparency = 1
+statusTxt.Font = Enum.Font.GothamBlack
+statusTxt.TextScaled = false
+statusTxt.TextSize = 15
+statusTxt.TextXAlignment = Enum.TextXAlignment.Left
+statusTxt.TextColor3 = Color3.fromRGB(0,255,0)
+statusTxt.Text = "Target Status: None"
+
+local stroke3 = Instance.new("UIStroke", statusTxt)
+stroke3.Color = Color3.fromRGB(0,0,0)
+stroke3.Thickness = 2
+stroke3.Transparency = 0
+stroke3.LineJoinMode = Enum.LineJoinMode.Round
+
+nameTxt.TextStrokeTransparency = 1
+hpTxt.TextStrokeTransparency = 1
+statusTxt.TextStrokeTransparency = 1
+
 -- TOGGLE
 local toggle = Instance.new("TextButton", gui)
 toggle.Size = UDim2.new(0,60,0,60)
@@ -174,6 +244,7 @@ icon.Size = UDim2.new(1,0,1,0)
 icon.Position = UDim2.new(0,0,0,0)
 icon.BackgroundTransparency = 1
 icon.Active = false
+icon.Selectable = false
 icon.Image = "rbxassetid://77734399658930" -- m tá»± thay id
 
 -- optional cho Ä‘áº¹p hÆ¡n
@@ -203,43 +274,37 @@ local UIS = game:GetService("UserInputService")
 
 local function makeDraggable(frame)
 	local dragging = false
-	local dragStart
-	local startPos
+	local dragInput, mousePos, framePos
 
-	UIS.InputBegan:Connect(function(input, gp)
-		if gp then return end
-		
+	frame.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			-- check náº¿u click náº±m trong frame
-			local mousePos = UIS:GetMouseLocation()
-			local absPos = frame.AbsolutePosition
-			local absSize = frame.AbsoluteSize
+			dragging = true
+			mousePos = input.Position
+			framePos = frame.Position
 
-			if mousePos.X >= absPos.X and mousePos.X <= absPos.X + absSize.X
-			and mousePos.Y >= absPos.Y and mousePos.Y <= absPos.Y + absSize.Y then
-				
-				dragging = true
-				dragStart = input.Position
-				startPos = frame.Position
-			end
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
 		end
 	end)
 
-	UIS.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			dragging = false
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			dragInput = input
 		end
 	end)
 
 	UIS.InputChanged:Connect(function(input)
-		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-			local delta = input.Position - dragStart
+		if input == dragInput and dragging then
+			local delta = input.Position - mousePos
 
 			frame.Position = UDim2.new(
-				startPos.X.Scale,
-				startPos.X.Offset + delta.X,
-				startPos.Y.Scale,
-				startPos.Y.Offset + delta.Y
+				framePos.X.Scale,
+				framePos.X.Offset + delta.X,
+				framePos.Y.Scale,
+				framePos.Y.Offset + delta.Y
 			)
 		end
 	end)
@@ -431,26 +496,98 @@ end
 
 updateTypeUI()
 
-typeBox.MouseButton1Click:Connect(function()
-	if targetType == "Orbit" then
-		targetType = "Behind"
-		
-		game.StarterGui:SetCore("SendNotification", {
-			Title = "Guestial Hub",
-			Text = "Changed Targetting Type To 'Behind' ",
-			Duration = 3
-		})
-	else
-		targetType = "Orbit"
-		
-		game.StarterGui:SetCore("SendNotification", {
-			Title = "Guestial Hub",
-			Text = "Changed Targetting Type To 'Orbit' ",
-			Duration = 3
-		})
-	end
+local sliderFrame = Instance.new("Frame", hub)
+sliderFrame.Size = UDim2.new(0.8,0,0,40)
+sliderFrame.Position = UDim2.new(0.1,0,0,posNoList.type + 35)
+sliderFrame.BackgroundTransparency = 1
+sliderFrame.Visible = false
 
-	updateTypeUI()
+local sliderText = Instance.new("TextLabel", sliderFrame)
+sliderText.Size = UDim2.new(1,0,0,18)
+sliderText.BackgroundTransparency = 1
+sliderText.Text = "Orbit Speed: "..orbitSpeed
+sliderText.TextColor3 = Color3.new(1,1,1)
+sliderText.Font = Enum.Font.GothamBold
+sliderText.TextSize = 14
+
+local sliderBar = Instance.new("Frame", sliderFrame)
+sliderBar.Size = UDim2.new(1,0,0,10)
+sliderBar.Position = UDim2.new(0,0,0,25)
+sliderBar.BackgroundColor3 = Color3.fromRGB(30,30,35)
+
+Instance.new("UICorner", sliderBar)
+
+local fill = Instance.new("Frame", sliderBar)
+fill.Size = UDim2.new(0,0,1,0)
+fill.BackgroundColor3 = Color3.fromRGB(255,0,0)
+Instance.new("UICorner", fill)
+
+local circle = Instance.new("Frame", sliderBar)
+circle.Size = UDim2.new(0,14,0,14)
+circle.AnchorPoint = Vector2.new(0.5,0.5)
+circle.Position = UDim2.new(0,0,0.5,0)
+circle.BackgroundColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", circle)
+sliderBar.Active = true
+circle.Active = true
+typeBox.ZIndex = 5
+
+sliderFrame.ZIndex = 4
+sliderBar.ZIndex = 4
+fill.ZIndex = 4
+circle.ZIndex = 4
+sliderText.ZIndex = 4
+
+local draggingSlider = false
+
+local function updateSlider(x)
+	local barX = sliderBar.AbsolutePosition.X
+	local barSize = sliderBar.AbsoluteSize.X
+
+	local percent = math.clamp((x - barX)/barSize, 0, 1)
+
+	fill.Size = UDim2.new(percent,0,1,0)
+	circle.Position = UDim2.new(percent,0,0.5,0)
+
+	orbitSpeed = math.floor(10 + (90 * percent))
+	sliderText.Text = "Orbit Speed: "..orbitSpeed
+end
+
+-- ðŸ”» Báº®T DRAG TRÃŠN Cáº¢ BAR + CIRCLE
+local function startDrag(input)
+	draggingSlider = true
+	updateSlider(input.Position.X)
+end
+
+circle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 
+	or input.UserInputType == Enum.UserInputType.Touch then
+		startDrag(input)
+	end
+end)
+
+sliderBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 
+	or input.UserInputType == Enum.UserInputType.Touch then
+		startDrag(input)
+	end
+end)
+
+-- ðŸ”» DRAG (QUAN TRá»ŒNG: dÃ¹ng input.Position luÃ´n)
+UIS.InputChanged:Connect(function(input)
+	if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement 
+	or input.UserInputType == Enum.UserInputType.Touch) then
+		
+		updateSlider(input.Position.X)
+	end
+end)
+
+-- ðŸ”» THáº¢
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 
+	or input.UserInputType == Enum.UserInputType.Touch then
+		draggingSlider = false
+	end
 end)
 
 -- AUTO CHANGE LOWEST SWITCH
@@ -573,6 +710,7 @@ hopFrame.AnchorPoint = Vector2.new(0.5,0.5)
 hopFrame.BackgroundColor3 = Color3.fromRGB(25,25,30)
 hopFrame.Visible = false
 hopFrame.ClipsDescendants = true
+hopFrame.ZIndex = 100
 
 Instance.new("UICorner", hopFrame)
 local hopStroke = Instance.new("UIStroke", hopFrame)
@@ -687,61 +825,69 @@ hopBtn.MouseButton1Click:Connect(function()
 	openHopMenu()
 end)
 
--- LIST ANIMATION (FIXED)
 local listVisible = false
 
+local function refreshLayout(animated)
+	local base = listVisible and posWithList or posNoList
+	local tweenInfo = TweenInfo.new(0.25)
+
+	local function move(obj, y)
+		local goal = {Position = UDim2.new(0.1, 0, 0, y)}
+
+		if animated then
+			TweenService:Create(obj, tweenInfo, goal):Play()
+		else
+			obj.Position = goal.Position
+		end
+	end
+
+	-- main buttons
+	move(startBtn, base.start)
+	move(stopBtn, base.stop)
+	move(autoBtn, base.auto)
+	move(typeBox, base.type)
+
+	local extraOffset = 40
+
+	-- slider
+	if targetType == "Orbit" then
+		sliderVisible = true
+		sliderFrame.Visible = true
+		move(sliderFrame, base.type + 35)
+		extraOffset = 75
+	else
+		sliderVisible = false
+		sliderFrame.Visible = false
+	end
+
+	-- buttons below
+	move(autoSwitch, base.type + extraOffset)
+	move(noFriendBtn, base.type + extraOffset + 45)
+	move(hopBtn, base.type + extraOffset + 80)
+end
+
+refreshLayout(false)
+
+-- LIST ANIMATION (FIXED)
 listToggle.MouseButton1Click:Connect(function()
 	listVisible = not listVisible
 
 	if listVisible then
 		listFrame.Visible = true
-
-		TweenService:Create(listFrame,TweenInfo.new(0.25),{
+		TweenService:Create(listFrame, TweenInfo.new(0.25), {
 			Size = UDim2.new(0.8,0,0,90)
 		}):Play()
-
-		-- BUTTON ÄI XUá»NG
-		TweenService:Create(startBtn,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posWithList.start)
-		}):Play()
-
-		TweenService:Create(autoBtn,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posWithList.auto)
-		}):Play()
-
-		TweenService:Create(stopBtn,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posWithList.stop)
-		}):Play()
-
-		TweenService:Create(typeBox,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posWithList.type)
-		}):Play()
-
 	else
-		TweenService:Create(listFrame,TweenInfo.new(0.25),{
+		TweenService:Create(listFrame, TweenInfo.new(0.25), {
 			Size = UDim2.new(0.8,0,0,0)
 		}):Play()
 
-		-- BUTTON ÄI LÃŠN
-		TweenService:Create(startBtn,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posNoList.start)
-		}):Play()
-
-		TweenService:Create(autoBtn,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posNoList.auto)
-		}):Play()
-
-		TweenService:Create(stopBtn,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posNoList.stop)
-		}):Play()
-
-		TweenService:Create(typeBox,TweenInfo.new(0.25),{
-			Position = UDim2.new(0.1,0,0,posNoList.type)
-		}):Play()
-
-		task.wait(0.25)
-		listFrame.Visible = false
+		task.delay(0.25, function()
+			listFrame.Visible = false
+		end)
 	end
+
+	refreshLayout(true)
 end)
 
 -- HUB TOGGLE ANIM
@@ -824,6 +970,63 @@ local function applyVisual(plr)
 	end
 end
 
+local lastHP = nil
+
+local function updateInfoUI()
+	-- ðŸ”» náº¿u ko Ä‘Æ°á»£c phÃ©p show thÃ¬ áº©n luÃ´n
+	if not showInfo then
+		infoFrame.Visible = false
+		return
+	end
+
+	infoFrame.Visible = true
+
+	if victim and victim.Character then
+		local hum = victim.Character:FindFirstChildOfClass("Humanoid")
+
+		-- NAME
+		nameTxt.Text = "Target Name: "..victim.Name
+
+		if hum then
+			local hp = math.floor(hum.Health)
+hpTxt.Text = "Target HP: "..hp
+
+-- ðŸ”» DAMAGE ANIMATION
+local hp = math.floor(hum.Health)
+hpTxt.Text = "Target HP: "..hp
+
+lastHP = hp
+
+			-- ðŸ”» HP COLOR
+			local targetColor = Color3.fromRGB(0,255,0)
+
+			if hp < 20 then
+				targetColor = Color3.fromRGB(255,0,0)
+			elseif hp < 50 then
+				targetColor = Color3.fromRGB(255,200,0)
+			end
+
+			TweenService:Create(hpTxt, TweenInfo.new(0.25), {
+				TextColor3 = targetColor
+			}):Play()
+
+			-- STATUS
+if hum.Health <= 0 then
+	statusTxt.Text = "Target Status: Dead"
+	statusTxt.TextColor3 = Color3.fromRGB(255,0,0)
+
+elseif hum.Health < 35 then
+	statusTxt.Text = "Target Status: Dying"
+	statusTxt.TextColor3 = Color3.fromRGB(255,80,120) -- Ä‘á» há»“ng
+
+else
+	statusTxt.Text = "Target Status: Alive"
+	statusTxt.TextColor3 = Color3.fromRGB(0,255,0)
+end
+		end
+	end
+end
+
 local function getLowest()
 	local low=nil
 	local hp=math.huge
@@ -853,8 +1056,11 @@ startBtn.MouseButton1Click:Connect(function()
 	for _,p in pairs(Players:GetPlayers()) do
 		if p.Name:lower() == targetBox.Text:lower() then
 			victim = p
+			lastHP = nil
 enabled = true
+showInfo = true
 applyVisual(victim)
+updateInfoUI()
 			found = true
 			break
 		end
@@ -886,6 +1092,7 @@ end)
 
 autoBtn.MouseButton1Click:Connect(function()
 	auto = not auto
+showInfo = auto
 
 	if auto then
 		game.StarterGui:SetCore("SendNotification", {
@@ -906,6 +1113,7 @@ stopBtn.MouseButton1Click:Connect(function()
 	enabled = false
 	auto = false
 	victim = nil
+	showInfo = false
 	clearVisual()
 
 	game.StarterGui:SetCore("SendNotification", {
@@ -922,8 +1130,10 @@ task.spawn(function()
 	if not lockTarget then
 		-- bÃ¬nh thÆ°á»ng: luÃ´n láº¥y tháº±ng mÃ¡u tháº¥p nháº¥t
 		victim = getLowest()
+		lastHP = nil
 enabled = true
 applyVisual(victim)
+updateInfoUI()
 	else
 		-- lock mode: chá»‰ Ä‘á»•i náº¿u target cháº¿t hoáº·c máº¥t
 		if not victim 
@@ -934,6 +1144,7 @@ applyVisual(victim)
 			victim = getLowest()
 			enabled = true
 			applyVisual(victim)
+			updateInfoUI()
 		end
 	end
 end
@@ -952,6 +1163,82 @@ autoSwitch.MouseLeave:Connect(function()
 	}):Play()
 end)
 
+local function showSlider()
+	sliderVisible = true
+	sliderFrame.Visible = true
+
+	TweenService:Create(sliderFrame,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 35)
+	}):Play()
+
+	-- Ä‘áº©y UI xuá»‘ng
+	TweenService:Create(autoSwitch,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 75)
+	}):Play()
+
+	TweenService:Create(noFriendBtn,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 120)
+	}):Play()
+
+	TweenService:Create(hopBtn,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 155)
+	}):Play()
+end
+
+local function hideSlider()
+	sliderVisible = false
+
+	TweenService:Create(sliderFrame,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type)
+	}):Play()
+
+	task.wait(0.25)
+	sliderFrame.Visible = false
+
+	-- kÃ©o UI lÃªn
+	TweenService:Create(autoSwitch,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 40)
+	}):Play()
+
+	TweenService:Create(noFriendBtn,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 85)
+	}):Play()
+
+	TweenService:Create(hopBtn,TweenInfo.new(0.25),{
+		Position = UDim2.new(0.1,0,0,posNoList.type + 120)
+	}):Play()
+end
+
+typeBox.MouseButton1Click:Connect(function()
+	if targetType == "Orbit" then
+		targetType = "Behind"
+		hideSlider()
+		
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Changed Targetting Type To 'Behind' ",
+			Duration = 3
+		})
+	else
+		targetType = "Orbit"
+		showSlider()
+		
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Guestial Hub",
+			Text = "Changed Targetting Type To 'Orbit' ",
+			Duration = 3
+		})
+	end
+
+	updateTypeUI()
+	refreshLayout(true)
+end)
+
+hopTitle.ZIndex = 101
+closeBtn.ZIndex = 101
+lowBtn.ZIndex = 101
+normalBtn.ZIndex = 101
+
 RunService.Heartbeat:Connect(function()
 	if enabled and victim and victim.Character then
 		local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -969,7 +1256,7 @@ RunService.Heartbeat:Connect(function()
 				cf = CFrame.new(predicted - look * dist, predicted)
 
 			elseif targetType == "Orbit" then
-				local t = tick() * 20
+				local t = tick() * orbitSpeed
 
 				local offset = Vector3.new(
 					math.cos(t) * dist,
@@ -997,6 +1284,8 @@ RunService.Heartbeat:Connect(function()
 end
 		end
 	end
+	
+	updateInfoUI()
 end)
 
 local UserInputService = game:GetService("UserInputService")
