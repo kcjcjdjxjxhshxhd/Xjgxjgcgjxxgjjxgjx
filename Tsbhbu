@@ -12,6 +12,10 @@ local noFriends = false
 local showInfo = false
 local orbitSpeed = 20
 local sliderVisible = false
+local safeMode = false
+local isSafe = false
+local safeBtn
+local safePos = nil
 
 local posNoList = {
 	start = 180,
@@ -157,6 +161,56 @@ local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
 gui.ResetOnSpawn = false
 gui.DisplayOrder = 999999
 gui.IgnoreGuiInset = true
+
+-- ðŸ”» SAFE WARNING TEXT
+local safeWarn = nil
+local safeWarnTween = nil
+
+local function createSafeWarning()
+	if safeWarn then return end
+
+	safeWarn = Instance.new("TextLabel", gui)
+	safeWarn.Size = UDim2.new(0, 220, 0, 28)
+	safeWarn.Position = UDim2.new(0.5, 0, 0, 50)
+	safeWarn.AnchorPoint = Vector2.new(0.5, 0)
+	safeWarn.BackgroundTransparency = 1
+
+	safeWarn.Text = "You are low. Retreating.."
+	safeWarn.TextColor3 = Color3.new(1,1,1)
+	safeWarn.Font = Enum.Font.GothamBlack
+	safeWarn.TextSize = 20
+	safeWarn.TextTransparency = 0
+
+	local stroke = Instance.new("UIStroke", safeWarn)
+	stroke.Color = Color3.fromRGB(0,0,0)
+	stroke.Thickness = 2
+
+	-- ðŸ”» LOOP FADE
+	task.spawn(function()
+		while safeWarn and safeWarn.Parent do
+			local fadeOut = TweenService:Create(safeWarn, TweenInfo.new(3), {
+				TextTransparency = 1
+			})
+			fadeOut:Play()
+			fadeOut.Completed:Wait()
+
+			if not safeWarn then break end
+
+			local fadeIn = TweenService:Create(safeWarn, TweenInfo.new(3), {
+				TextTransparency = 0
+			})
+			fadeIn:Play()
+			fadeIn.Completed:Wait()
+		end
+	end)
+end
+
+local function removeSafeWarning()
+	if safeWarn then
+		safeWarn:Destroy()
+		safeWarn = nil
+	end
+end
 
 -- =====================
 -- ðŸ”» TARGET INFO UI ðŸ”»
@@ -603,8 +657,6 @@ autoSwitch.TextWrapped = true
 Instance.new("UICorner", autoSwitch)
 Instance.new("UIStroke", autoSwitch)
 
-local lockTarget = false
-
 local function updateAutoSwitchUI()
 	if lockTarget then
 		autoSwitch.Text = "Auto Change To The Lowest Target: OFF\n(Click to switch to ON)"
@@ -864,9 +916,8 @@ local function refreshLayout(animated)
 	move(autoSwitch, base.type + extraOffset)
 	move(noFriendBtn, base.type + extraOffset + 45)
 	move(hopBtn, base.type + extraOffset + 80)
+move(safeBtn, base.type + extraOffset + 115)
 end
-
-refreshLayout(false)
 
 -- LIST ANIMATION (FIXED)
 listToggle.MouseButton1Click:Connect(function()
@@ -1209,6 +1260,50 @@ local function hideSlider()
 	}):Play()
 end
 
+safeBtn = Instance.new("TextButton", hub)
+safeBtn.Size = UDim2.new(0.8,0,0,32)
+safeBtn.Position = UDim2.new(0.1,0,0,posNoList.type + 160)
+safeBtn.BackgroundColor3 = Color3.fromRGB(60,60,70)
+safeBtn.TextColor3 = Color3.new(1,1,1)
+safeBtn.Font = Enum.Font.GothamBold
+safeBtn.Text = "Enable Safe Mode: OFF"
+
+Instance.new("UICorner", safeBtn)
+Instance.new("UIStroke", safeBtn)
+
+refreshLayout(false)
+
+local function updateSafeUI()
+	if safeMode then
+		safeBtn.Text = "Enable Safe Mode: ON"
+	else
+		safeBtn.Text = "Enable Safe Mode: OFF"
+	end
+end
+
+safeBtn.MouseButton1Click:Connect(function()
+	safeMode = not safeMode
+	updateSafeUI()
+
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Guestial Hub",
+		Text = "Safe Mode: "..(safeMode and "ON" or "OFF"),
+		Duration = 2
+	})
+end)
+
+safeBtn.MouseEnter:Connect(function()
+	TweenService:Create(safeBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(255,80,80)
+	}):Play()
+end)
+
+safeBtn.MouseLeave:Connect(function()
+	TweenService:Create(safeBtn,TweenInfo.new(0.15),{
+		BackgroundColor3 = Color3.fromRGB(60,60,70)
+	}):Play()
+end)
+
 typeBox.MouseButton1Click:Connect(function()
 	if targetType == "Orbit" then
 		targetType = "Behind"
@@ -1240,6 +1335,58 @@ lowBtn.ZIndex = 101
 normalBtn.ZIndex = 101
 
 RunService.Heartbeat:Connect(function()
+
+    local char = LocalPlayer.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+
+    -- SAFE MODE STATE
+if safeMode and hum and root and (enabled or auto) then
+    if hum.Health <= 20 and not isSafe then
+	isSafe = true
+	enabled = false
+
+	safePos = root.Position + Vector3.new(0, 120, 0)
+
+	createSafeWarning() -- ðŸ”» THÃŠM DÃ’NG NÃ€Y
+
+        -- ðŸ“Œ lÆ°u vá»‹ trÃ­ bay lÃªn (chá»‰ 1 láº§n)
+        safePos = root.Position + Vector3.new(0, 120, 0)
+
+    elseif hum.Health >= 50 and isSafe then
+	isSafe = false
+	enabled = true
+	safePos = nil
+
+	removeSafeWarning() -- ðŸ”» THÃŠM DÃ’NG NÃ€Y
+    end
+end
+
+-- ðŸ”» BAY + GIá»® NGUYÃŠN TRÃŠN TRá»œI
+if isSafe and root then
+    root.Velocity = Vector3.zero
+    root.AssemblyLinearVelocity = Vector3.zero
+
+    if victim and victim.Character then
+        local tRoot = victim.Character:FindFirstChild("HumanoidRootPart")
+
+        if tRoot then
+            local height = 120 -- ðŸ”¥ chá»‰nh Ä‘á»™ cao an toÃ n á»Ÿ Ä‘Ã¢y
+
+            -- ðŸ“Œ vá»‹ trÃ­ trÃªn Ä‘áº§u target
+            local targetPos = tRoot.Position + Vector3.new(0, height, 0)
+
+            -- ðŸ“Œ luÃ´n nhÃ¬n xuá»‘ng target
+            local cf = CFrame.new(targetPos, tRoot.Position)
+
+            root.CFrame = root.CFrame:Lerp(cf, 0.2)
+        end
+    end
+
+updateInfoUI()
+    return
+end
+
 	if enabled and victim and victim.Character then
 		local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 		local tRoot = victim.Character:FindFirstChild("HumanoidRootPart")
