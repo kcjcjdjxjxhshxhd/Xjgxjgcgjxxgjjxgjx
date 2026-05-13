@@ -194,8 +194,11 @@ local iconHolder = Instance.new("Frame")
 iconHolder.Parent = frame
 iconHolder.BackgroundColor3 = Color3.fromRGB(25,25,25)
 iconHolder.BackgroundTransparency = 1
-iconHolder.Position = UDim2.new(0,12,0.5,-22)
-iconHolder.Size = UDim2.new(0,44,0,44)
+
+-- border to hÆ¡n XD
+iconHolder.Position = UDim2.new(0,10,0.5,-28)
+iconHolder.Size = UDim2.new(0,56,0,56)
+
 iconHolder.ClipsDescendants = true
 
 local iconHolderCorner = Instance.new("UICorner")
@@ -204,7 +207,7 @@ iconHolderCorner.Parent = iconHolder
 
 local iconStroke = Instance.new("UIStroke")
 iconStroke.Parent = iconHolder
-iconStroke.Thickness = 1.4
+iconStroke.Thickness = 2.2
 iconStroke.Transparency = 1
 
 ------------------------------------------------
@@ -216,12 +219,19 @@ icon.Parent = iconHolder
 icon.BackgroundTransparency = 1
 icon.ImageTransparency = 1
 
--- image hÆ¡i to hÆ¡n holder Ä‘á»ƒ auto crop hÃ¬nh
-icon.Size = UDim2.new(1.15,0,1.15,0)
-icon.Position = UDim2.new(-0.075,0,-0.075,0)
+-- fit full frame
+icon.Size = UDim2.new(1,0,1,0)
+icon.Position = UDim2.new(0,0,0,0)
 
 icon.Image = image
+
+-- crop chuáº©n
 icon.ScaleType = Enum.ScaleType.Crop
+
+-- QUAN TRá»ŒNG XD
+local imageCorner = Instance.new("UICorner")
+imageCorner.CornerRadius = UDim.new(1,0)
+imageCorner.Parent = icon
 
 	------------------------------------------------
 	-- LABEL HOLDERS
@@ -242,9 +252,9 @@ icon.ScaleType = Enum.ScaleType.Crop
 	reasonHolder.BackgroundTransparency = 1
 	reasonHolder.Size = UDim2.new(1,-58,0,12)
 	
-	titleHolder.Position = UDim2.new(0,66,0,9)
-descHolder.Position = UDim2.new(0,66,0,31)
-reasonHolder.Position = UDim2.new(0,66,0,50)
+	titleHolder.Position = UDim2.new(0,78,0,9)
+descHolder.Position = UDim2.new(0,78,0,31)
+reasonHolder.Position = UDim2.new(0,78,0,50)
 
 	------------------------------------------------
 	-- FAKE LABELS
