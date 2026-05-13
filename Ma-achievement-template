@@ -150,7 +150,7 @@ return function(data)
 	frame.AnchorPoint = Vector2.new(0.5,0)
 
 	-- nhá» gáº¥p Ä‘Ã´i XD
-	frame.Size = UDim2.new(0,215,0,60)
+	frame.Size = UDim2.new(0,280,0,78)
 
 	if spawnPosition == "Side" then
 
@@ -194,8 +194,8 @@ end
 	icon.Parent = frame
 	icon.BackgroundTransparency = 1
 	icon.ImageTransparency = 1
-	icon.Position = UDim2.new(0,9,0.5,-17)
-	icon.Size = UDim2.new(0,34,0,34)
+	icon.Position = UDim2.new(0,12,0.5,-22)
+icon.Size = UDim2.new(0,44,0,44)
 	icon.Image = image
 
 	local iconCorner = Instance.new("UICorner")
@@ -209,20 +209,21 @@ end
 	local titleHolder = Instance.new("Frame")
 	titleHolder.Parent = frame
 	titleHolder.BackgroundTransparency = 1
-	titleHolder.Position = UDim2.new(0,52,0,7)
 	titleHolder.Size = UDim2.new(1,-58,0,14)
 
 	local descHolder = Instance.new("Frame")
 	descHolder.Parent = frame
 	descHolder.BackgroundTransparency = 1
-	descHolder.Position = UDim2.new(0,52,0,24)
 	descHolder.Size = UDim2.new(1,-58,0,12)
 
 	local reasonHolder = Instance.new("Frame")
 	reasonHolder.Parent = frame
 	reasonHolder.BackgroundTransparency = 1
-	reasonHolder.Position = UDim2.new(0,52,0,38)
 	reasonHolder.Size = UDim2.new(1,-58,0,12)
+	
+	titleHolder.Position = UDim2.new(0,66,0,9)
+descHolder.Position = UDim2.new(0,66,0,31)
+reasonHolder.Position = UDim2.new(0,66,0,50)
 
 	------------------------------------------------
 	-- FAKE LABELS
@@ -234,7 +235,6 @@ end
 	titleLabel.Size = UDim2.new(1,0,1,0)
 	titleLabel.Text = ""
 	titleLabel.Font = Enum.Font.GothamBold
-	titleLabel.TextSize = 12
 	titleLabel.TextColor3 = Color3.new(1,1,1)
 	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -244,7 +244,6 @@ end
 	descLabel.Size = UDim2.new(1,0,1,0)
 	descLabel.Text = ""
 	descLabel.Font = Enum.Font.Gotham
-	descLabel.TextSize = 9
 	descLabel.TextColor3 = Color3.fromRGB(220,220,220)
 	descLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -254,8 +253,10 @@ end
 	reasonLabel.Size = UDim2.new(1,0,1,0)
 	reasonLabel.Text = ""
 	reasonLabel.Font = Enum.Font.GothamSemibold
-	reasonLabel.TextSize = 9
 	reasonLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.TextSize = 15
+descLabel.TextSize = 11
+reasonLabel.TextSize = 11
 	
 	------------------------------------------------
 -- RAINBOW EFFECT
