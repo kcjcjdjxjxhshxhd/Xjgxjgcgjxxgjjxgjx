@@ -91,6 +91,24 @@ return function(data)
 	local desc = data.Desc or "Description"
 	local reason = data.Reason or "Completed"
 	local image = data.Image or "rbxassetid://0"
+	local colorName = data.FrameBorderAndTextColor or "Yellow"
+
+	local COLORS = {
+
+		Yellow = Color3.fromRGB(255,220,120),
+		Blue = Color3.fromRGB(80,170,255),
+		Green = Color3.fromRGB(80,255,120),
+		Purple = Color3.fromRGB(170,100,255),
+		Pink = Color3.fromRGB(255,120,210),
+		White = Color3.fromRGB(255,255,255),
+		Cyan = Color3.fromRGB(120,255,255),
+		Orange = Color3.fromRGB(255,170,70),
+		Red = Color3.fromRGB(255,90,90),
+		Violet = Color3.fromRGB(210,120,255)
+
+	}
+
+	local selectedColor = COLORS[colorName] or COLORS.Yellow
 
 	------------------------------------------------
 	-- FRAME
@@ -100,7 +118,7 @@ return function(data)
 	frame.Parent = gui
 	frame.AnchorPoint = Vector2.new(0.5,0)
 
-	-- nhỏ gấp đôi XD
+	-- nhá» gáº¥p Ä‘Ã´i XD
 	frame.Size = UDim2.new(0,215,0,60)
 
 	frame.Position = UDim2.new(0.5,0,-0.3,0)
@@ -117,7 +135,7 @@ return function(data)
 	stroke.Parent = frame
 	stroke.Thickness = 1.5
 	stroke.Transparency = 1
-	stroke.Color = Color3.fromRGB(255,220,120)
+	stroke.Color = selectedColor
 
 	local gradient = Instance.new("UIGradient")
 	gradient.Parent = frame
@@ -195,7 +213,7 @@ return function(data)
 	reasonLabel.Text = ""
 	reasonLabel.Font = Enum.Font.GothamSemibold
 	reasonLabel.TextSize = 9
-	reasonLabel.TextColor3 = Color3.fromRGB(255,220,120)
+	reasonLabel.TextColor3 = selectedColor
 	reasonLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 	------------------------------------------------
@@ -310,7 +328,7 @@ return function(data)
 	fadeStroke:Play()
 	fadeImage:Play()
 
-	-- fade toàn bộ chữ
+	-- fade toÃ n bá»™ chá»¯
 	for _,v in ipairs(frame:GetDescendants()) do
 		if v:IsA("TextLabel") then
 			TweenService:Create(
