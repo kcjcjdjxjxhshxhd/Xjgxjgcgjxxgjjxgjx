@@ -186,21 +186,42 @@ end
 		ColorSequenceKeypoint.new(1,Color3.fromRGB(15,15,15))
 	})
 
-	------------------------------------------------
-	-- IMAGE
-	------------------------------------------------
+------------------------------------------------
+-- IMAGE HOLDER
+------------------------------------------------
 
-	local icon = Instance.new("ImageLabel")
-	icon.Parent = frame
-	icon.BackgroundTransparency = 1
-	icon.ImageTransparency = 1
-	icon.Position = UDim2.new(0,12,0.5,-22)
-icon.Size = UDim2.new(0,44,0,44)
-	icon.Image = image
+local iconHolder = Instance.new("Frame")
+iconHolder.Parent = frame
+iconHolder.BackgroundColor3 = Color3.fromRGB(25,25,25)
+iconHolder.BackgroundTransparency = 1
+iconHolder.Position = UDim2.new(0,12,0.5,-22)
+iconHolder.Size = UDim2.new(0,44,0,44)
+iconHolder.ClipsDescendants = true
 
-	local iconCorner = Instance.new("UICorner")
-	iconCorner.CornerRadius = UDim.new(0,7)
-	iconCorner.Parent = icon
+local iconHolderCorner = Instance.new("UICorner")
+iconHolderCorner.CornerRadius = UDim.new(1,0)
+iconHolderCorner.Parent = iconHolder
+
+local iconStroke = Instance.new("UIStroke")
+iconStroke.Parent = iconHolder
+iconStroke.Thickness = 1.4
+iconStroke.Transparency = 1
+
+------------------------------------------------
+-- IMAGE
+------------------------------------------------
+
+local icon = Instance.new("ImageLabel")
+icon.Parent = iconHolder
+icon.BackgroundTransparency = 1
+icon.ImageTransparency = 1
+
+-- image hÆ¡i to hÆ¡n holder Ä‘á»ƒ auto crop hÃ¬nh
+icon.Size = UDim2.new(1.15,0,1.15,0)
+icon.Position = UDim2.new(-0.075,0,-0.075,0)
+
+icon.Image = image
+icon.ScaleType = Enum.ScaleType.Crop
 
 	------------------------------------------------
 	-- LABEL HOLDERS
@@ -272,7 +293,8 @@ if colorName == "Rainbow" then
 			local rainbow = Color3.fromHSV(hue,1,1)
 
 			stroke.Color = rainbow
-			reasonLabel.TextColor3 = rainbow
+iconStroke.Color = rainbow
+reasonLabel.TextColor3 = rainbow
 
 			task.wait()
 		end
@@ -281,7 +303,8 @@ if colorName == "Rainbow" then
 else
 
 	stroke.Color = selectedColor
-	reasonLabel.TextColor3 = selectedColor
+iconStroke.Color = selectedColor
+reasonLabel.TextColor3 = selectedColor
 
 end
 
@@ -311,15 +334,24 @@ local tweenIn = TweenService:Create(
 )
 
 	local strokeTween = TweenService:Create(
-		stroke,
-		TweenInfo.new(1),
-		{
-			Transparency = 0
-		}
-	)
+	stroke,
+	TweenInfo.new(1),
+	{
+		Transparency = 0
+	}
+)
+
+local iconStrokeTween = TweenService:Create(
+	iconStroke,
+	TweenInfo.new(1),
+	{
+		Transparency = 0
+	}
+)
 
 	tweenIn:Play()
 	strokeTween:Play()
+	iconStrokeTween:Play()
 	PlaySound(SPAWN_SOUND,1)
 
 	tweenIn.Completed:Wait()
@@ -395,12 +427,20 @@ local outro = TweenService:Create(
 )
 
 	local fadeStroke = TweenService:Create(
-		stroke,
-		TweenInfo.new(1),
-		{
-			Transparency = 1
-		}
-	)
+	stroke,
+	TweenInfo.new(1),
+	{
+		Transparency = 1
+	}
+)
+
+local fadeIconStroke = TweenService:Create(
+	iconStroke,
+	TweenInfo.new(1),
+	{
+		Transparency = 1
+	}
+)
 
 	local fadeImage = TweenService:Create(
 		icon,
@@ -414,6 +454,7 @@ PlaySound(DESPAWN_SOUND,1)
 
 	outro:Play()
 	fadeStroke:Play()
+	fadeIconStroke:Play()
 	fadeImage:Play()
 
 	-- fade toÃ n bá»™ chá»¯
