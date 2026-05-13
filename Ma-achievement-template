@@ -2,6 +2,7 @@
 
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
 local TextService = game:GetService("TextService")
 
 local plr = Players.LocalPlayer
@@ -12,6 +13,33 @@ gui.Name = "AchievementTemplate"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.Parent = playerGui
+
+----------------------------------------------------
+-- SOUND IDS
+----------------------------------------------------
+
+local SPAWN_SOUND = "rbxassetid://140247053994120"
+local TEXT_TICK_SOUND = "rbxassetid://139692748155280"
+local DESPAWN_SOUND = "rbxassetid://137799519556394"
+
+----------------------------------------------------
+-- PLAY SOUND
+----------------------------------------------------
+
+local function PlaySound(id,volume)
+
+	local sound = Instance.new("Sound")
+	sound.SoundId = id
+	sound.Volume = volume or 1
+	sound.Parent = SoundService
+
+	sound:Play()
+
+	sound.Ended:Connect(function()
+		sound:Destroy()
+	end)
+
+end
 
 ----------------------------------------------------
 -- LETTER ANIMATION
@@ -74,7 +102,7 @@ local function AnimateText(parentLabel,text,speed)
 		tween:Play()
 
 		xOffset += size.X
-
+		PlaySound(TEXT_TICK_SOUND,0.5)
 		task.wait(speed)
 	end
 end
@@ -92,21 +120,24 @@ return function(data)
 	local reason = data.Reason or "Completed"
 	local image = data.Image or "rbxassetid://0"
 	local colorName = data.FrameBorderAndTextColor or "Yellow"
+	local spawnPosition = data.SpawnPosition or "Up"
 
 	local COLORS = {
 
-		Yellow = Color3.fromRGB(255,220,120),
-		Blue = Color3.fromRGB(80,170,255),
-		Green = Color3.fromRGB(80,255,120),
-		Purple = Color3.fromRGB(170,100,255),
-		Pink = Color3.fromRGB(255,120,210),
-		White = Color3.fromRGB(255,255,255),
-		Cyan = Color3.fromRGB(120,255,255),
-		Orange = Color3.fromRGB(255,170,70),
-		Red = Color3.fromRGB(255,90,90),
-		Violet = Color3.fromRGB(210,120,255)
+	Yellow = Color3.fromRGB(255,220,120),
+	Blue = Color3.fromRGB(80,170,255),
+	Green = Color3.fromRGB(80,255,120),
+	Purple = Color3.fromRGB(170,100,255),
+	Pink = Color3.fromRGB(255,120,210),
+	White = Color3.fromRGB(255,255,255),
+	Cyan = Color3.fromRGB(120,255,255),
+	Orange = Color3.fromRGB(255,170,70),
+	Red = Color3.fromRGB(255,90,90),
+	Violet = Color3.fromRGB(210,120,255),
 
-	}
+	Rainbow = "Rainbow"
+
+}
 
 	local selectedColor = COLORS[colorName] or COLORS.Yellow
 
@@ -121,7 +152,19 @@ return function(data)
 	-- nhá» gáº¥p Ä‘Ã´i XD
 	frame.Size = UDim2.new(0,215,0,60)
 
+	if spawnPosition == "Side" then
+
+	frame.AnchorPoint = Vector2.new(1,0)
+
+	frame.Position = UDim2.new(1.3,0,0.03,0)
+
+else
+
+	frame.AnchorPoint = Vector2.new(0.5,0)
+
 	frame.Position = UDim2.new(0.5,0,-0.3,0)
+
+end
 
 	frame.BackgroundColor3 = Color3.fromRGB(18,18,18)
 	frame.BackgroundTransparency = 1
@@ -135,7 +178,6 @@ return function(data)
 	stroke.Parent = frame
 	stroke.Thickness = 1.5
 	stroke.Transparency = 1
-	stroke.Color = selectedColor
 
 	local gradient = Instance.new("UIGradient")
 	gradient.Parent = frame
@@ -213,25 +255,59 @@ return function(data)
 	reasonLabel.Text = ""
 	reasonLabel.Font = Enum.Font.GothamSemibold
 	reasonLabel.TextSize = 9
-	reasonLabel.TextColor3 = selectedColor
 	reasonLabel.TextXAlignment = Enum.TextXAlignment.Left
+	
+	------------------------------------------------
+-- RAINBOW EFFECT
+------------------------------------------------
+
+if colorName == "Rainbow" then
+
+	task.spawn(function()
+
+		while frame and frame.Parent do
+
+			local hue = tick() % 5 / 5
+			local rainbow = Color3.fromHSV(hue,1,1)
+
+			stroke.Color = rainbow
+			reasonLabel.TextColor3 = rainbow
+
+			task.wait()
+		end
+	end)
+
+else
+
+	stroke.Color = selectedColor
+	reasonLabel.TextColor3 = selectedColor
+
+end
 
 	------------------------------------------------
 	-- INTRO
 	------------------------------------------------
 
-	local tweenIn = TweenService:Create(
-		frame,
-		TweenInfo.new(
-			1,
-			Enum.EasingStyle.Exponential,
-			Enum.EasingDirection.Out
-		),
-		{
-			Position = UDim2.new(0.5,0,0.06,0),
-			BackgroundTransparency = 0
-		}
-	)
+	local introPosition
+
+if spawnPosition == "Side" then
+	introPosition = UDim2.new(0.965,0,0.03,0)
+else
+	introPosition = UDim2.new(0.5,0,0.06,0)
+end
+
+local tweenIn = TweenService:Create(
+	frame,
+	TweenInfo.new(
+		1,
+		Enum.EasingStyle.Exponential,
+		Enum.EasingDirection.Out
+	),
+	{
+		Position = introPosition,
+		BackgroundTransparency = 0
+	}
+)
 
 	local strokeTween = TweenService:Create(
 		stroke,
@@ -243,6 +319,7 @@ return function(data)
 
 	tweenIn:Play()
 	strokeTween:Play()
+	PlaySound(SPAWN_SOUND,1)
 
 	tweenIn.Completed:Wait()
 
@@ -295,18 +372,26 @@ return function(data)
 	-- OUTRO
 	------------------------------------------------
 
-	local outro = TweenService:Create(
-		frame,
-		TweenInfo.new(
-			1,
-			Enum.EasingStyle.Exponential,
-			Enum.EasingDirection.In
-		),
-		{
-			Position = UDim2.new(0.5,0,-0.3,0),
-			BackgroundTransparency = 1
-		}
-	)
+	local outroPosition
+
+if spawnPosition == "Side" then
+	outroPosition = UDim2.new(1.3,0,0.03,0)
+else
+	outroPosition = UDim2.new(0.5,0,-0.3,0)
+end
+
+local outro = TweenService:Create(
+	frame,
+	TweenInfo.new(
+		1,
+		Enum.EasingStyle.Exponential,
+		Enum.EasingDirection.In
+	),
+	{
+		Position = outroPosition,
+		BackgroundTransparency = 1
+	}
+)
 
 	local fadeStroke = TweenService:Create(
 		stroke,
@@ -323,6 +408,8 @@ return function(data)
 			ImageTransparency = 1
 		}
 	)
+
+PlaySound(DESPAWN_SOUND,1)
 
 	outro:Play()
 	fadeStroke:Play()
