@@ -1,0 +1,135 @@
+-- achievement template
+-- upload lên github rồi dùng raw link
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+
+local plr = Players.LocalPlayer
+local playerGui = plr:WaitForChild("PlayerGui")
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "AchievementTemplate"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = playerGui
+
+local active = 0
+
+return function(data)
+
+	data = data or {}
+
+	local title = data.Title or "Achievement"
+	local desc = data.Desc or "Description"
+	local reason = data.Reason or "Completed something"
+	local image = data.Image or "rbxassetid://0"
+
+	active += 1
+
+	local frame = Instance.new("Frame")
+	frame.Parent = gui
+	frame.Size = UDim2.new(0,340,0,95)
+	frame.Position = UDim2.new(1,360,1,-115 - ((active-1) * 105))
+	frame.BackgroundColor3 = Color3.fromRGB(18,18,18)
+	frame.BorderSizePixel = 0
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0,14)
+	corner.Parent = frame
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Parent = frame
+	stroke.Thickness = 2
+	stroke.Color = Color3.fromRGB(255,215,0)
+
+	local gradient = Instance.new("UIGradient")
+	gradient.Parent = frame
+	gradient.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0,Color3.fromRGB(35,35,35)),
+		ColorSequenceKeypoint.new(1,Color3.fromRGB(15,15,15))
+	})
+
+	local icon = Instance.new("ImageLabel")
+	icon.Parent = frame
+	icon.BackgroundTransparency = 1
+	icon.Position = UDim2.new(0,10,0.5,-32)
+	icon.Size = UDim2.new(0,64,0,64)
+	icon.Image = image
+
+	local iconCorner = Instance.new("UICorner")
+	iconCorner.CornerRadius = UDim.new(0,12)
+	iconCorner.Parent = icon
+
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Parent = frame
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Position = UDim2.new(0,85,0,8)
+	titleLabel.Size = UDim2.new(1,-95,0,28)
+	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.Text = title
+	titleLabel.TextColor3 = Color3.new(1,1,1)
+	titleLabel.TextScaled = true
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	local descLabel = Instance.new("TextLabel")
+	descLabel.Parent = frame
+	descLabel.BackgroundTransparency = 1
+	descLabel.Position = UDim2.new(0,85,0,36)
+	descLabel.Size = UDim2.new(1,-95,0,20)
+	descLabel.Font = Enum.Font.Gotham
+	descLabel.Text = desc
+	descLabel.TextColor3 = Color3.fromRGB(210,210,210)
+	descLabel.TextScaled = true
+	descLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	local reasonLabel = Instance.new("TextLabel")
+	reasonLabel.Parent = frame
+	reasonLabel.BackgroundTransparency = 1
+	reasonLabel.Position = UDim2.new(0,85,0,58)
+	reasonLabel.Size = UDim2.new(1,-95,0,20)
+	reasonLabel.Font = Enum.Font.GothamSemibold
+	reasonLabel.Text = reason
+	reasonLabel.TextColor3 = Color3.fromRGB(255,220,120)
+	reasonLabel.TextScaled = true
+	reasonLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	local sound = Instance.new("Sound")
+	sound.Parent = frame
+	sound.SoundId = "rbxassetid://6026984224"
+	sound.Volume = 2
+	sound:Play()
+
+	Debris:AddItem(sound,5)
+
+	local tweenIn = TweenService:Create(
+		frame,
+		TweenInfo.new(0.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),
+		{
+			Position = UDim2.new(1,-355,1,-115 - ((active-1) * 105))
+		}
+	)
+
+	tweenIn:Play()
+
+	task.spawn(function()
+
+		task.wait(5)
+
+		local tweenOut = TweenService:Create(
+			frame,
+			TweenInfo.new(0.5,Enum.EasingStyle.Quint,Enum.EasingDirection.In),
+			{
+				Position = UDim2.new(1,360,1,-115 - ((active-1) * 105))
+			}
+		)
+
+		tweenOut:Play()
+		tweenOut.Completed:Wait()
+
+		frame:Destroy()
+
+		active -= 1
+	end)
+
+end
