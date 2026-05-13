@@ -1,9 +1,7 @@
--- achievement template
--- upload lên github rồi dùng raw link
+-- ultra smooth achievement template XD
 
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local Debris = game:GetService("Debris")
 
 local plr = Players.LocalPlayer
 local playerGui = plr:WaitForChild("PlayerGui")
@@ -14,7 +12,79 @@ gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.Parent = playerGui
 
-local active = 0
+----------------------------------------------------
+-- TYPEWRITER FUNCTION
+----------------------------------------------------
+
+local function AnimateText(label,text,speed)
+
+	label.Text = ""
+
+	for i = 1,#text do
+
+		local char = text:sub(i,i)
+
+		local holder = Instance.new("TextLabel")
+		holder.Parent = label.Parent
+		holder.BackgroundTransparency = 1
+		holder.Font = label.Font
+		holder.Text = char
+		holder.TextColor3 = label.TextColor3
+		holder.TextTransparency = 1
+		holder.TextScaled = true
+		holder.Size = UDim2.new(0,0,label.Size.Y.Scale,label.Size.Y.Offset)
+		holder.AutomaticSize = Enum.AutomaticSize.XY
+
+		local currentText = label.Text
+		label.Text = currentText .. char
+
+		task.wait()
+
+		local textBounds = game:GetService("TextService"):GetTextSize(
+			currentText,
+			label.TextSize,
+			label.Font,
+			Vector2.new(9999,9999)
+		)
+
+		holder.Position = UDim2.new(
+			label.Position.X.Scale,
+			label.Position.X.Offset + textBounds.X,
+			label.Position.Y.Scale,
+			label.Position.Y.Offset + 20
+		)
+
+		local tween = TweenService:Create(
+			holder,
+			TweenInfo.new(
+				0.35,
+				Enum.EasingStyle.Quint,
+				Enum.EasingDirection.Out
+			),
+			{
+				TextTransparency = 0,
+				Position = UDim2.new(
+					label.Position.X.Scale,
+					label.Position.X.Offset + textBounds.X,
+					label.Position.Y.Scale,
+					label.Position.Y.Offset
+				)
+			}
+		)
+
+		tween:Play()
+
+		task.delay(0.35,function()
+			holder:Destroy()
+		end)
+
+		task.wait(speed)
+	end
+end
+
+----------------------------------------------------
+-- MAIN
+----------------------------------------------------
 
 return function(data)
 
@@ -22,114 +92,237 @@ return function(data)
 
 	local title = data.Title or "Achievement"
 	local desc = data.Desc or "Description"
-	local reason = data.Reason or "Completed something"
+	local reason = data.Reason or "Completed"
 	local image = data.Image or "rbxassetid://0"
 
-	active += 1
+	------------------------------------------------
+	-- FRAME
+	------------------------------------------------
 
 	local frame = Instance.new("Frame")
 	frame.Parent = gui
-	frame.Size = UDim2.new(0,340,0,95)
-	frame.Position = UDim2.new(1,360,1,-115 - ((active-1) * 105))
+	frame.AnchorPoint = Vector2.new(0.5,0)
+	frame.Size = UDim2.new(0,430,0,120)
+
+	-- spawn trên màn hình
+	frame.Position = UDim2.new(0.5,0,-0.3,0)
+
 	frame.BackgroundColor3 = Color3.fromRGB(18,18,18)
+	frame.BackgroundTransparency = 1
 	frame.BorderSizePixel = 0
 
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0,14)
+	corner.CornerRadius = UDim.new(0,18)
 	corner.Parent = frame
 
 	local stroke = Instance.new("UIStroke")
 	stroke.Parent = frame
 	stroke.Thickness = 2
-	stroke.Color = Color3.fromRGB(255,215,0)
+	stroke.Transparency = 1
+	stroke.Color = Color3.fromRGB(255,220,120)
 
 	local gradient = Instance.new("UIGradient")
 	gradient.Parent = frame
 	gradient.Color = ColorSequence.new({
-		ColorSequenceKeypoint.new(0,Color3.fromRGB(35,35,35)),
+		ColorSequenceKeypoint.new(0,Color3.fromRGB(40,40,40)),
 		ColorSequenceKeypoint.new(1,Color3.fromRGB(15,15,15))
 	})
+
+	------------------------------------------------
+	-- IMAGE
+	------------------------------------------------
 
 	local icon = Instance.new("ImageLabel")
 	icon.Parent = frame
 	icon.BackgroundTransparency = 1
-	icon.Position = UDim2.new(0,10,0.5,-32)
-	icon.Size = UDim2.new(0,64,0,64)
+	icon.ImageTransparency = 1
+	icon.Position = UDim2.new(0,18,0.5,-35)
+	icon.Size = UDim2.new(0,70,0,70)
 	icon.Image = image
 
 	local iconCorner = Instance.new("UICorner")
-	iconCorner.CornerRadius = UDim.new(0,12)
+	iconCorner.CornerRadius = UDim.new(0,14)
 	iconCorner.Parent = icon
+
+	------------------------------------------------
+	-- LABELS
+	------------------------------------------------
 
 	local titleLabel = Instance.new("TextLabel")
 	titleLabel.Parent = frame
 	titleLabel.BackgroundTransparency = 1
-	titleLabel.Position = UDim2.new(0,85,0,8)
-	titleLabel.Size = UDim2.new(1,-95,0,28)
+	titleLabel.TextTransparency = 1
+	titleLabel.Position = UDim2.new(0,105,0,14)
+	titleLabel.Size = UDim2.new(1,-120,0,28)
 	titleLabel.Font = Enum.Font.GothamBold
-	titleLabel.Text = title
+	titleLabel.Text = ""
 	titleLabel.TextColor3 = Color3.new(1,1,1)
-	titleLabel.TextScaled = true
+	titleLabel.TextSize = 24
 	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 	local descLabel = Instance.new("TextLabel")
 	descLabel.Parent = frame
 	descLabel.BackgroundTransparency = 1
-	descLabel.Position = UDim2.new(0,85,0,36)
-	descLabel.Size = UDim2.new(1,-95,0,20)
+	descLabel.TextTransparency = 1
+	descLabel.Position = UDim2.new(0,105,0,48)
+	descLabel.Size = UDim2.new(1,-120,0,20)
 	descLabel.Font = Enum.Font.Gotham
-	descLabel.Text = desc
-	descLabel.TextColor3 = Color3.fromRGB(210,210,210)
-	descLabel.TextScaled = true
+	descLabel.Text = ""
+	descLabel.TextColor3 = Color3.fromRGB(220,220,220)
+	descLabel.TextSize = 18
 	descLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 	local reasonLabel = Instance.new("TextLabel")
 	reasonLabel.Parent = frame
 	reasonLabel.BackgroundTransparency = 1
-	reasonLabel.Position = UDim2.new(0,85,0,58)
-	reasonLabel.Size = UDim2.new(1,-95,0,20)
+	reasonLabel.TextTransparency = 1
+	reasonLabel.Position = UDim2.new(0,105,0,74)
+	reasonLabel.Size = UDim2.new(1,-120,0,20)
 	reasonLabel.Font = Enum.Font.GothamSemibold
-	reasonLabel.Text = reason
+	reasonLabel.Text = ""
 	reasonLabel.TextColor3 = Color3.fromRGB(255,220,120)
-	reasonLabel.TextScaled = true
+	reasonLabel.TextSize = 18
 	reasonLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-	local sound = Instance.new("Sound")
-	sound.Parent = frame
-	sound.SoundId = "rbxassetid://6026984224"
-	sound.Volume = 2
-	sound:Play()
-
-	Debris:AddItem(sound,5)
+	------------------------------------------------
+	-- FRAME TWEEN IN
+	------------------------------------------------
 
 	local tweenIn = TweenService:Create(
 		frame,
-		TweenInfo.new(0.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),
+		TweenInfo.new(
+			1,
+			Enum.EasingStyle.Exponential,
+			Enum.EasingDirection.Out
+		),
 		{
-			Position = UDim2.new(1,-355,1,-115 - ((active-1) * 105))
+			Position = UDim2.new(0.5,0,0.08,0),
+			BackgroundTransparency = 0
+		}
+	)
+
+	local strokeTween = TweenService:Create(
+		stroke,
+		TweenInfo.new(1),
+		{
+			Transparency = 0
 		}
 	)
 
 	tweenIn:Play()
+	strokeTween:Play()
 
-	task.spawn(function()
+	tweenIn.Completed:Wait()
 
-		task.wait(5)
+	------------------------------------------------
+	-- WAIT
+	------------------------------------------------
 
-		local tweenOut = TweenService:Create(
-			frame,
-			TweenInfo.new(0.5,Enum.EasingStyle.Quint,Enum.EasingDirection.In),
-			{
-				Position = UDim2.new(1,360,1,-115 - ((active-1) * 105))
-			}
-		)
+	task.wait(1)
 
-		tweenOut:Play()
-		tweenOut.Completed:Wait()
+	------------------------------------------------
+	-- IMAGE FADE IN
+	------------------------------------------------
 
-		frame:Destroy()
+	local imageTween = TweenService:Create(
+		icon,
+		TweenInfo.new(
+			2,
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.Out
+		),
+		{
+			ImageTransparency = 0
+		}
+	)
 
-		active -= 1
-	end)
+	imageTween:Play()
+	imageTween.Completed:Wait()
+
+	------------------------------------------------
+	-- TYPEWRITER
+	------------------------------------------------
+
+	AnimateText(titleLabel,title,0.045)
+	task.wait(0.25)
+
+	AnimateText(descLabel,desc,0.035)
+	task.wait(0.25)
+
+	AnimateText(reasonLabel,reason,0.035)
+
+	------------------------------------------------
+	-- WAIT 4S
+	------------------------------------------------
+
+	task.wait(4)
+
+	------------------------------------------------
+	-- OUTRO
+	------------------------------------------------
+
+	local outro = TweenService:Create(
+		frame,
+		TweenInfo.new(
+			1,
+			Enum.EasingStyle.Exponential,
+			Enum.EasingDirection.In
+		),
+		{
+			Position = UDim2.new(0.5,0,-0.3,0),
+			BackgroundTransparency = 1
+		}
+	)
+
+	local fadeStroke = TweenService:Create(
+		stroke,
+		TweenInfo.new(1),
+		{
+			Transparency = 1
+		}
+	)
+
+	local fadeImage = TweenService:Create(
+		icon,
+		TweenInfo.new(1),
+		{
+			ImageTransparency = 1
+		}
+	)
+
+	local fadeTitle = TweenService:Create(
+		titleLabel,
+		TweenInfo.new(1),
+		{
+			TextTransparency = 1
+		}
+	)
+
+	local fadeDesc = TweenService:Create(
+		descLabel,
+		TweenInfo.new(1),
+		{
+			TextTransparency = 1
+		}
+	)
+
+	local fadeReason = TweenService:Create(
+		reasonLabel,
+		TweenInfo.new(1),
+		{
+			TextTransparency = 1
+		}
+	)
+
+	outro:Play()
+	fadeStroke:Play()
+	fadeImage:Play()
+	fadeTitle:Play()
+	fadeDesc:Play()
+	fadeReason:Play()
+
+	outro.Completed:Wait()
+
+	frame:Destroy()
 
 end
