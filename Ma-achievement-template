@@ -115,6 +115,23 @@ end
 return function(data)
 
 	data = data or {}
+	
+	local oneUse = data.OneUse or false
+local key = "_ACHIEVEMENT_TEMPLATE_USED"
+
+local function getKeyHash(t)
+	return tostring(t.Title)..tostring(t.Desc)..tostring(t.Reason)..tostring(t.Image)
+end
+
+if oneUse then
+	local currentHash = getKeyHash(data)
+
+	if _G[key] == currentHash then
+		return -- Ä‘Ã£ cháº¡y rá»“i => block
+	end
+
+	_G[key] = currentHash
+end
 
 	local title = data.Title or "Achievement"
 	local desc = data.Desc or "Description"
