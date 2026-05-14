@@ -46,6 +46,7 @@ end
 ----------------------------------------------------
 
 local function AnimateText(parentLabel,text,speed)
+	if not parentLabel or not parentLabel.Parent then return end
 
 	parentLabel.Text = ""
 
@@ -238,21 +239,22 @@ imageCorner.Parent = icon
 	------------------------------------------------
 
 	local titleHolder = Instance.new("Frame")
-	titleHolder.Parent = frame
-	titleHolder.BackgroundTransparency = 1
-	titleHolder.Size = UDim2.new(1,-58,0,14)
+local descHolder = Instance.new("Frame")
+local reasonHolder = Instance.new("Frame")
 
-	local descHolder = Instance.new("Frame")
-	descHolder.Parent = frame
-	descHolder.BackgroundTransparency = 1
-	descHolder.Size = UDim2.new(1,-58,0,12)
+titleHolder.Parent = frame
+descHolder.Parent = frame
+reasonHolder.Parent = frame
 
-	local reasonHolder = Instance.new("Frame")
-	reasonHolder.Parent = frame
-	reasonHolder.BackgroundTransparency = 1
-	reasonHolder.Size = UDim2.new(1,-58,0,12)
-	
-	titleHolder.Position = UDim2.new(0,78,0,9)
+titleHolder.BackgroundTransparency = 1
+descHolder.BackgroundTransparency = 1
+reasonHolder.BackgroundTransparency = 1
+
+titleHolder.Size = UDim2.new(1,-58,0,14)
+descHolder.Size = UDim2.new(1,-58,0,12)
+reasonHolder.Size = UDim2.new(1,-58,0,12)
+
+titleHolder.Position = UDim2.new(0,78,0,9)
 descHolder.Position = UDim2.new(0,78,0,31)
 reasonHolder.Position = UDim2.new(0,78,0,50)
 
