@@ -1,0 +1,871 @@
+local Character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local RootPart = Character:WaitForChild("HumanoidRootPart")
+local Camera = workspace.CurrentCamera
+local Collision
+
+Collision = Character:FindFirstChild("CollisionPart")
+    if not Collision then
+        for _, part in pairs(Character:GetChildren()) do
+            if part:IsA("BasePart") and part.Name:lower():find("collision") then
+                Collision = part
+                break
+            end
+        end
+    end
+    
+    if not Collision then
+        Collision = RootPart
+    end
+    
+    local CollisionClone = Collision:Clone()
+    CollisionClone.CanCollide = false
+    CollisionClone.Massless = true
+    CollisionClone.CanQuery = false
+    CollisionClone.Name = "CollisionClone"
+    
+    if CollisionClone:FindFirstChild("CollisionCrouch") then
+        CollisionClone.CollisionCrouch:Destroy()
+    end
+    
+    CollisionClone.Parent = Character
+    
+    task.spawn(function()
+        while Character.Parent do
+            if RootPart.Anchored then
+                CollisionClone.Massless = true
+                repeat task.wait() until not RootPart.Anchored
+                task.wait(0.15)
+            else
+                CollisionClone.Massless = not CollisionClone.Massless
+            end
+            task.wait(0.24)
+        end
+    end)
+
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+
+local camera = workspace.CurrentCamera
+
+local DEFAULT_FOV = 70
+local SPRINT_FOV = 100
+
+local currentFovTween
+
+local function tweenFov(fov)
+
+	if currentFovTween then
+		currentFovTween:Cancel()
+	end
+
+	currentFovTween = TweenService:Create(
+		camera,
+		TweenInfo.new(
+			0.35,
+			Enum.EasingStyle.Quint,
+			Enum.EasingDirection.Out
+		),
+		{
+			FieldOfView = fov
+		}
+	)
+
+	currentFovTween:Play()
+end
+
+local plr = Players.LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
+local hum = char:WaitForChild("Humanoid")
+
+local MAX_STAMINA = 100
+local stamina = MAX_STAMINA
+
+local drainRate = 10
+local regenRate = 15
+
+local exhaustedRegenRate = 9
+
+local walkSpeed = 16
+local sprintSpeed = 22
+
+local sprinting = false
+local exhausted = false
+local exhaustedTime = 0
+local changingSpeed = false
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "SigmaSprintGui"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = plr:WaitForChild("PlayerGui")
+
+--------------------------------------------------
+-- SPRINT BUTTON (NEW POSITION + SIZE)
+--------------------------------------------------
+
+local sprintBtn = Instance.new("TextButton")
+sprintBtn.Parent = gui
+
+-- bÃ© hÆ¡n XD
+sprintBtn.Size = UDim2.new(0,58,0,58)
+
+-- cao hÆ¡n + sÃ¡t lá» pháº£i hÆ¡n
+sprintBtn.AnchorPoint = Vector2.new(1,1)
+sprintBtn.Position = UDim2.new(1,-6,1,-145)
+
+sprintBtn.BackgroundColor3 = Color3.fromRGB(35,35,35)
+sprintBtn.BorderSizePixel = 0
+
+sprintBtn.Text = "Sprint"
+
+sprintBtn.TextScaled = true
+sprintBtn.Font = Enum.Font.GothamBlack
+sprintBtn.TextColor3 = Color3.new(1,1,1)
+sprintBtn.AutoButtonColor = false
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(1,0)
+btnCorner.Parent = sprintBtn
+
+local btnStroke = Instance.new("UIStroke")
+btnStroke.Parent = sprintBtn
+btnStroke.Thickness = 0.4
+
+-- border Ä‘en XD
+btnStroke.Color = Color3.fromRGB(0,0,0)
+
+btnStroke.Transparency = 0.25
+
+---
+
+-- STAMINA HOLDER
+
+local holder = Instance.new("Frame")
+holder.Parent = gui
+
+holder.AnchorPoint = Vector2.new(1,1)
+holder.Position = UDim2.new(1,-10,1,-18)
+
+holder.Size = UDim2.new(0,170,0,8)
+
+holder.BackgroundColor3 = Color3.fromRGB(18,18,18)
+holder.BorderSizePixel = 0
+
+local holderCorner = Instance.new("UICorner")
+holderCorner.CornerRadius = UDim.new(1,0)
+holderCorner.Parent = holder
+
+local holderStroke = Instance.new("UIStroke")
+holderStroke.Parent = holder
+
+---
+
+-- MAIN BAR
+
+local bar = Instance.new("Frame")
+bar.Parent = holder
+
+bar.Size = UDim2.new(1,0,1,0)
+
+bar.BackgroundColor3 = Color3.fromRGB(0,255,170)
+bar.BorderSizePixel = 0
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(1,0)
+barCorner.Parent = bar
+
+local barStroke = Instance.new("UIStroke")
+barStroke.Parent = bar
+
+--------------------------------------------------
+-- HOLDER BORDER (BLACK)
+--------------------------------------------------
+
+holderStroke.Color = Color3.fromRGB(0,0,0)
+holderStroke.Transparency = 0.15
+holderStroke.Thickness = 2
+
+--------------------------------------------------
+-- BAR BORDER (BLACK)
+--------------------------------------------------
+
+barStroke.Color = Color3.fromRGB(0,0,0)
+barStroke.Transparency = 0.2
+barStroke.Thickness = 1.4
+
+--------------------------------------------------
+-- BUTTON FX UPDATE
+--------------------------------------------------
+
+-- thay Ä‘oáº¡n BUTTON FX cÅ© thÃ nh cÃ¡i nÃ y:
+
+if sprinting then
+
+	TweenService:Create(
+		sprintBtn,
+		TweenInfo.new(0.14),
+		{
+			Size = UDim2.new(0,78,0,78),
+			BackgroundColor3 = Color3.fromRGB(0,170,255)
+		}
+	):Play()
+
+else
+
+	TweenService:Create(
+		sprintBtn,
+		TweenInfo.new(0.14),
+		{
+			Size = UDim2.new(0,72,0,72),
+			BackgroundColor3 = Color3.fromRGB(35,35,35)
+		}
+	):Play()
+end
+
+--------------------------------------------------
+-- GLOW EFFECT
+--------------------------------------------------
+
+local glow = Instance.new("Frame")
+glow.Parent = bar
+glow.Size = UDim2.new(0,28,1,0)
+
+glow.BackgroundColor3 = Color3.new(1,1,1)
+glow.BackgroundTransparency = 0.72
+glow.BorderSizePixel = 0
+
+local glowCorner = Instance.new("UICorner")
+glowCorner.CornerRadius = UDim.new(1,0)
+glowCorner.Parent = glow
+
+--------------------------------------------------
+-- TEXT
+--------------------------------------------------
+
+local txt = Instance.new("TextLabel")
+txt.Parent = holder
+
+txt.AnchorPoint = Vector2.new(1,1)
+txt.Position = UDim2.new(1,0,0,-3)
+
+txt.Size = UDim2.new(0,70,0,14)
+
+txt.BackgroundTransparency = 1
+txt.Text = "100%"
+txt.TextScaled = false
+txt.TextSize = 12
+
+txt.Font = Enum.Font.GothamBold
+txt.TextColor3 = Color3.fromRGB(255,255,255)
+
+--------------------------------------------------
+-- EXHAUSTED SYSTEM V2 XD
+--------------------------------------------------
+
+local Lighting = game:GetService("Lighting")
+
+-- bá»‹ cháº­m hÆ¡n 4 speed
+local EXHAUST_SPEED_PENALTY = 7
+
+--------------------------------------------------
+-- BLUR
+--------------------------------------------------
+
+local blur = Instance.new("BlurEffect")
+blur.Name = "SprintBlur"
+
+blur.Size = 0
+blur.Enabled = false
+
+blur.Parent = Lighting
+
+local blurTween
+
+--------------------------------------------------
+-- EXHAUSTED BREATH SOUND XD
+--------------------------------------------------
+
+local breathSound = Instance.new("Sound")
+
+breathSound.Name = "ExhaustedBreath"
+
+-- gáº¯n sound id cá»§a m á»Ÿ Ä‘Ã¢y XD
+breathSound.SoundId = "rbxassetid://133079433479133"
+
+breathSound.Looped = true
+breathSound.Volume = 1
+
+breathSound.Parent = hum
+
+--------------------------------------------------
+-- BLUR LOOP
+--------------------------------------------------
+
+local blurAnimating = false
+
+local function startBlurLoop()
+
+	if blurAnimating then
+		return
+	end
+
+	blurAnimating = true
+
+	task.spawn(function()
+
+		while exhausted do
+
+			--------------------------------------------------
+			-- FADE IN
+			--------------------------------------------------
+
+			blur.Enabled = true
+
+			local tween1 = TweenService:Create(
+				blur,
+				TweenInfo.new(
+					0.8,
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.Out
+				),
+				{
+					Size = 18
+				}
+			)
+
+			tween1:Play()
+			tween1.Completed:Wait()
+
+			if not exhausted then
+				break
+			end
+
+			--------------------------------------------------
+			-- FADE OUT
+			--------------------------------------------------
+
+			local tween2 = TweenService:Create(
+				blur,
+				TweenInfo.new(
+					0.8,
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.Out
+				),
+				{
+					Size = 8
+				}
+			)
+
+			tween2:Play()
+			tween2.Completed:Wait()
+		end
+
+		--------------------------------------------------
+		-- REMOVE BLUR
+		--------------------------------------------------
+
+		local removeTween = TweenService:Create(
+			blur,
+			TweenInfo.new(0.45),
+			{
+				Size = 0
+			}
+		)
+
+		removeTween:Play()
+
+		removeTween.Completed:Wait()
+
+		blur.Enabled = false
+
+		blurAnimating = false
+	end)
+end
+
+--------------------------------------------------
+-- AUTO SPEED CHECK
+--------------------------------------------------
+
+local function updateSpeed()
+
+	changingSpeed = true
+
+	if exhausted then
+
+		hum.WalkSpeed =
+			math.max(
+				0,
+				walkSpeed - EXHAUST_SPEED_PENALTY
+			)
+
+	elseif sprinting then
+
+		hum.WalkSpeed = sprintSpeed
+
+	else
+
+		hum.WalkSpeed = walkSpeed
+	end
+
+	task.defer(function()
+		changingSpeed = false
+	end)
+end
+
+--------------------------------------------------
+-- ANTI SERVER SPEED CHANGE XD
+--------------------------------------------------
+
+local antiSpeedConnection
+
+local function setupAntiSpeed()
+
+	if antiSpeedConnection then
+		antiSpeedConnection:Disconnect()
+	end
+
+	antiSpeedConnection =
+		RunService.RenderStepped:Connect(function()
+
+		if not hum then
+			return
+		end
+
+		if changingSpeed then
+			return
+		end
+
+		local targetSpeed
+
+		--------------------------------------------------
+		-- exhausted
+		--------------------------------------------------
+
+		if exhausted then
+
+			targetSpeed =
+				math.max(
+					0,
+					walkSpeed - EXHAUST_SPEED_PENALTY
+				)
+
+		--------------------------------------------------
+		-- sprinting
+		--------------------------------------------------
+
+		elseif sprinting then
+
+			targetSpeed = sprintSpeed
+
+		else
+			return
+		end
+
+		--------------------------------------------------
+		-- server Ä‘á»•i speed -> kÃ©o láº¡i XD
+		--------------------------------------------------
+
+		if hum.WalkSpeed ~= targetSpeed then
+
+			changingSpeed = true
+
+			hum.WalkSpeed = targetSpeed
+
+			task.defer(function()
+				changingSpeed = false
+			end)
+		end
+	end)
+end
+
+setupAntiSpeed()
+
+--------------------------------------------------
+-- MODIFY setSprint()
+--------------------------------------------------
+
+-- replace setSprint function cÅ© báº±ng cÃ¡i nÃ y XD
+
+local function setSprint(state)
+
+if exhausted then
+
+	sprinting = false
+	updateSpeed()
+
+	return
+end
+
+sprinting = state and stamina > 0
+
+updateSpeed()
+
+end
+
+--------------------------------------------------
+-- RESPAWN FIX
+--------------------------------------------------
+
+-- thay CharacterAdded cÅ© báº±ng cÃ¡i nÃ y XD
+
+plr.CharacterAdded:Connect(function(c)
+
+	char = c
+	hum = c:WaitForChild("Humanoid")
+
+	setupAntiSpeed()
+
+	updateSpeed()
+	
+	--------------------------------------------------
+	-- RECREATE BREATH SOUND
+	--------------------------------------------------
+
+	breathSound = breathSound:Clone()
+	breathSound.Parent = hum
+
+end)
+
+--------------------------------------------------
+-- UPDATE BAR
+--------------------------------------------------
+
+local sizeTween
+local colorTween
+local borderTween
+
+local function updateBar()
+
+	local percent = stamina / MAX_STAMINA
+
+	--------------------------------------------------
+	-- SIZE
+	--------------------------------------------------
+
+	if sizeTween then
+		sizeTween:Cancel()
+	end
+
+	sizeTween = TweenService:Create(
+		bar,
+		TweenInfo.new(
+			0.14,
+			Enum.EasingStyle.Quint,
+			Enum.EasingDirection.Out
+		),
+		{
+			Size = UDim2.new(percent,0,1,0)
+		}
+	)
+
+	sizeTween:Play()
+
+	--------------------------------------------------
+	-- COLOR
+	--------------------------------------------------
+
+	local targetColor
+
+	if exhausted then
+		targetColor = Color3.fromRGB(120,120,120)
+
+	elseif percent > 0.6 then
+		targetColor = Color3.fromRGB(0,255,170)
+
+	elseif percent > 0.3 then
+		targetColor = Color3.fromRGB(255,190,0)
+
+	else
+		targetColor = Color3.fromRGB(255,70,70)
+	end
+
+	if colorTween then
+		colorTween:Cancel()
+	end
+
+	colorTween = TweenService:Create(
+		bar,
+		TweenInfo.new(0.22),
+		{
+			BackgroundColor3 = targetColor
+		}
+	)
+
+	colorTween:Play()
+
+--------------------------------------------------
+	-- STAMINA TEXT XD
+	--------------------------------------------------
+
+	if exhausted then
+
+		txt.Text = "EXHAUSTED"
+
+	else
+
+		txt.Text = math.floor(stamina).."%"
+	end
+
+--------------------------------------------------
+-- BUTTON TEXT XD
+--------------------------------------------------
+
+local borderColor
+
+if exhausted then
+
+	sprintBtn.Text = "Unsprintable"
+	borderColor = Color3.fromRGB(255,70,70)
+
+elseif sprinting then
+
+	sprintBtn.Text = "Stop sprinting"
+	borderColor = Color3.fromRGB(255,190,0)
+
+else
+
+	sprintBtn.Text = "Sprint"
+	borderColor = Color3.fromRGB(0,255,170)
+end
+
+--------------------------------------------------
+-- BORDER TWEEN XD
+--------------------------------------------------
+
+if borderTween then
+	borderTween:Cancel()
+end
+
+borderTween = TweenService:Create(
+	btnStroke,
+	TweenInfo.new(
+		0.22,
+		Enum.EasingStyle.Quint,
+		Enum.EasingDirection.Out
+	),
+	{
+		Color = borderColor
+	}
+)
+
+borderTween:Play()
+
+--------------------------------------------------
+-- BUTTON FX
+--------------------------------------------------
+
+if sprinting then
+
+	TweenService:Create(
+		sprintBtn,
+		TweenInfo.new(0.14),
+		{
+			Size = UDim2.new(0,64,0,64),
+
+			-- giá»¯ mÃ u xÃ¡m gá»‘c XD
+			BackgroundColor3 = Color3.fromRGB(35,35,35)
+		}
+	):Play()
+
+elseif exhausted then
+
+	TweenService:Create(
+		sprintBtn,
+		TweenInfo.new(0.14),
+		{
+			Size = UDim2.new(0,58,0,58),
+			BackgroundColor3 = Color3.fromRGB(90,90,90)
+		}
+	):Play()
+
+else
+
+	TweenService:Create(
+		sprintBtn,
+		TweenInfo.new(0.14),
+		{
+			Size = UDim2.new(0,58,0,58),
+			BackgroundColor3 = Color3.fromRGB(35,35,35)
+		}
+	):Play()
+end
+	end
+
+--------------------------------------------------
+-- INPUT
+--------------------------------------------------
+
+UIS.InputBegan:Connect(function(input,gp)
+
+	if gp then
+		return
+	end
+
+	if input.KeyCode == Enum.KeyCode.LeftShift then
+
+		if exhausted then
+			return
+		end
+
+		setSprint(not sprinting)
+	end
+end)
+
+--------------------------------------------------
+-- MOBILE
+--------------------------------------------------
+
+sprintBtn.MouseButton1Click:Connect(function()
+
+	if exhausted then
+		return
+	end
+
+	setSprint(not sprinting)
+end)
+
+--------------------------------------------------
+-- LOOP
+--------------------------------------------------
+
+RunService.RenderStepped:Connect(function(dt)
+
+	--------------------------------------------------
+	-- DRAIN
+	--------------------------------------------------
+
+	if sprinting then
+
+		--------------------------------------------------
+		-- CHECK MOVING XD
+		--------------------------------------------------
+
+		local moving = hum.MoveDirection.Magnitude > 0
+
+		--------------------------------------------------
+		-- chá»‰ tá»¥t stamina náº¿u Ä‘ang di chuyá»ƒn
+		--------------------------------------------------
+
+		if moving then
+
+			stamina -= drainRate * dt
+
+		else
+
+			--------------------------------------------------
+			-- Ä‘á»©ng yÃªn = há»“i stamina luÃ´n XD
+			--------------------------------------------------
+
+			stamina += regenRate * dt
+
+			if stamina > MAX_STAMINA then
+				stamina = MAX_STAMINA
+			end
+		end
+
+		if stamina <= 0 then
+
+			stamina = 0
+
+			exhausted = true
+exhaustedTime = tick()
+
+startBlurLoop()
+
+updateSpeed()
+
+setSprint(false)
+		end
+
+	--------------------------------------------------
+	-- REGEN
+	--------------------------------------------------
+
+	else
+
+		-- Ä‘á»£i 3s má»›i há»“i XD
+		if exhausted then
+
+			if tick() - exhaustedTime >= 3 then
+
+				stamina += exhaustedRegenRate * dt
+
+				if stamina >= 50 then
+
+	exhausted = false
+	sprinting = false
+
+	sprintBtn.Text = "Sprint"
+
+	updateSpeed()
+
+end
+			end
+
+		else
+
+			stamina += regenRate * dt
+		end
+
+		if stamina > MAX_STAMINA then
+			stamina = MAX_STAMINA
+		end
+	end
+	
+	--------------------------------------------------
+	-- FOV UPDATE XD
+	--------------------------------------------------
+
+	local moving = hum.MoveDirection.Magnitude > 0
+
+	-- sprint + moving
+	if sprinting and moving and not exhausted then
+
+		if camera.FieldOfView ~= SPRINT_FOV then
+			tweenFov(SPRINT_FOV)
+		end
+
+	-- Ä‘á»©ng yÃªn / exhausted / ko sprint
+	else
+
+		if camera.FieldOfView ~= DEFAULT_FOV then
+			tweenFov(DEFAULT_FOV)
+		end
+	end
+	
+	--------------------------------------------------
+	-- BREATH SOUND
+	--------------------------------------------------
+
+	if exhausted then
+
+		if not breathSound.IsPlaying then
+			breathSound:Play()
+		end
+
+	else
+
+		if breathSound.IsPlaying then
+			breathSound:Stop()
+		end
+	end
+
+	--------------------------------------------------
+	-- GLOW ANIMATION
+	--------------------------------------------------
+
+	glow.Position = UDim2.new(
+		math.sin(tick()*3)*0.5 + 0.5,
+		-14,
+		0,
+		0
+	)
+
+	updateBar()
+end)
+
+updateBar()
