@@ -1,23 +1,18 @@
---// 2D GHOST ENTITY TEMPLATE FULL FIX XD
---// AlwaysOnTop OFF + NO DISTANCE SCALING
+--// 2D GHOST ENTITY TEMPLATE FULL FIX XD (CLEAN VERSION)
 
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-
-local plr = Players.LocalPlayer
-local camera = workspace.CurrentCamera
 
 return function(config)
+
+	config = config or {}
 
 	--------------------------------------------------
 	-- SETTINGS XD
 	--------------------------------------------------
 
-	config = config or {}
-
 	local NAME = config.Name or "GhostEntity"
-	local FACE = config.Face or "rbxassetid://0"
+	local FACE_TEXTURE = config.Face or "rbxassetid://0"
 	local SPAWN_CFRAME = config.CFrame or CFrame.new(0,5,0)
 
 	local LIGHT_COLOR = config.PointLightColor or Color3.fromRGB(255,255,255)
@@ -30,7 +25,6 @@ return function(config)
 	local VFX_IMAGE = config.EntityVFXImage or "rbxassetid://0"
 
 	local VFX_AMOUNT = config.VFXAmount or 8
-	local VFX_SIZE = config.VFXSize or 120
 	local VFX_DISTANCE = config.VFXDistance or 4
 	local VFX_SPEED = config.VFXSpeed or 1
 
@@ -42,62 +36,90 @@ return function(config)
 	model.Name = NAME
 	model.Parent = workspace
 
+	local core = Instance.new("Part")
+	core.Size = Vector3.new(2,2,2)
+	core.Anchored = true
+	core.CanCollide = false
+	core.Transparency = 1
+	core.CFrame = SPAWN_CFRAME
+	core.Parent = model
+
+	model.PrimaryPart = core
+	
 	--------------------------------------------------
--- STACKED PARTICLE FACE XD (CLEARER VERSION)
+-- ENTITY SOUND XD (RESTORED)
 --------------------------------------------------
 
-local facePart = Instance.new("Part")
-facePart.Size = Vector3.new(1,1,1)
-facePart.Anchored = true
-facePart.CanCollide = false
-facePart.Transparency = 1
-facePart.CFrame = core.CFrame
-facePart.Parent = model
+local sound = Instance.new("Sound")
+sound.Name = "EntitySound"
 
-local att = Instance.new("Attachment")
-att.Parent = facePart
+sound.SoundId = config.EntitySound or "rbxassetid://0"
+sound.Volume = config.SoundVolume or 1
 
-local EMITTER_COUNT = 10
+sound.RollOffMaxDistance = config.SoundMaxDistance or 100
+sound.RollOffMinDistance = config.SoundMinDistance or 1
 
-for i = 1, EMITTER_COUNT do
+sound.Looped = (config.SoundLooped ~= false)
 
-	local pe = Instance.new("ParticleEmitter")
-	pe.Texture = FACE_TEXTURE
+sound.RollOffMode = Enum.RollOffMode.InverseTapered
+sound.EmitterSize = 10
 
-	--------------------------------------------------
-	-- FIX: stack layers for clarity XD
-	--------------------------------------------------
+sound.Parent = core
 
-	pe.Rate = 5
-	pe.Lifetime = NumberRange.new(0.6, 0.6)
-
-	pe.Speed = NumberRange.new(0)
-	pe.SpreadAngle = Vector2.new(0,0)
-
-	pe.LightEmission = 1
-	pe.Brightness = 5
-
-	-- má»—i layer slightly khÃ¡c nhau
-	local scale = 6 - (i * 0.3)
-
-	pe.Size = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, scale),
-		NumberSequenceKeypoint.new(1, scale)
-	})
-
-	-- giáº£m flicker + tÄƒng Ä‘á»™ â€œrÃµâ€
-	pe.Transparency = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 0),
-		NumberSequenceKeypoint.new(1, 0)
-	})
-
-	-- slight offset illusion (giáº£ depth)
-	pe.EmissionDirection = Enum.NormalId.Front
-	pe.Rotation = NumberRange.new(0,360)
-	pe.RotSpeed = NumberRange.new(-10,10)
-
-	pe.Parent = att
+if sound.SoundId ~= "rbxassetid://0" then
+	sound:Play()
 end
+
+	--------------------------------------------------
+	-- FACE PART XD
+	--------------------------------------------------
+
+	local facePart = Instance.new("Part")
+	facePart.Size = Vector3.new(1,1,1)
+	facePart.Anchored = true
+	facePart.CanCollide = false
+	facePart.Transparency = 1
+	facePart.CFrame = core.CFrame
+	facePart.Parent = model
+
+	local att = Instance.new("Attachment")
+	att.Parent = facePart
+
+	--------------------------------------------------
+	-- STACKED PARTICLE FACE XD
+	--------------------------------------------------
+
+	for i = 1, 10 do
+
+		local pe = Instance.new("ParticleEmitter")
+		pe.Texture = FACE_TEXTURE
+
+		pe.Rate = 6
+		pe.Lifetime = NumberRange.new(0.6, 0.6)
+
+		pe.Speed = NumberRange.new(0)
+		pe.SpreadAngle = Vector2.new(0,0)
+
+		pe.LightEmission = 1
+		pe.Brightness = 5
+
+		local scale = 6 - (i * 0.25)
+
+		pe.Size = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, scale),
+			NumberSequenceKeypoint.new(1, scale)
+		})
+
+		pe.Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0),
+			NumberSequenceKeypoint.new(1, 0)
+		})
+
+		pe.Rotation = NumberRange.new(0,360)
+		pe.RotSpeed = NumberRange.new(-10,10)
+
+		pe.Parent = att
+	end
 
 	--------------------------------------------------
 	-- LIGHT XD
@@ -107,15 +129,14 @@ end
 	light.Color = LIGHT_COLOR
 	light.Range = LIGHT_RANGE
 	light.Brightness = LIGHT_BRIGHTNESS
-	light.Parent = part
+	light.Parent = core
 
 	--------------------------------------------------
-	-- VFX XD (FIXED SAME SCALE BEHAVIOR)
+	-- VFX XD
 	--------------------------------------------------
 
 	local vfxFolder = Instance.new("Folder")
-	vfxFolder.Name = "VFXFolder"
-	vfxFolder.Parent = part
+	vfxFolder.Parent = model
 
 	local vfxObjects = {}
 
@@ -129,21 +150,17 @@ end
 		holder.Parent = vfxFolder
 
 		local gui = Instance.new("BillboardGui")
-		gui.Size = UDim2.new(0, VFX_SIZE, 0, VFX_SIZE)
-
-		gui.AlwaysOnTop = false -- FIX HERE XD
+		gui.Size = UDim2.new(0,120,0,120)
+		gui.AlwaysOnTop = false
 		gui.LightInfluence = 0
-		gui.MaxDistance = math.huge -- IMPORTANT FIX
-		gui.SizeOffset = Vector2.new(0,0)
-
+		gui.MaxDistance = math.huge
 		gui.Parent = holder
 
 		local img = Instance.new("ImageLabel")
 		img.BackgroundTransparency = 1
 		img.Size = UDim2.fromScale(1,1)
-		img.ImageTransparency = 0.35
 		img.Image = VFX_IMAGE
-		img.ScaleType = Enum.ScaleType.Stretch -- FIX NO DIST SCALE FEEL
+		img.ScaleType = Enum.ScaleType.Stretch
 		img.Parent = gui
 
 		table.insert(vfxObjects,{
@@ -164,17 +181,17 @@ end
 	task.spawn(function()
 		while model.Parent do
 
-			local up = TweenService:Create(part,
+			local up = TweenService:Create(core,
 				TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-				{CFrame = part.CFrame + Vector3.new(0,1,0)}
+				{CFrame = core.CFrame + Vector3.new(0,1,0)}
 			)
 
 			up:Play()
 			up.Completed:Wait()
 
-			local down = TweenService:Create(part,
+			local down = TweenService:Create(core,
 				TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-				{CFrame = part.CFrame - Vector3.new(0,1,0)}
+				{CFrame = core.CFrame - Vector3.new(0,1,0)}
 			)
 
 			down:Play()
@@ -203,10 +220,14 @@ end
 		-- SHAKE XD
 		--------------------------------------------------
 
-		local offsetX = math.random(-ENTITY_VIBRATION, ENTITY_VIBRATION)/50
-		local offsetY = math.random(-ENTITY_VIBRATION, ENTITY_VIBRATION)/50
+		local ox = math.random(-ENTITY_VIBRATION, ENTITY_VIBRATION)/50
+		local oy = math.random(-ENTITY_VIBRATION, ENTITY_VIBRATION)/50
 
-		billboard.StudsOffset = Vector3.new(offsetX, offsetY, 0)
+		facePart.CFrame = core.CFrame * CFrame.new(ox,oy,0)
+
+		--------------------------------------------------
+		-- CAMERA SHAKE XD
+		--------------------------------------------------
 
 		local camOffset = Vector3.new(
 			math.random(-SCREEN_VIBRATION, SCREEN_VIBRATION)/100,
@@ -214,10 +235,11 @@ end
 			0
 		)
 
-		camera.CFrame = camera.CFrame * CFrame.new(camOffset)
+		workspace.CurrentCamera.CFrame =
+			workspace.CurrentCamera.CFrame * CFrame.new(camOffset)
 
 		--------------------------------------------------
-		-- HYBRID VFX XD
+		-- VFX HYBRID XD
 		--------------------------------------------------
 
 		for _,obj in pairs(vfxObjects) do
@@ -226,7 +248,7 @@ end
 
 			local orbitX = math.cos(angle) * VFX_DISTANCE
 			local orbitZ = math.sin(angle) * VFX_DISTANCE
-			local orbitY = math.sin(angle * 2) * 1.5
+			local orbitY = math.sin(angle * 2)
 
 			if tick() - obj.MoveTick > math.random(1,3)/2 then
 				obj.RandomTarget = Vector3.new(
@@ -242,9 +264,9 @@ end
 			local finalPos =
 				Vector3.new(orbitX, orbitY, orbitZ) + obj.RandomOffset
 
-			obj.Part.CFrame = part.CFrame * CFrame.new(finalPos)
+			obj.Part.CFrame = core.CFrame * CFrame.new(finalPos)
 
-			obj.Image.Rotation += math.random(1,3)
+			obj.Image.Rotation += 2
 
 			obj.Image.ImageTransparency =
 				0.2 + math.abs(math.sin(tick()*2))/3
@@ -260,7 +282,7 @@ end
 	local entity = {}
 
 	function entity:SetCFrame(cf)
-		part.CFrame = cf
+		core.CFrame = cf
 	end
 
 	function entity:GetModel()
