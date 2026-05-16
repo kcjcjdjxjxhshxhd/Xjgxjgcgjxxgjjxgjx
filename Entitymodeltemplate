@@ -71,55 +71,44 @@ if sound.SoundId ~= "rbxassetid://0" then
 end
 
 	--------------------------------------------------
-	-- FACE PART XD
-	--------------------------------------------------
+-- SINGLE PARTICLE FACE XD (CLEAN + SHARP)
+--------------------------------------------------
 
-	local facePart = Instance.new("Part")
-	facePart.Size = Vector3.new(1,1,1)
-	facePart.Anchored = true
-	facePart.CanCollide = false
-	facePart.Transparency = 1
-	facePart.CFrame = core.CFrame
-	facePart.Parent = model
+local facePart = Instance.new("Part")
+facePart.Size = Vector3.new(1,1,1)
+facePart.Anchored = true
+facePart.CanCollide = false
+facePart.Transparency = 1
+facePart.CFrame = core.CFrame
+facePart.Parent = model
 
-	local att = Instance.new("Attachment")
-	att.Parent = facePart
+local att = Instance.new("Attachment")
+att.Parent = facePart
 
-	--------------------------------------------------
-	-- STACKED PARTICLE FACE XD
-	--------------------------------------------------
+local faceParticle = Instance.new("ParticleEmitter")
+faceParticle.Texture = config.Face or "rbxassetid://0"
 
-	for i = 1, 10 do
+faceParticle.Rate = 8
+faceParticle.Lifetime = NumberRange.new(0.7, 0.7)
 
-		local pe = Instance.new("ParticleEmitter")
-		pe.Texture = FACE_TEXTURE
+faceParticle.Speed = NumberRange.new(0)
+faceParticle.SpreadAngle = Vector2.new(0,0)
 
-		pe.Rate = 6
-		pe.Lifetime = NumberRange.new(0.6, 0.6)
+faceParticle.LightEmission = 1
+faceParticle.Brightness = 5
 
-		pe.Speed = NumberRange.new(0)
-		pe.SpreadAngle = Vector2.new(0,0)
+-- sharper look fix
+faceParticle.Size = NumberSequence.new({
+	NumberSequenceKeypoint.new(0, 6),
+	NumberSequenceKeypoint.new(1, 6)
+})
 
-		pe.LightEmission = 1
-		pe.Brightness = 5
+faceParticle.Transparency = NumberSequence.new({
+	NumberSequenceKeypoint.new(0, 0),
+	NumberSequenceKeypoint.new(1, 0)
+})
 
-		local scale = 6 - (i * 0.25)
-
-		pe.Size = NumberSequence.new({
-			NumberSequenceKeypoint.new(0, scale),
-			NumberSequenceKeypoint.new(1, scale)
-		})
-
-		pe.Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0, 0),
-			NumberSequenceKeypoint.new(1, 0)
-		})
-
-		pe.Rotation = NumberRange.new(0,360)
-		pe.RotSpeed = NumberRange.new(-10,10)
-
-		pe.Parent = att
-	end
+faceParticle.Parent = att
 
 	--------------------------------------------------
 	-- LIGHT XD
