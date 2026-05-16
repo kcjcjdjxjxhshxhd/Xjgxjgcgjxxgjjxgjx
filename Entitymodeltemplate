@@ -42,39 +42,62 @@ return function(config)
 	model.Name = NAME
 	model.Parent = workspace
 
-	local part = Instance.new("Part")
-	part.Name = "Main"
-	part.Size = Vector3.new(5,5,1)
-	part.Anchored = true
-	part.CanCollide = false
-	part.Transparency = 1
-	part.CFrame = SPAWN_CFRAME
-	part.Parent = model
+	--------------------------------------------------
+-- STACKED PARTICLE FACE XD (CLEARER VERSION)
+--------------------------------------------------
 
-	model.PrimaryPart = part
+local facePart = Instance.new("Part")
+facePart.Size = Vector3.new(1,1,1)
+facePart.Anchored = true
+facePart.CanCollide = false
+facePart.Transparency = 1
+facePart.CFrame = core.CFrame
+facePart.Parent = model
+
+local att = Instance.new("Attachment")
+att.Parent = facePart
+
+local EMITTER_COUNT = 10
+
+for i = 1, EMITTER_COUNT do
+
+	local pe = Instance.new("ParticleEmitter")
+	pe.Texture = FACE_TEXTURE
 
 	--------------------------------------------------
-	-- FACE XD (FIXED NO DISTANCE SCALE)
+	-- FIX: stack layers for clarity XD
 	--------------------------------------------------
 
-	local billboard = Instance.new("BillboardGui")
-	billboard.Name = "Face"
-	billboard.Size = UDim2.new(0,350,0,350)
+	pe.Rate = 5
+	pe.Lifetime = NumberRange.new(0.6, 0.6)
 
-	billboard.AlwaysOnTop = false -- FIX HERE XD
-	billboard.LightInfluence = 0
-	billboard.MaxDistance = math.huge -- IMPORTANT FIX
-	billboard.SizeOffset = Vector2.new(0,0)
-	billboard.StudsOffsetWorldSpace = Vector3.new(0,0,0)
+	pe.Speed = NumberRange.new(0)
+	pe.SpreadAngle = Vector2.new(0,0)
 
-	billboard.Parent = part
+	pe.LightEmission = 1
+	pe.Brightness = 5
 
-	local image = Instance.new("ImageLabel")
-	image.BackgroundTransparency = 1
-	image.Size = UDim2.fromScale(1,1)
-	image.Image = FACE
-	image.ScaleType = Enum.ScaleType.Stretch -- FIX NO CAMERA SCALING FEEL
-	image.Parent = billboard
+	-- má»—i layer slightly khÃ¡c nhau
+	local scale = 6 - (i * 0.3)
+
+	pe.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, scale),
+		NumberSequenceKeypoint.new(1, scale)
+	})
+
+	-- giáº£m flicker + tÄƒng Ä‘á»™ â€œrÃµâ€
+	pe.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0),
+		NumberSequenceKeypoint.new(1, 0)
+	})
+
+	-- slight offset illusion (giáº£ depth)
+	pe.EmissionDirection = Enum.NormalId.Front
+	pe.Rotation = NumberRange.new(0,360)
+	pe.RotSpeed = NumberRange.new(-10,10)
+
+	pe.Parent = att
+end
 
 	--------------------------------------------------
 	-- LIGHT XD
