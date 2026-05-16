@@ -1,0 +1,365 @@
+--// 2D GHOST ENTITY TEMPLATE FULL XD
+--// CUSTOM POSITION VERSION
+--// loadstring ready
+
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local plr = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+return function(config)
+
+	--------------------------------------------------
+	-- SETTINGS XD
+	--------------------------------------------------
+
+	config = config or {}
+
+	local NAME = config.Name or "GhostEntity"
+	local FACE = config.Face or "rbxassetid://0"
+
+	local SPAWN_CFRAME = config.CFrame or CFrame.new(0,5,0)
+
+	local LIGHT_COLOR =
+		config.PointLightColor
+		or Color3.fromRGB(255,255,255)
+
+	local LIGHT_RANGE =
+		config.LightRange or 10
+
+	local LIGHT_BRIGHTNESS =
+		config.LightBrightness or 1
+
+	local ENTITY_VIBRATION =
+		config.EntityVibration or 5
+
+	local SCREEN_VIBRATION =
+		config.ScreenVibration or 5
+
+	local VFX_IMAGE =
+		config.EntityVFXImage or "rbxassetid://0"
+
+	local VFX_AMOUNT =
+		config.VFXAmount or 8
+
+	local VFX_SIZE =
+		config.VFXSize or 120
+
+	local VFX_DISTANCE =
+		config.VFXDistance or 4
+
+	local VFX_SPEED =
+		config.VFXSpeed or 1
+
+	--------------------------------------------------
+	-- ENTITY MODEL XD
+	--------------------------------------------------
+
+	local model = Instance.new("Model")
+	model.Name = NAME
+	model.Parent = workspace
+
+	local part = Instance.new("Part")
+	part.Name = "Main"
+	part.Size = Vector3.new(5,5,1)
+	part.Anchored = true
+	part.CanCollide = false
+	part.Transparency = 1
+	part.CFrame = SPAWN_CFRAME
+	part.Parent = model
+
+	model.PrimaryPart = part
+
+	--------------------------------------------------
+	-- FACE XD
+	--------------------------------------------------
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "Face"
+	billboard.Size = UDim2.new(0,350,0,350)
+	billboard.AlwaysOnTop = true
+	billboard.LightInfluence = 0
+	billboard.Parent = part
+
+	local image = Instance.new("ImageLabel")
+	image.BackgroundTransparency = 1
+	image.Size = UDim2.fromScale(1,1)
+	image.Image = FACE
+	image.Parent = billboard
+
+	--------------------------------------------------
+	-- POINTLIGHT XD
+	--------------------------------------------------
+
+	local light = Instance.new("PointLight")
+	light.Color = LIGHT_COLOR
+	light.Range = LIGHT_RANGE
+	light.Brightness = LIGHT_BRIGHTNESS
+	light.Parent = part
+
+	--------------------------------------------------
+	-- VFX XD
+	--------------------------------------------------
+
+	local vfxFolder = Instance.new("Folder")
+	vfxFolder.Name = "VFXFolder"
+	vfxFolder.Parent = part
+
+	local vfxObjects = {}
+
+	for i = 1, VFX_AMOUNT do
+
+		local holder = Instance.new("Part")
+		holder.Anchored = true
+		holder.CanCollide = false
+		holder.Transparency = 1
+		holder.Size = Vector3.new(1,1,1)
+		holder.Parent = vfxFolder
+
+		local gui = Instance.new("BillboardGui")
+		gui.Size = UDim2.new(0,VFX_SIZE,0,VFX_SIZE)
+		gui.AlwaysOnTop = true
+		gui.LightInfluence = 0
+		gui.Parent = holder
+
+		local img = Instance.new("ImageLabel")
+		img.BackgroundTransparency = 1
+		img.Size = UDim2.fromScale(1,1)
+		img.ImageTransparency = 0.35
+		img.Image = VFX_IMAGE
+		img.Parent = gui
+
+		table.insert(vfxObjects,{
+			Part = holder,
+			Image = img,
+
+			Angle = (360 / VFX_AMOUNT) * i,
+
+			RandomOffset = Vector3.new(
+				math.random(-30,30)/10,
+				math.random(-30,30)/10,
+				math.random(-30,30)/10
+			),
+
+			RandomTarget = Vector3.new(
+				math.random(-30,30)/10,
+				math.random(-30,30)/10,
+				math.random(-30,30)/10
+			),
+
+			MoveTick = tick()
+		})
+
+	end
+
+	--------------------------------------------------
+	-- FLOATING ANIMATION XD
+	--------------------------------------------------
+
+	task.spawn(function()
+
+		while model.Parent do
+
+			local up = TweenService:Create(
+				part,
+				TweenInfo.new(
+					1.5,
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				),
+				{
+					CFrame = part.CFrame + Vector3.new(0,1,0)
+				}
+			)
+
+			up:Play()
+			up.Completed:Wait()
+
+			local down = TweenService:Create(
+				part,
+				TweenInfo.new(
+					1.5,
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				),
+				{
+					CFrame = part.CFrame - Vector3.new(0,1,0)
+				}
+			)
+
+			down:Play()
+			down.Completed:Wait()
+
+		end
+
+	end)
+
+	--------------------------------------------------
+	-- MAIN LOOP XD
+	--------------------------------------------------
+
+	local spin = 0
+
+	local con
+	con = RunService.RenderStepped:Connect(function(dt)
+
+		if not model.Parent then
+			con:Disconnect()
+			return
+		end
+
+		spin += dt * 120 * VFX_SPEED
+
+		--------------------------------------------------
+		-- ENTITY SHAKE XD
+		--------------------------------------------------
+
+		local offsetX =
+			math.random(
+				-ENTITY_VIBRATION,
+				ENTITY_VIBRATION
+			)/50
+
+		local offsetY =
+			math.random(
+				-ENTITY_VIBRATION,
+				ENTITY_VIBRATION
+			)/50
+
+		billboard.StudsOffset =
+			Vector3.new(offsetX, offsetY, 0)
+
+		--------------------------------------------------
+		-- SCREEN SHAKE XD
+		--------------------------------------------------
+
+		local camOffset = Vector3.new(
+			math.random(
+				-SCREEN_VIBRATION,
+				SCREEN_VIBRATION
+			)/100,
+
+			math.random(
+				-SCREEN_VIBRATION,
+				SCREEN_VIBRATION
+			)/100,
+
+			0
+		)
+
+		camera.CFrame =
+			camera.CFrame *
+			CFrame.new(camOffset)
+
+		--------------------------------------------------
+		-- HYBRID VFX XD
+		--------------------------------------------------
+
+		for _,obj in pairs(vfxObjects) do
+
+			------------------------------------------
+			-- ORBIT XD
+			------------------------------------------
+
+			local angle =
+				math.rad(obj.Angle + spin)
+
+			local orbitX =
+				math.cos(angle) *
+				VFX_DISTANCE
+
+			local orbitZ =
+				math.sin(angle) *
+				VFX_DISTANCE
+
+			local orbitY =
+				math.sin(angle * 2) * 1.5
+
+			------------------------------------------
+			-- RANDOM FLOAT XD
+			------------------------------------------
+
+			if tick() - obj.MoveTick >
+				math.random(1,3)/2 then
+
+				obj.RandomTarget = Vector3.new(
+					math.random(-40,40)/10,
+					math.random(-40,40)/10,
+					math.random(-40,40)/10
+				)
+
+				obj.MoveTick = tick()
+
+			end
+
+			obj.RandomOffset =
+				obj.RandomOffset:Lerp(
+					obj.RandomTarget,
+					0.03
+				)
+
+			------------------------------------------
+			-- FINAL POSITION XD
+			------------------------------------------
+
+			local finalPos = Vector3.new(
+				orbitX,
+				orbitY,
+				orbitZ
+			) + obj.RandomOffset
+
+			obj.Part.CFrame =
+				part.CFrame *
+				CFrame.new(finalPos)
+
+			------------------------------------------
+			-- IMAGE EFFECT XD
+			------------------------------------------
+
+			obj.Image.Rotation +=
+				math.random(1,3)
+
+			obj.Image.ImageTransparency =
+				0.2 +
+				math.abs(
+					math.sin(tick()*2)
+				)/3
+
+		end
+
+	end)
+
+	--------------------------------------------------
+	-- FUNCTIONS XD
+	--------------------------------------------------
+
+	local entity = {}
+
+	function entity:Destroy()
+
+		con:Disconnect()
+		model:Destroy()
+
+	end
+
+	function entity:SetCFrame(cf)
+
+		part.CFrame = cf
+
+	end
+
+	function entity:GetModel()
+
+		return model
+
+	end
+
+	--------------------------------------------------
+	-- RETURN XD
+	--------------------------------------------------
+
+	return entity
+
+end
