@@ -94,13 +94,16 @@ faceParticle.Lifetime = NumberRange.new(0.7, 0.7)
 faceParticle.Speed = NumberRange.new(0)
 faceParticle.SpreadAngle = Vector2.new(0,0)
 
-faceParticle.LightEmission = 1
-faceParticle.Brightness = 5
+faceParticle.LightEmission = 0
+faceParticle.Brightness = 1
+faceParticle.LightInfluence = 1
 
 -- sharper look fix
+local faceSize = config.EntityFaceSize or 4
+
 faceParticle.Size = NumberSequence.new({
-	NumberSequenceKeypoint.new(0, 6),
-	NumberSequenceKeypoint.new(1, 6)
+	NumberSequenceKeypoint.new(0, faceSize),
+	NumberSequenceKeypoint.new(1, faceSize)
 })
 
 faceParticle.Transparency = NumberSequence.new({
@@ -139,18 +142,27 @@ faceParticle.Parent = att
 		holder.Parent = vfxFolder
 
 		local gui = Instance.new("BillboardGui")
-		gui.Size = UDim2.new(0,120,0,120)
-		gui.AlwaysOnTop = false
-		gui.LightInfluence = 0
-		gui.MaxDistance = math.huge
-		gui.Parent = holder
+gui.Size = UDim2.new(0, 120, 0, 120)
+
+gui.AlwaysOnTop = false
+gui.LightInfluence = 0
+
+-- ðŸ”¥ FIX QUAN TRá»ŒNG: chá»‘ng scale distance áº£o
+gui.MaxDistance = math.huge
+gui.SizeOffset = Vector2.new(0,0)
+gui.StudsOffsetWorldSpace = Vector3.new(0,0,0)
+
+gui.Parent = holder
 
 		local img = Instance.new("ImageLabel")
 		img.BackgroundTransparency = 1
-		img.Size = UDim2.fromScale(1,1)
 		img.Image = VFX_IMAGE
-		img.ScaleType = Enum.ScaleType.Stretch
 		img.Parent = gui
+		img.Size = UDim2.fromScale(1,1)
+img.ScaleType = Enum.ScaleType.Stretch
+
+-- ðŸ”¥ FIX thÃªm
+img.ResampleMode = Enum.ResamplerMode.Default
 
 		table.insert(vfxObjects,{
 			Part = holder,
@@ -253,7 +265,13 @@ faceParticle.Parent = att
 			local finalPos =
 				Vector3.new(orbitX, orbitY, orbitZ) + obj.RandomOffset
 
-			obj.Part.CFrame = core.CFrame * CFrame.new(finalPos)
+			local FIX_SIZE = 1
+
+local finalPos =
+	Vector3.new(orbitX, orbitY, orbitZ) + obj.RandomOffset
+
+obj.Part.CFrame =
+	core.CFrame * CFrame.new(finalPos * FIX_SIZE)
 
 			obj.Image.Rotation += 2
 
