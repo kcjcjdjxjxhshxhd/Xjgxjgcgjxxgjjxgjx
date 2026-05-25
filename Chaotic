@@ -1,0 +1,255 @@
+--// Pink Red Environment Flash
+--// má»i Lighting sáº½ chuyá»ƒn sang Ä‘á» há»“ng rá»“i tween vá» gá»‘c
+
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+
+--// lÆ°u value gá»‘c
+local Original = {
+	Ambient = Lighting.Ambient,
+	OutdoorAmbient = Lighting.OutdoorAmbient,
+	ColorShift_Top = Lighting.ColorShift_Top,
+	ColorShift_Bottom = Lighting.ColorShift_Bottom,
+	FogColor = Lighting.FogColor,
+	Brightness = Lighting.Brightness
+}
+
+--// mĂ u Ä‘á» há»“ng
+Lighting.Ambient = Color3.fromRGB(255, 60, 120)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 40, 100)
+Lighting.ColorShift_Top = Color3.fromRGB(255, 0, 80)
+Lighting.ColorShift_Bottom = Color3.fromRGB(255, 80, 120)
+Lighting.FogColor = Color3.fromRGB(255, 40, 90)
+Lighting.Brightness = 3
+
+--// giá»¯ effect 0.2s
+task.wait(1)
+
+--// tween vá» mĂ´i trÆ°á»ng gá»‘c
+local Tween = TweenService:Create(
+	Lighting,
+	TweenInfo.new(
+		2, -- thá»i gian tween
+		Enum.EasingStyle.Quad,
+		Enum.EasingDirection.Out
+	),
+	{
+		Ambient = Original.Ambient,
+		OutdoorAmbient = Original.OutdoorAmbient,
+		ColorShift_Top = Original.ColorShift_Top,
+		ColorShift_Bottom = Original.ColorShift_Bottom,
+		FogColor = Original.FogColor,
+		Brightness = Original.Brightness
+	}
+)
+
+Tween:Play()
+
+--// SOUND URL
+local url = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_FB51FB7.mp3?raw=true"
+
+--// FILE NAME
+local soundFile = "ChaoticTheme.mp3"
+
+--// DELETE OLD CACHE
+pcall(function()
+	if isfile(soundFile) then
+		delfile(soundFile)
+	end
+end)
+
+--// DOWNLOAD NEW FILE
+writefile(soundFile, game:HttpGet(url))
+
+--// CREATE SOUND
+local sound = Instance.new("Sound")
+sound.Name = "ChaoticSound"
+sound.SoundId = (getcustomasset or getsynasset)(soundFile)
+
+sound.Volume = 3
+sound.Looped = true
+
+sound.RollOffMaxDistance = 200
+sound.RollOffMinDistance = 10
+
+local entityTemp = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/Not-Guestly/Scripts/refs/heads/main/DOORS-Entity-Template.lua"
+))()
+
+local spawner = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"
+))()
+
+local ghost = entityTemp({
+    Name = "Chaotic",
+    Face = "rbxassetid://122070125316807",
+    CFrame = CFrame.new(0,3,0),
+
+    PointLightColor = Color3.fromRGB(255, 80, 120),
+    LightRange = 20,
+    LightBrightness = 1,
+
+    EntityVibration = 5,
+    EntityFaceSize = 4,
+    ScreenVibration = 0,
+
+    EntityVFXImage = "rbxassetid://0",
+    VFXAmount = 20,
+    VFXSize = 80,
+    VFXDistance = 8,
+    VFXSpeed = 10,
+
+    EntitySound = "rbxassetid://0",
+    SoundVolume = 3,
+    SoundMaxDistance = 100,
+    SoundMinDistance = 1,
+    SoundLooped = true
+})
+
+local ghostModel = ghost:GetModel()
+
+if not ghostModel or not ghostModel:IsA("Model") then
+    error("Ghost model not returned correctly from entityTemp")
+end
+
+ghostModel = ghostModel:Clone()
+ghostModel.Name = "Chaotic"
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Chaotic",
+		Asset = ghostModel,
+		HeightOffset = 2
+	},
+
+	Lights = {
+		Flicker = {
+			Enabled = false,
+			Duration = 4
+		},
+		Shatter = true,
+		Repair = false
+	},
+
+	Earthquake = {
+		Enabled = false
+	},
+
+	CameraShake = {
+		Enabled = true,
+		Range = 150,
+		Values = {2, 8, 17, 14}
+	},
+
+	Movement = {
+		Speed = 250,
+		Delay = 8,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = true,
+		Type = "Ambush",
+		Min = 5,
+		Max = 5,
+		Delay = 1
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 125
+	},
+
+	Crucifixion = {
+		Enabled = false,
+		Range = 40,
+		Resist = true,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"You died to Smile_disort",
+			"He is not so fast, but tricky",
+			"When you encounter him, hide quick! ",
+			"Good luck."
+		},
+		Cause = "Chaotic"
+	}
+})
+
+entity:SetCallback("OnSpawned", function()
+    print("SmileGhost spawned")
+
+    local model = workspace:FindFirstChild("Chaotic")
+
+	if model then
+		sound.Parent = model
+		sound:Play()
+	end
+end)
+
+entity:SetCallback("OnStartMoving", function()
+    print("SmileGhost moving")
+
+    if ghost.PlayMove then
+        ghost:PlayMove()
+    end
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+    if newHealth <= 0 then
+        print("Player died")
+
+        if ghost.Jumpscare then
+            ghost:Jumpscare()
+        end
+    else
+        print("Player damaged")
+
+        if ghost.ScreenVibration then
+            ghost:ScreenVibration(5)
+        end
+    end
+end)
+
+entity:SetCallback("OnLookAt", function(isLooking)
+    if isLooking and ghost.ScreenVibration then
+        ghost:ScreenVibration(2)
+    end
+end)
+
+entity:SetCallback("OnEnterRoom", function(room, firstTime)
+    if firstTime then
+        print("First room:", room.Name)
+
+        if ghost.EmitVFX then
+            ghost:EmitVFX()
+        end
+    end
+end)
+
+entity:SetCallback("OnRebounding", function(start)
+    if start then
+        print("Rebounding start")
+        if ghost.PlayRebound then ghost:PlayRebound() end
+    else
+        print("Rebounding end")
+    end
+end)
+
+entity:SetCallback("OnDespawning", function()
+    print("SmileGhost despawning")
+	if sound then
+		sound:Stop()
+		sound:Destroy()
+	end
+end)
+
+entity:SetCallback("OnDespawned", function()
+    print("SmileGhost gone")
+end)
+
+entity:Run()
