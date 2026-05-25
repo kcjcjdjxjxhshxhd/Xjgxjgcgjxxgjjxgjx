@@ -1,0 +1,103 @@
+game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage("<font color='#ffa200'>[Laver Mode]: Script Succesfully Executed/Loaded.</font>")
+
+--// AUTO CLONE PATHFINDNODES SYSTEM
+
+local roomsFolder = workspace:WaitForChild("CurrentRooms")
+
+local SavedClones = {}
+
+local function clonePath(room)
+    if SavedClones[room] then return end
+
+    local nodes = room:FindFirstChild("PathfindNodes")
+    if not nodes then return end
+
+    local clone = nodes:Clone()
+    clone.Name = "PathfindNodes"
+    clone.Parent = room -- hoĂ¡ÂºÂ·c ReplicatedStorage nĂ¡ÂºÂ¿u thÄ‚Â­ch
+
+    SavedClones[room] = clone
+end
+
+local function removeClone(room)
+    if SavedClones[room] then
+        SavedClones[room]:Destroy()
+        SavedClones[room] = nil
+    end
+end
+
+-- Ä‘Å¸â€Â¥ CHECK CĂ¡Â»Â°C NHANH (Heartbeat level)
+game:GetService("RunService").Heartbeat:Connect(function()
+    for _, room in ipairs(roomsFolder:GetChildren()) do
+        if not SavedClones[room] then
+            clonePath(room)
+        end
+    end
+end)
+
+-- dĂ¡Â»Ân clone nĂ¡ÂºÂ¿u room bĂ¡Â»â€¹ xoÄ‚Â¡
+roomsFolder.ChildRemoved:Connect(function(room)
+    removeClone(room)
+end)
+
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Laver Mode Actived!",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Remade, Fixed by Guestly",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(255, 255, 255)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Credits to the OG creator of Laver mode",true)
+wait(2)
+local caption = game.Players.LocalPlayer:WaitForChild("PlayerGui").MainUI.MainFrame.Caption
+caption.TextColor3 = Color3.fromRGB(164, 255, 156)
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Enjoy the mode! :D",true)
+
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+
+-- Smile_disort
+coroutine.wrap(function()
+    while true do
+        wait(170)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Smile%20fsjhh"))()
+    end
+end)()
+
+-- Classio-Reboundier
+coroutine.wrap(function()
+    while true do
+        wait(430)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Classioooooo"))()
+    end
+end)()
+
+-- Chaotic
+coroutine.wrap(function()
+    while true do
+        wait(510)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Chaotic"))()
+    end
+end)()
+
+-- Grudge_A21
+coroutine.wrap(function()
+    while true do
+        wait(790)
+       
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        wait(0) 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/kcjcjdjxjxhshxhd/Xjgxjgcgjxxgjjxgjx/refs/heads/main/Grudge"))()
+    end
+end)()
