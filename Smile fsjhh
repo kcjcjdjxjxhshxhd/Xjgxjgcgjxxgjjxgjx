@@ -1,0 +1,205 @@
+local url1 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_C5DB982.mp3?raw=true"
+local url2 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_717A971.mp3?raw=true"
+
+if not isfile("sound1.mp3") then
+	writefile("sound1.mp3", game:HttpGet(url1))
+end
+
+if not isfile("sound2.mp3") then
+	writefile("sound2.mp3", game:HttpGet(url2))
+end
+
+local sound1 = Instance.new("Sound")
+sound1.SoundId = (getcustomasset or getsynasset)("sound1.mp3")
+sound1.Volume = 5
+
+local sound2 = Instance.new("Sound")
+sound2.SoundId = (getcustomasset or getsynasset)("sound2.mp3")
+sound2.Looped = true
+sound2.RollOffMaxDistance = 200
+sound2.RollOffMinDistance = 10
+sound2.Volume = 2
+
+local entityTemp = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/Not-Guestly/Scripts/refs/heads/main/DOORS-Entity-Template.lua"
+))()
+
+local spawner = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"
+))()
+
+local ghost = entityTemp({
+    Name = "Smile_disort",
+    Face = "rbxassetid://80009602848798",
+    CFrame = CFrame.new(0,3,0),
+
+    PointLightColor = Color3.fromRGB(0,255,0),
+    LightRange = 20,
+    LightBrightness = 2,
+
+    EntityVibration = 10,
+    EntityFaceSize = 4,
+    ScreenVibration = 0,
+
+    EntityVFXImage = "rbxassetid://0",
+    VFXAmount = 10,
+    VFXSize = 140,
+    VFXDistance = 5,
+    VFXSpeed = 1.5,
+
+    EntitySound = "rbxassetid://0",
+    SoundVolume = 3,
+    SoundMaxDistance = 100,
+    SoundMinDistance = 1,
+    SoundLooped = true
+})
+
+local ghostModel = ghost:GetModel()
+
+if not ghostModel or not ghostModel:IsA("Model") then
+    error("Ghost model not returned correctly from entityTemp")
+end
+
+ghostModel = ghostModel:Clone()
+ghostModel.Name = "Smile_disort"
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Smile_disort",
+		Asset = ghostModel,
+		HeightOffset = 2
+	},
+
+	Lights = {
+		Flicker = {
+			Enabled = false,
+			Duration = 0
+		},
+		Shatter = true,
+		Repair = false
+	},
+
+	Earthquake = {
+		Enabled = false
+	},
+
+	CameraShake = {
+		Enabled = true,
+		Range = 150,
+		Values = {2, 15, 10, 9}
+	},
+
+	Movement = {
+		Speed = 100,
+		Delay = 5,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = false,
+		Type = "Ambush",
+		Min = 3,
+		Max = 3,
+		Delay = 0
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 125
+	},
+
+	Crucifixion = {
+		Enabled = false,
+		Range = 40,
+		Resist = true,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"You died to Smile_disort",
+			"He is not so fast, but tricky",
+			"When you encounter him, hide quick! ",
+			"Good luck."
+		},
+		Cause = "Smile_disort"
+	}
+})
+
+entity:SetCallback("OnSpawned", function()
+    print("SmileGhost spawned")
+
+    if ghost.PlaySpawn then
+        ghost:PlaySpawn()
+    end
+    
+    sound1.Parent = workspace
+    sound2.Parent = game.Workspace["Smile_disort"]
+    
+    sound1:Play()
+    sound2:Play()
+end)
+
+entity:SetCallback("OnStartMoving", function()
+    print("SmileGhost moving")
+
+    if ghost.PlayMove then
+        ghost:PlayMove()
+    end
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+    if newHealth <= 0 then
+        print("Player died")
+
+        if ghost.Jumpscare then
+            ghost:Jumpscare()
+        end
+    else
+        print("Player damaged")
+
+        if ghost.ScreenVibration then
+            ghost:ScreenVibration(5)
+        end
+    end
+end)
+
+entity:SetCallback("OnLookAt", function(isLooking)
+    if isLooking and ghost.ScreenVibration then
+        ghost:ScreenVibration(2)
+    end
+end)
+
+entity:SetCallback("OnEnterRoom", function(room, firstTime)
+    if firstTime then
+        print("First room:", room.Name)
+
+        if ghost.EmitVFX then
+            ghost:EmitVFX()
+        end
+    end
+end)
+
+entity:SetCallback("OnRebounding", function(start)
+    if start then
+        print("Rebounding start")
+        if ghost.PlayRebound then ghost:PlayRebound() end
+    else
+        print("Rebounding end")
+    end
+end)
+
+entity:SetCallback("OnDespawning", function()
+    print("SmileGhost despawning")
+    
+    sound2:Stop()
+    sound2:Destroy()
+end)
+
+entity:SetCallback("OnDespawned", function()
+    print("SmileGhost gone")
+end)
+
+entity:Run()
