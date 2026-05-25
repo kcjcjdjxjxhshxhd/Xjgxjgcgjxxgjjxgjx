@@ -1,0 +1,304 @@
+--// SOUND URLS
+local url3 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_8D1F15C.mp3?raw=true"
+local url4 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_549C0A6.mp3?raw=true"
+local url5 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_9B3EE25.mp3?raw=true" -- << thĂªm cĂ¡i nĂ y (Ä‘á»•i link m tá»± dĂ¹ng)
+
+--// FILE NAMES
+local soundFile1 = "OneLap.mp3"
+local soundFile2 = "Forlap.mp3"
+local soundFile3 = "SpawnGrudge.mp3"
+
+--// DELETE OLD CACHE
+pcall(function() if isfile(soundFile1) then delfile(soundFile1) end end)
+pcall(function() if isfile(soundFile2) then delfile(soundFile2) end end)
+pcall(function() if isfile(soundFile3) then delfile(soundFile3) end end)
+
+--// DOWNLOAD NEW FILES
+writefile(soundFile1, game:HttpGet(url3))
+writefile(soundFile2, game:HttpGet(url4))
+writefile(soundFile3, game:HttpGet(url5))
+
+--// CREATE SOUND 1
+local sound1 = Instance.new("Sound")
+sound1.Name = "OneLap"
+sound1.SoundId = (getcustomasset or getsynasset)(soundFile1)
+sound1.Volume = 3
+sound1.Parent = workspace
+
+--// CREATE SOUND 2
+local sound2 = Instance.new("Sound")
+sound2.Name = "Forlap"
+sound2.SoundId = (getcustomasset or getsynasset)(soundFile2)
+sound2.Volume = 3
+sound2.Parent = workspace
+
+--// CREATE SOUND 3
+local sound3 = Instance.new("Sound")
+sound3.Name = "SpawnGrudge"
+sound3.SoundId = (getcustomasset or getsynasset)(soundFile3)
+sound3.Volume = 3
+sound3.Parent = workspace
+
+local entityTemp = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/Not-Guestly/Scripts/refs/heads/main/DOORS-Entity-Template.lua"
+))()
+
+local spawner = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"
+))()
+
+local ghost = entityTemp({
+    Name = "Grudge_A21",
+    Face = "rbxassetid://94726195089959",
+    CFrame = CFrame.new(0,3,0),
+
+    PointLightColor = Color3.fromRGB(255,255,255),
+    LightRange = 15,
+    LightBrightness = 1,
+
+    EntityVibration = 0,
+    EntityFaceSize = 4,
+    ScreenVibration = 0,
+
+    EntityVFXImage = "rbxassetid://0",
+    VFXAmount = 20,
+    VFXSize = 80,
+    VFXDistance = 8,
+    VFXSpeed = 10,
+
+    EntitySound = "rbxassetid://0",
+    SoundVolume = 3,
+    SoundMaxDistance = 100,
+    SoundMinDistance = 1,
+    SoundLooped = true
+})
+
+local ghostModel = ghost:GetModel()
+
+if not ghostModel or not ghostModel:IsA("Model") then
+    error("Ghost model not returned correctly from entityTemp")
+end
+
+ghostModel = ghostModel:Clone()
+ghostModel.Name = "Grudge_A21"
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Grudge_A21",
+		Asset = ghostModel,
+		HeightOffset = 2
+	},
+
+	Lights = {
+		Flicker = {
+			Enabled = false,
+			Duration = 4
+		},
+		Shatter = true,
+		Repair = false
+	},
+
+	Earthquake = {
+		Enabled = false
+	},
+
+	CameraShake = {
+		Enabled = false,
+		Range = 150,
+		Values = {5, 8, 12, 6}
+	},
+
+	Movement = {
+		Speed = 100, 
+		Delay = 6,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = true,
+		Type = "Ambush",
+		Min = 11,
+		Max = 11,
+		Delay = 0
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 125
+	},
+
+	Crucifixion = {
+		Enabled = false,
+		Range = 40,
+		Resist = true,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"You died to Smile_disort",
+			"He is not so fast, but tricky",
+			"When you encounter him, hide quick! ",
+			"Good luck."
+		},
+		Cause = "Grudge_A21"
+	}
+})
+
+entity:SetCallback("OnSpawned", function()
+    print("SmileGhost spawned")
+
+    local model = workspace:FindFirstChild("Grudge_A21")
+
+	if model then
+		sound3:Play()
+	end
+end)
+
+entity:SetCallback("OnStartMoving", function()
+    print("SmileGhost moving")
+
+    if ghost.PlayMove then
+        ghost:PlayMove()
+    end
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+    if newHealth <= 0 then
+        print("Player died")
+
+        if ghost.Jumpscare then
+            ghost:Jumpscare()
+        end
+    else
+        print("Player damaged")
+
+        if ghost.ScreenVibration then
+            ghost:ScreenVibration(5)
+        end
+    end
+end)
+
+entity:SetCallback("OnLookAt", function(isLooking)
+    if isLooking and ghost.ScreenVibration then
+        ghost:ScreenVibration(2)
+    end
+end)
+
+entity:SetCallback("OnEnterRoom", function(room, firstTime)
+    if firstTime then
+        print("First room:", room.Name)
+        
+        sound1:Play()
+
+        if ghost.EmitVFX then
+            ghost:EmitVFX()
+        end
+    end
+end)
+
+entity:SetCallback("OnRebounding", function(start)
+    if start then
+        print("Rebounding start")
+        if ghost.PlayRebound then ghost:PlayRebound() end
+    else
+        print("Rebounding end")
+    end
+end)
+
+entity:SetCallback("OnDespawning", function()
+    print("SmileGhost despawning")
+    if sound1 then
+		sound1:Destroy()
+	end
+
+	if sound2 then
+		sound2:Destroy()
+	end
+	
+		if sound3 then
+		sound3:Destroy()
+	end
+end)
+
+entity:SetCallback("OnDespawned", function()
+    print("SmileGhost gone")
+end)
+
+entity:Run()
+
+--// ROOM TRACKER (ENTITY ENTER CURRENT PLAYER ROOM)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local currentRoom = nil
+local lastRoomName = nil
+
+--// detect room localplayer Ä‘ang Ä‘á»©ng
+local function getPlayerRoom()
+	local char = player.Character
+	if not char then return nil end
+
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return nil end
+
+	local roomsFolder = workspace:FindFirstChild("CurrentRooms")
+	if not roomsFolder then return nil end
+
+	for _, room in ipairs(roomsFolder:GetChildren()) do
+		if room:IsA("Model") then
+			-- check simple bounding box
+			local cf, size = room:GetBoundingBox()
+			local pos = hrp.Position
+
+			local relative = cf:PointToObjectSpace(pos)
+			if math.abs(relative.X) < size.X/2
+			and math.abs(relative.Y) < size.Y/2
+			and math.abs(relative.Z) < size.Z/2 then
+				return room
+			end
+		end
+	end
+
+	return nil
+end
+
+--// detect entity model
+local function getEntity()
+	return workspace:FindFirstChild("Grudge_A21")
+end
+
+--// loop check
+task.spawn(function()
+	while task.wait(0.2) do
+		local room = getPlayerRoom()
+		local entity = getEntity()
+
+		if room and entity then
+			-- chá»‰ trigger khi room Ä‘á»•i (trĂ¡nh spam sound)
+			if room.Name ~= lastRoomName then
+				lastRoomName = room.Name
+			end
+
+			-- check entity cĂ³ náº±m trong cĂ¹ng room ko
+			local cf, size = room:GetBoundingBox()
+			local pos = entity:GetPivot().Position
+
+			local relative = cf:PointToObjectSpace(pos)
+
+			local insideRoom =
+				math.abs(relative.X) < size.X/2 and
+				math.abs(relative.Y) < size.Y/2 and
+				math.abs(relative.Z) < size.Z/2
+
+			if insideRoom then
+				if not sound2.IsPlaying then
+					sound2:Play()
+				end
+			end
+		end
+	end
+end)
