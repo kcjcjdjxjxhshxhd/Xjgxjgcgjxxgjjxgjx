@@ -1,0 +1,329 @@
+--// SOUND URLS
+local url3 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_B5B5057.mp3?raw=true"
+local url4 = "https://github.com/lynguyen26031993-design/-u/raw/refs/heads/main/Novo_projeto_32_6A08AFC.mp3?raw=true"
+
+--// FILE NAMES
+local soundFile1 = "ClassioSpawn.mp3"
+local soundFile2 = "ClassioMove.mp3"
+
+--// DELETE OLD CACHE
+pcall(function()
+	if isfile(soundFile1) then
+		delfile(soundFile1)
+	end
+end)
+
+pcall(function()
+	if isfile(soundFile2) then
+		delfile(soundFile2)
+	end
+end)
+
+--// DOWNLOAD NEW FILES
+writefile(soundFile1, game:HttpGet(url3))
+writefile(soundFile2, game:HttpGet(url4))
+
+--// CREATE SOUND 1
+local sound1 = Instance.new("Sound")
+sound1.Name = "SpawnSound"
+sound1.SoundId = (getcustomasset or getsynasset)(soundFile1)
+sound1.Volume = 3
+sound1.Looped = true
+sound1.RollOffMaxDistance = 400
+sound1.RollOffMinDistance = 10
+
+--// CREATE SOUND 2
+local sound2 = Instance.new("Sound")
+sound2.Name = "MoveSound"
+sound2.SoundId = (getcustomasset or getsynasset)(soundFile2)
+sound2.Volume = 3
+sound2.Looped = true
+sound2.RollOffMaxDistance = 50
+sound2.RollOffMinDistance = 10
+
+local entityTemp = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/Not-Guestly/Scripts/refs/heads/main/DOORS-Entity-Template.lua"
+))()
+
+local spawner = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"
+))()
+
+local ghost = entityTemp({
+    Name = "Classio-Reboundier",
+    Face = "rbxassetid://123653829329197",
+    CFrame = CFrame.new(0,3,0),
+
+    PointLightColor = Color3.fromRGB(0,102,255),
+    LightRange = 25,
+    LightBrightness = 2,
+
+    EntityVibration = 0,
+    EntityFaceSize = 4,
+    ScreenVibration = 0,
+
+    EntityVFXImage = "rbxassetid://81113995633681",
+    VFXAmount = 20,
+    VFXSize = 80,
+    VFXDistance = 8,
+    VFXSpeed = 10,
+
+    EntitySound = "rbxassetid://0",
+    SoundVolume = 3,
+    SoundMaxDistance = 100,
+    SoundMinDistance = 1,
+    SoundLooped = true
+})
+
+local ghostModel = ghost:GetModel()
+
+if not ghostModel or not ghostModel:IsA("Model") then
+    error("Ghost model not returned correctly from entityTemp")
+end
+
+ghostModel = ghostModel:Clone()
+ghostModel.Name = "Classio-Reboundier"
+
+local entity = spawner.Create({
+	Entity = {
+		Name = "Classio-Reboundier",
+		Asset = ghostModel,
+		HeightOffset = 2
+	},
+
+	Lights = {
+		Flicker = {
+			Enabled = true,
+			Duration = 4
+		},
+		Shatter = true,
+		Repair = false
+	},
+
+	Earthquake = {
+		Enabled = false
+	},
+
+	CameraShake = {
+		Enabled = true,
+		Range = 150,
+		Values = {5, 8, 12, 6}
+	},
+
+	Movement = {
+		Speed = 80,
+		Delay = 8,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = true,
+		Type = "Ambush",
+		Min = 3,
+		Max = 3,
+		Delay = 1
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 125
+	},
+
+	Crucifixion = {
+		Enabled = false,
+		Range = 40,
+		Resist = true,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"You died to Smile_disort",
+			"He is not so fast, but tricky",
+			"When you encounter him, hide quick! ",
+			"Good luck."
+		},
+		Cause = "Classio-Reboundier"
+	}
+})
+
+entity:SetCallback("OnSpawned", function()
+    print("SmileGhost spawned")
+
+    local model = workspace:FindFirstChild("Classio-Reboundier")
+
+	if model then
+		sound1.Parent = model
+		sound2.Parent = model
+
+		sound1:Play()
+		sound2:Play()
+	end
+end)
+
+entity:SetCallback("OnStartMoving", function()
+    print("SmileGhost moving")
+
+    if ghost.PlayMove then
+        ghost:PlayMove()
+    end
+end)
+
+entity:SetCallback("OnDamagePlayer", function(newHealth)
+    if newHealth <= 0 then
+        print("Player died")
+
+        if ghost.Jumpscare then
+            ghost:Jumpscare()
+        end
+    else
+        print("Player damaged")
+
+        if ghost.ScreenVibration then
+            ghost:ScreenVibration(5)
+        end
+    end
+end)
+
+entity:SetCallback("OnLookAt", function(isLooking)
+    if isLooking and ghost.ScreenVibration then
+        ghost:ScreenVibration(2)
+    end
+end)
+
+entity:SetCallback("OnEnterRoom", function(room, firstTime)
+    if firstTime then
+        print("First room:", room.Name)
+
+        if ghost.EmitVFX then
+            ghost:EmitVFX()
+        end
+    end
+end)
+
+entity:SetCallback("OnRebounding", function(start)
+    if start then
+        print("Rebounding start")
+        if ghost.PlayRebound then ghost:PlayRebound() end
+    else
+        print("Rebounding end")
+    end
+end)
+
+entity:SetCallback("OnDespawning", function()
+    print("SmileGhost despawning")
+    if sound1 then
+		sound1:Stop()
+		sound1:Destroy()
+	end
+
+	if sound2 then
+		sound2:Stop()
+		sound2:Destroy()
+	end
+end)
+
+entity:SetCallback("OnDespawned", function()
+    print("SmileGhost gone")
+end)
+
+entity:Run()
+
+--// STRONG BLUE ENVIRONMENT FLASH + WAVY SCREENSHAKE
+
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+--// lÆ°u mĂ´i trÆ°á»ng gá»‘c
+local Original = {
+	Ambient = Lighting.Ambient,
+	OutdoorAmbient = Lighting.OutdoorAmbient,
+	ColorShift_Top = Lighting.ColorShift_Top,
+	ColorShift_Bottom = Lighting.ColorShift_Bottom,
+	FogColor = Lighting.FogColor,
+	Brightness = Lighting.Brightness
+}
+
+--// STRONG BLUE
+Lighting.Ambient = Color3.fromRGB(0, 120, 255)
+Lighting.OutdoorAmbient = Color3.fromRGB(0, 80, 255)
+Lighting.ColorShift_Top = Color3.fromRGB(0, 140, 255)
+Lighting.ColorShift_Bottom = Color3.fromRGB(0, 60, 255)
+Lighting.FogColor = Color3.fromRGB(0, 110, 255)
+Lighting.Brightness = 4
+
+task.spawn(function()
+--// giá»¯ effect 0.2s
+task.wait(3)
+
+--// tween lighting vá» gá»‘c
+local LightTween = TweenService:Create(
+	Lighting,
+	TweenInfo.new(
+		2,
+		Enum.EasingStyle.Quad,
+		Enum.EasingDirection.Out
+	),
+	{
+		Ambient = Original.Ambient,
+		OutdoorAmbient = Original.OutdoorAmbient,
+		ColorShift_Top = Original.ColorShift_Top,
+		ColorShift_Bottom = Original.ColorShift_Bottom,
+		FogColor = Original.FogColor,
+		Brightness = Original.Brightness
+	}
+)
+
+LightTween:Play()
+end)
+
+task.spawn(function()
+
+	local duration = 4
+	local start = tick()
+
+	local connection
+	connection = RunService.RenderStepped:Connect(function()
+		local elapsed = tick() - start
+		local progress = elapsed / duration
+
+		if progress >= 1 then
+			connection:Disconnect()
+			return
+		end
+
+		--// intensity giáº£m dáº§n
+		local intensity = (1 - progress)^0.7
+
+		--// wave offset máº¡nh
+		local offsetX = math.sin(tick() * 42) * 1.8 * intensity
+		local offsetY = math.cos(tick() * 33) * 1.4 * intensity
+		local offsetZ = math.sin(tick() * 25) * 0.9 * intensity
+
+		--// nghiĂªng camera kiá»ƒu sĂ³ng
+		local tiltX = math.rad(math.sin(tick() * 20) * 8 * intensity)
+		local tiltY = math.rad(math.cos(tick() * 17) * 8 * intensity)
+		local tiltZ = math.rad(math.sin(tick() * 28) * 14 * intensity)
+
+		camera.CFrame =
+			camera.CFrame
+			* CFrame.new(
+				offsetX * 0.12,
+				offsetY * 0.12,
+				offsetZ * 0.06
+			)
+			* CFrame.Angles(
+				tiltX,
+				tiltY,
+				tiltZ
+			)
+	end)
+
+end)
