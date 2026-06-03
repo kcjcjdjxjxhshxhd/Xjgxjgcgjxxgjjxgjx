@@ -1,0 +1,280 @@
+local Lighting = game:GetService("Lighting")
+local currentRooms = workspace:WaitForChild("CurrentRooms")
+
+
+local FROZEN_COLOR = Color3.fromRGB(75, 254, 255)
+
+
+---------------------------------------------------
+-- CHá»¨C NÄ‚NG 1: Äá»”I MĂ€U ÄĂˆN Cá»¦A PHĂ’NG
+
+
+local function setupFrozenLights(room)
+	for _, descendant in ipairs(room:GetDescendants()) do
+		local isLightFolder = descendant:IsA("Folder") and descendant.Name == "Light_Fixtures"
+		local isChandelier = descendant:IsA("Model") and descendant.Name == "Chandelier"
+
+
+		if isLightFolder or isChandelier then
+			local fixtureModels = isLightFolder and descendant:GetChildren() or {descendant}
+
+
+			for _, fixtureModel in ipairs(fixtureModels) do
+				local lightFixture = fixtureModel:FindFirstChild("LightFixture") or fixtureModel:FindFirstChildWhichIsA("BasePart")
+
+
+				if lightFixture and lightFixture:IsA("BasePart") then
+					if not lightFixture:FindFirstChild("FrozenSmoke") then
+						local smoke = Instance.new("Smoke")
+						smoke.Name = "FrozenSmoke"
+						smoke.Color = FROZEN_COLOR
+						smoke.Opacity = 0.1
+						smoke.Size = 0.5
+						smoke.Parent = lightFixture
+					end
+				end
+
+
+				for _, obj in ipairs(fixtureModel:GetDescendants()) do
+					if obj:IsA("BasePart") and (obj.Name == "Neon" or obj.Material == Enum.Material.Neon) then
+						obj.Color = FROZEN_COLOR
+					end
+					if obj:IsA("Light") then
+						obj.Color = FROZEN_COLOR
+					end
+				end
+			end
+		end
+	end
+end
+
+
+---------------------------------------------------
+-- CHá»¨C NÄ‚NG 2: Xá»¬ LĂ Cá»¬A Sá»” (WINDOW) KHĂ”NG DROP FPS
+
+
+-- HĂ m táº¡o ParticleEmitter mÆ°a hiá»‡u nÄƒng cao
+local function createRainEmitter()
+	local rain = Instance.new("ParticleEmitter")
+	rain.Texture = "rbxassetid://86574624318804"
+	rain.Rate = 25 -- Giáº£m nháº¹ tá»« 30 xuá»‘ng 25 Ä‘á»ƒ tá»‘i Æ°u FPS khi cĂ³ nhiá»u cá»­a sá»•
+	rain.Lifetime = NumberRange.new(0.7, 1)
+	rain.Speed = NumberRange.new(3, 4)
+	rain.EmissionDirection = Enum.NormalId.Bottom
+	rain.SpreadAngle = Vector2.new(5, 5)
+	rain.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 5),
+		NumberSequenceKeypoint.new(1, 4)
+	})
+	rain.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.2),
+		NumberSequenceKeypoint.new(1, 1)
+	})
+	rain.Acceleration = Vector3.new(0, -15, 0)
+	return rain
+end
+
+
+local function setupWindow(model)
+	if not (model:IsA("Model") and model.Name == "Window") then return end
+
+
+	-- 1. ÄĂƒ XĂ“A TOĂ€N Bá»˜ PHáº¦N Táº O VĂ€ Xá»¬ LĂ Ă‚M THANH KHá»I SCRIPT
+
+
+	-- 2. Xá»­ lĂ½ Part 'Particles' vĂ  gáº¯n hiá»‡u á»©ng mÆ°a
+	local particlesPart = model:FindFirstChild("Particles")
+	if particlesPart and particlesPart:IsA("BasePart") then
+		for _, child in ipairs(particlesPart:GetChildren()) do
+			if child:IsA("ParticleEmitter") then
+				child:Destroy()
+			end
+		end
+
+
+		local newRain = createRainEmitter()
+		newRain.Parent = particlesPart
+	end
+
+
+	-- Xá»­ lĂ½ Ä‘á»•i mĂ u cĂ¡c bá»™ pháº­n cá»§a Cá»­a sá»• (Skybox & SurfaceLight)
+	for _, desc in ipairs(model:GetDescendants()) do
+		-- Äá»•i mĂ u Mesh/Part tĂªn 'Skybox'
+		if desc.Name == "Skybox" then
+			if desc:IsA("SpecialMesh") or desc:IsA("FileMesh") then
+				desc.VertexColor = Vector3.new(24/255, 56/255, 69/255)
+			elseif desc:IsA("BlockMesh") then
+				-- Bá» qua VertexColor cá»§a BlockMesh Ä‘á»ƒ trĂ¡nh lá»—i
+			elseif desc:IsA("BasePart") then
+				desc.Color = Color3.fromRGB(24, 56, 69)
+			end
+			
+			if desc.Parent and desc.Parent:IsA("BasePart") then
+				desc.Parent.Color = Color3.fromRGB(24, 56, 69)
+			end
+		-- Äá»•i mĂ u SurfaceLight
+		elseif desc:IsA("SurfaceLight") and desc.Name == "SurfaceLight" then
+			desc.Color = Color3.fromRGB(0, 76, 90)
+		end
+	end
+end
+
+
+---------------------------------------------------
+-- Cáº¤U HĂŒNH SÆ¯Æ NG MĂ™ & SPAWN MODEL BÄ‚NG
+
+
+Lighting.FogColor = Color3.fromRGB(170, 238, 245)
+Lighting.FogStart = 16
+Lighting.FogEnd = 350
+
+
+local MODEL_IDS = {
+    "rbxassetid://123394042081913", 
+    "rbxassetid://75597378264678"
+}
+
+
+local function loadModelFromId(assetPath)
+    local success, result = pcall(function()
+        return game:GetObjects(assetPath)
+    end)
+    if success and result and #result > 0 then
+        local original = result[1]
+        local clone = original:Clone()
+        original:Destroy()
+        return clone
+    end
+    return nil
+end
+
+
+local function getRandomPosOnFloor(floor, modelHeight)
+    local floorSize = floor.Size
+    local limitX = floorSize.X / 2 - 4
+    local limitZ = floorSize.Z / 2 - 4
+    local randomX = (limitX <= 0) and math.random(-floorSize.X / 2, floorSize.X / 2) or math.random(-limitX, limitX)
+    local randomZ = (limitZ <= 0) and math.random(-floorSize.Z / 2, floorSize.Z / 2) or math.random(-limitZ, limitZ)
+    return Vector3.new(randomX, (floorSize.Y / 2) + (modelHeight / 2), randomZ)
+end
+
+
+local function spawnModelsOnSpecificFloor(floor, count)
+    local spawnedPositions = {}
+
+
+    for i = 1, count do
+        local randomPath = MODEL_IDS[math.random(1, #MODEL_IDS)]
+        local newModel = loadModelFromId(randomPath)
+        
+        if not newModel then continue end
+        
+        newModel.Name = "ICE_MODEL_" .. i
+        
+        for _, part in pairs(newModel:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false 
+                part.CanQuery = false   
+                part.CanTouch = false   
+            end
+        end
+        
+        local size = newModel:GetExtentsSize()
+        local localPos
+        
+        if i == 1 then
+            localPos = getRandomPosOnFloor(floor, size.Y)
+        else
+            local attempts = 0
+            while true do
+                attempts = attempts + 1
+                local tempPos = getRandomPosOnFloor(floor, size.Y)
+                if (tempPos - spawnedPositions[1]).Magnitude >= 20 or attempts > 30 then
+                    localPos = tempPos
+                    break
+                end
+            end
+        end
+        
+        table.insert(spawnedPositions, localPos)
+        newModel.Parent = floor
+        
+        local randomRotationY = math.rad(math.random(0, 360))
+        local targetCFrame = floor.CFrame * CFrame.new(localPos) * CFrame.Angles(0, randomRotationY, 0)
+        newModel:PivotTo(targetCFrame)
+    end
+end
+
+
+---------------------------------------------------
+-- QUáº¢N LĂ PHĂ’NG (HĂ€M Gá»C Tá»I Æ¯U)
+
+
+local function onRoomAdded(room)
+	task.wait(0.5)
+
+
+	-- Tá»‘i Æ°u FPS: Cháº¡y xá»­ lĂ½ Ä‘Ă¨n vĂ  cá»­a sá»• song song khĂ´ng gĂ¢y ngháº½n luá»“ng chĂ­nh
+	task.defer(function()
+		-- 1. Äá»•i mĂ u Ä‘Ă¨n phĂ²ng
+		setupFrozenLights(room)
+
+
+		-- 2. QuĂ©t tĂ¬m vĂ  xá»­ lĂ½ táº¥t cáº£ Cá»­a Sá»• CHá»ˆ TRONG PHĂ’NG NĂ€Y (PhĂ²ng nĂ o khĂ´ng cĂ³ tá»± Ä‘á»™ng bá» qua)
+		for _, obj in ipairs(room:GetDescendants()) do
+			if obj:IsA("Model") and obj.Name == "Window" then
+				setupWindow(obj)
+			end
+		end
+	end)
+
+
+	-- 3. Tá»ˆ Lá»† 1/3: Quyáº¿t Ä‘á»‹nh spawn mĂ´ hĂ¬nh bÄƒng dÆ°á»›i sĂ n
+	if math.random(1, 3) ~= 1 then return end
+
+
+	local floors = {}
+	local mainFloor = room:FindFirstChild("Floor") or room:FindFirstChild("Base")
+
+
+	if mainFloor and mainFloor:IsA("BasePart") and mainFloor.Size.X > 4 and mainFloor.Size.Z > 4 then
+		table.insert(floors, mainFloor)
+	end
+
+
+	for _, obj in ipairs(room:GetDescendants()) do
+		if obj:IsA("BasePart") and (obj.Name == "Floor" or obj.Name == "Base" or obj.Name == "Carpet" or obj.Name == "Path") then
+			if obj.Size.X > 4 and obj.Size.Z > 4 and not table.find(floors, obj) then
+				table.insert(floors, obj)
+			end
+		end
+	end
+
+
+	if #floors == 0 then return end
+
+
+	local totalModelsToSpawn = math.random(1, 2)
+	
+	if totalModelsToSpawn == 1 then
+		local targetFloor = floors[math.random(1, #floors)]
+		spawnModelsOnSpecificFloor(targetFloor, 1)
+	else
+		local targetFloor1 = floors[math.random(1, #floors)]
+		local targetFloor2 = floors[math.random(1, #floors)]
+		
+		if targetFloor1 == targetFloor2 then
+			spawnModelsOnSpecificFloor(targetFloor1, 2)
+		else
+			spawnModelsOnSpecificFloor(targetFloor1, 1)
+			spawnModelsOnSpecificFloor(targetFloor2, 1)
+		end
+	end
+end
+
+
+-- KĂ­ch hoáº¡t há»‡ thá»‘ng láº¯ng nghe phĂ²ng
+for _, room in pairs(currentRooms:GetChildren()) do
+    onRoomAdded(room)
+end
+currentRooms.ChildAdded:Connect(onRoomAdded)
