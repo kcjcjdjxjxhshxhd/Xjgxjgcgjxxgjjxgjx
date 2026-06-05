@@ -77,7 +77,7 @@ local entityTemp = loadstring(game:HttpGet(
 ))()
 
 local spawner = loadstring(game:HttpGet(
-"https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Entity%20Spawner/V2/Source.lua"
+"https://raw.githubusercontent.com/Not-Guestly/Modes/refs/heads/main/Entity-Spawner-Fixed-By-Guestly%20(Outernal)"
 ))()
 
 local ghost = entityTemp({
