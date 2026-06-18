@@ -4,7 +4,7 @@ game:GetService("TextChatService").TextChannels.RBXGeneral:DisplaySystemMessage(
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Guestly-V2-2/Random-Stuffs/refs/heads/main/Floor%202%20theme"))()
 
 -- Dark
-game:GetService("Lighting").Sanity.Contrast = 1
+game:GetService("Lighting").Sanity.Contrast = 0.5
 game:GetService("Lighting").Sanity.Brightness = 0
 game:GetService("Lighting").Sanity.Enabled = true
 
